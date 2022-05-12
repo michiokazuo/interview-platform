@@ -2,8 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // Routes
-import { canNavigate } from '@/libs/acl/routeProtection'
-import { isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser } from '@/auth/utils'
+import { canNavigate } from '../libs/acl/routeProtection'
+import {
+  isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser,
+  setToken, setUser, removeToken, removeUser, checkUserLoggedIn, checkRouterRole,
+} from '../auth/utils'
 import apps from './routes/apps'
 import dashboard from './routes/dashboard'
 import uiElements from './routes/ui-elements/index'
@@ -36,24 +39,61 @@ const router = new VueRouter({
   ],
 })
 
+const checkLogin = () => {
+  let isLogged = false
+  let status
+  let checkingLogin
+  // eslint-disable-next-line no-restricted-globals
+  if (location.pathname === '/dashboard' && location.search !== '') {
+    status = 'checking'
+    // eslint-disable-next-line no-restricted-globals
+    const { search } = location
+    const accessToken = new URLSearchParams(search).get('accessToken')
+    setToken(accessToken)
+    checkingLogin = checkUserLoggedIn()
+      .then(response => {
+        isLogged = true
+        setUser(response.data)
+        setToken(response.data.accessToken)
+        status = 'done'
+      })
+      .catch(() => {
+        removeToken()
+        removeUser()
+        status = 'error'
+      })
+  }
+  return () => {
+    if (status === 'checking') {
+      throw checkingLogin
+    } else if (status === 'error') {
+      return false
+    }
+
+    return isLogged
+  }
+}
+
 router.beforeEach((to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
+  const checkLoginRs = checkLogin()
+  const oAuthLogin = checkLoginRs ?? false
 
   if (!canNavigate(to)) {
-    // Redirect to login if not logged in
-    if (!isLoggedIn) return next({ name: 'auth-login' })
+    // Redirect to log in if not logged in
+    if (!(isLoggedIn && oAuthLogin)) return next({ name: 'auth-login' })
 
     // If logged in => not authorized
     return next({ name: 'misc-not-authorized' })
   }
 
   // Redirect if logged in
-  if (to.meta.redirectIfLoggedIn && isLoggedIn) {
-    const userData = getUserData()
+  const userData = getUserData()
+  if (to.meta.redirectIfLoggedIn && isLoggedIn && oAuthLogin) {
     next(getHomeRouteForLoggedInUser(userData ? userData.role : null))
   }
 
-  return next()
+  return checkRouterRole(userData ? userData.role : null, next)
 })
 
 // ? For splash screen

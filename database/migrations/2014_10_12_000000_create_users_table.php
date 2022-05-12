@@ -19,8 +19,27 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->unique();
+            $table->string('address');
+            $table->string('avatar');
+            $table->text('introduction')->nullable();
+            $table->string('social_network')->nullable();
+            $table->string('major')->nullable();
+            $table->unsignedBigInteger('role_id')->unsigned();
+            $table->unsignedBigInteger('candidate_id')->unsigned()->nullable();
+            $table->unsignedBigInteger('company_id')->unsigned()->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('role_id')
+                ->references('id')->on('role')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('candidate_id')
+                ->references('id')->on('candidate')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_id')
+                ->references('id')->on('company')
+                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

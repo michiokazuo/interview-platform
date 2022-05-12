@@ -1,1 +1,2 @@
-require("./src/main.js");
+// eslint-disable-next-line import/extensions
+require('./src/main.js')

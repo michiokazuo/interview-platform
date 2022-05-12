@@ -1,16 +1,25 @@
-import useJwt from '@/auth/jwt/useJwt'
+import axios from 'axios'
+import useJwt from './jwt/useJwt'
 
 /**
  * Return if user is logged in
  * This is completely up to you and how you want to store the token in your frontend application
  * e.g. If you are using cookies to store the application please update this function
  */
-// eslint-disable-next-line arrow-body-style
-export const isUserLoggedIn = () => {
-  return localStorage.getItem('userData') && localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)
-}
+export const isUserLoggedIn = () => localStorage.getItem('userData')
+  && localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)
 
 export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
+
+export const setToken = token => useJwt.setToken(token)
+
+export const setUser = user => localStorage.setItem('userData', JSON.stringify(user))
+
+export const removeUser = () => localStorage.removeItem('userData')
+
+export const removeToken = () => localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
+
+export const checkUserLoggedIn = () => axios.get('/api/user')
 
 /**
  * This function is used for demo purpose route navigation
@@ -21,7 +30,33 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = userRole => {
-  if (userRole === 'admin') return '/'
-  if (userRole === 'client') return { name: 'access-control' }
-  return { name: 'auth-login' }
+  // eslint-disable-next-line no-restricted-globals
+  const path = location.pathname
+  if (userRole === 'ROLE_ADMIN' && path === '/admin') return { name: 'admin-home' }
+  if (userRole === 'ROLE_CANDIDATE' && path === '/candidate') return { name: 'candidate-home' }
+  if (userRole === 'ROLE_COMPANY' && path === '/company') return { name: 'company-home' }
+  return { name: 'access-control' }
+}
+
+/**
+ * router role checker
+ * @param userRole
+ * @param next
+ */
+export const checkRouterRole = (userRole, next) => {
+  // eslint-disable-next-line no-restricted-globals
+  const path = location.pathname
+
+  if (path.startsWith('/admin')) {
+    if (userRole === 'ROLE_ADMIN') next()
+    else next({ name: 'access-control' })
+  } else if (path.startsWith('/candidate')) {
+    if (userRole === 'ROLE_CANDIDATE') next()
+    else next({ name: 'access-control' })
+  } else if (path.startsWith('/company')) {
+    if (userRole === 'ROLE_COMPANY') next()
+    else next({ name: 'access-control' })
+  } else {
+    next()
+  }
 }

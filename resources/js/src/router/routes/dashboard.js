@@ -9,4 +9,19 @@ export default [
     name: 'dashboard-ecommerce',
     component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
   },
+  {
+    path: '/admin-home',
+    name: 'admin-home',
+    component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+  },
+  {
+    path: '/candidate-home',
+    name: 'candidate-home',
+    component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+  },
+  {
+    path: '/company-home',
+    name: 'company-home',
+    component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+  },
 ]
