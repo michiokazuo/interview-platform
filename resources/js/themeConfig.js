@@ -9,7 +9,7 @@ export const $themeBreakpoints = {}
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: 'Interview Platform', // Will update name in navigation menu (Branding)
+    appName: 'IP', // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require,import/no-unresolved
     appLogoImage: require('@/assets/images/logo/logo.svg'), // Will update logo in navigation menu (Branding)
   },

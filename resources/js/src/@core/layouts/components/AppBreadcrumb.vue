@@ -16,7 +16,7 @@
             {{ t($route.meta.pageTitle) }}
           </h2>
           <div class="breadcrumb-wrapper">
-            <b-breadcrumb>
+            <b-breadcrumb class="breadcrumb-pipes">
               <b-breadcrumb-item to="/">
                 <feather-icon
                   icon="HomeIcon"
@@ -61,36 +61,20 @@
           </b-button>
         </template>
 
-        <b-dropdown-item :to="{ name: 'apps-todo' }">
+        <b-dropdown-item :to="{ name: 'auth-login-v2' }">
           <feather-icon
-            icon="CheckSquareIcon"
+            icon="LogInIcon"
             size="16"
           />
-          <span class="align-middle ml-50">Todo</span>
+          <span class="align-middle ml-50">Đăng nhập</span>
         </b-dropdown-item>
 
-        <b-dropdown-item :to="{ name: 'apps-chat' }">
+        <b-dropdown-item :to="{ name: 'auth-register' }">
           <feather-icon
-            icon="MessageSquareIcon"
+            icon="LogOutIcon"
             size="16"
           />
-          <span class="align-middle ml-50">Chat</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item :to="{ name: 'apps-email' }">
-          <feather-icon
-            icon="MailIcon"
-            size="16"
-          />
-          <span class="align-middle ml-50">Email</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item :to="{ name: 'apps-calendar' }">
-          <feather-icon
-            icon="CalendarIcon"
-            size="16"
-          />
-          <span class="align-middle ml-50">Calendar</span>
+          <span class="align-middle ml-50">Đăng ký</span>
         </b-dropdown-item>
       </b-dropdown>
     </b-col>

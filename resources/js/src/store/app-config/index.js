@@ -1,5 +1,13 @@
 import { $themeConfig } from '@themeConfig'
 
+// eslint-disable-next-line no-restricted-globals
+const { pathname } = location
+// remember check this when create auth prefix
+const checkAuth = true || (
+  pathname.startsWith('/admin')
+  || pathname.startsWith('/candidate')
+  || pathname.startsWith('/company'))
+
 export default {
   namespaced: true,
   state: {
@@ -10,10 +18,10 @@ export default {
       type: $themeConfig.layout.type,
       contentWidth: $themeConfig.layout.contentWidth,
       menu: {
-        hidden: $themeConfig.layout.menu.hidden,
+        hidden: checkAuth ? $themeConfig.layout.menu.hidden : true,
       },
       navbar: {
-        type: $themeConfig.layout.navbar.type,
+        type: checkAuth ? $themeConfig.layout.navbar.type : 'hidden',
         backgroundColor: $themeConfig.layout.navbar.backgroundColor,
       },
       footer: {

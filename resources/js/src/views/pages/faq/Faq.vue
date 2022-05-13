@@ -9,10 +9,10 @@
       >
         <b-card-body class="text-center">
           <h2 class="text-primary">
-            Let's answer some questions
+            Hãy trả lời một số câu hỏi
           </h2>
           <b-card-text class="mb-2">
-            or choose a category to quickly find the help you need
+           hoặc chọn danh mục mà bạn cần tìm đề tìm câu hỏi liên quan
           </b-card-text>
 
           <!-- form -->
@@ -24,7 +24,7 @@
               <b-form-input
                 id="searchbar"
                 v-model="faqSearchQuery"
-                placeholder="Search faq..."
+                placeholder="Tìm kiếm faq..."
               />
             </b-input-group>
           </b-form>
@@ -82,9 +82,9 @@
     <section class="faq-contact">
       <b-row class="mt-5 pt-75 text-center">
         <b-col cols="12">
-          <h2>You still have a question?</h2>
+          <h2>Bạn vẫn còn câu hỏi khác?</h2>
           <b-card-text class="mb-3">
-            If you cannot find a question in our FAQ, you can always contact us. We will answer to you shortly!
+            Nếu bạn không tìm thấy câu hỏi bạn cần, hãy liên hệ với chúng tôi để được giải đáp nhanh nhất!!!
           </b-card-text>
         </b-col>
         <b-col sm="6">
@@ -102,8 +102,8 @@
                 size="18"
               />
             </b-avatar>
-            <h4>+ (810) 2548 2568</h4>
-            <span class="text-body">We are always happy to help!</span>
+            <h4>+ (84) 34 690 2568</h4>
+            <span class="text-body">Chúng tôi luôn sẵn sàng giúp bạn!!!</span>
           </b-card>
         </b-col>
         <b-col sm="6">
@@ -121,8 +121,8 @@
                 size="18"
               />
             </b-avatar>
-            <h4>hello@help.com</h4>
-            <span class="text-body">Best way to get answer faster!</span>
+            <h4>interview_platform@hust.edu.vn</h4>
+            <span class="text-body">Liên lạc với chúng tôi thông qua email!</span>
           </b-card>
         </b-col>
       </b-row>
