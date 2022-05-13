@@ -13,6 +13,9 @@ export default [
     path: '/admin-home',
     name: 'admin-home',
     component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+    meta: {
+      // resource: 'ROLE_ADMIN',
+    },
   },
   {
     path: '/candidate-home',

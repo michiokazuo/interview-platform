@@ -6,7 +6,7 @@
       <b-link class="brand-logo">
         <vuexy-logo />
         <h2 class="brand-text text-primary ml-1">
-          Vuexy
+          Interview Platform
         </h2>
       </b-link>
       <!-- /Brand logo-->
@@ -41,32 +41,11 @@
             class="mb-1 font-weight-bold"
             title-tag="h2"
           >
-            Welcome to Vuexy! 👋
+            Welcome to Interview Platform! 👋
           </b-card-title>
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
           </b-card-text>
-
-          <b-alert
-            variant="primary"
-            show
-          >
-            <div class="alert-body font-small-2">
-              <p>
-                <small class="mr-50"><span class="font-weight-bold">Admin:</span> admin@demo.com | admin</small>
-              </p>
-              <p>
-                <small class="mr-50"><span class="font-weight-bold">Client:</span> client@demo.com | client</small>
-              </p>
-            </div>
-            <feather-icon
-              v-b-tooltip.hover.left="'This is just for ACL demo purpose'"
-              icon="HelpCircleIcon"
-              size="18"
-              class="position-absolute"
-              style="top: 10; right: 10;"
-            />
-          </b-alert>
 
           <!-- form -->
           <validation-observer
@@ -111,7 +90,7 @@
                   #default="{ errors }"
                   name="Password"
                   vid="password"
-                  rules="required"
+                  rules="required|password"
                 >
                   <b-input-group
                     class="input-group-merge"
@@ -169,13 +148,13 @@
           </b-card-text>
 
           <!-- divider -->
-          <div class="divider my-2">
+          <!-- <div class="divider my-2">
             <div class="divider-text">
               or
             </div>
-          </div>
+          </div> -->
 
-          <!-- social buttons -->
+          <!-- social buttons
           <div class="auth-footer-btn d-flex justify-content-center">
             <b-button
               variant="facebook"
@@ -201,7 +180,7 @@
             >
               <feather-icon icon="GithubIcon" />
             </b-button>
-          </div>
+          </div> -->
         </b-col>
       </b-col>
     <!-- /Login-->
@@ -231,8 +210,9 @@ import {
   VBTooltip,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
-import { required, email } from '@validations'
+import { required, email, password } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import auth from '@/store/api/Auth'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
@@ -264,9 +244,9 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
-      status: '',
-      password: 'admin',
-      userEmail: 'admin@demo.com',
+      status: false,
+      password: '',
+      userEmail: '',
       sideImg: require('@/assets/images/pages/login-v2.svg'),
 
       // validation rules
@@ -291,38 +271,49 @@ export default {
     login() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          useJwt
-            .login({
-              email: this.userEmail,
-              password: this.password,
-            })
-            .then(response => {
-              const { userData } = response.data
-              useJwt.setToken(response.data.accessToken)
-              useJwt.setRefreshToken(response.data.refreshToken)
-              localStorage.setItem('userData', JSON.stringify(userData))
-              this.$ability.update(userData.ability)
+          auth.login({
+            email: this.userEmail,
+            password: this.password,
+            remember: this.status,
+          }).then(response => {
+            const resp = response.data
+            const userData = resp.user
+            userData.ability = [
+              {
+                action: 'manage',
+                resource: 'all',
+                // subject: userData.role,
+              },
+            ]
+            useJwt.setToken(resp.data.accessToken)
+            localStorage.setItem('userData', JSON.stringify(userData))
+            this.$ability.update([
+              {
+                action: 'manage',
+                subject: 'all',
+                // subject: userData.role,
+              },
+            ])
 
-              // ? This is just for demo purpose as well.
-              // ? Because we are showing eCommerce app's cart items count in navbar
-              this.$store.commit('app-ecommerce/UPDATE_CART_ITEMS_COUNT', userData.extras.eCommerceCartItemsCount)
-
-              // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
-              this.$router.replace(getHomeRouteForLoggedInUser(userData.role)).then(() => {
-                this.$toast({
-                  component: ToastificationContent,
-                  position: 'top-right',
-                  props: {
-                    title: `Welcome ${userData.fullName || userData.username}`,
-                    icon: 'CoffeeIcon',
-                    variant: 'success',
-                    text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
-                  },
-                })
+            // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
+            this.$router.replace(getHomeRouteForLoggedInUser(userData.role)).then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                position: 'top-right',
+                props: {
+                  title: `Welcome ${userData.fullName || userData.username}`,
+                  icon: 'CoffeeIcon',
+                  variant: 'success',
+                  text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
+                },
               })
             })
+          })
             .catch(error => {
-              this.$refs.loginForm.setErrors(error.response.data.error)
+              console.log(error)
+              this.$refs.loginForm.setErrors({
+                email: 'Email or password is incorrect',
+              })
             })
         }
       })

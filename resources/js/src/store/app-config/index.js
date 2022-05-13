@@ -2,8 +2,9 @@ import { $themeConfig } from '@themeConfig'
 
 // eslint-disable-next-line no-restricted-globals
 const { pathname } = location
+
 // remember check this when create auth prefix
-const checkAuth = true || (
+const checkAuth = (
   pathname.startsWith('/admin')
   || pathname.startsWith('/candidate')
   || pathname.startsWith('/company'))

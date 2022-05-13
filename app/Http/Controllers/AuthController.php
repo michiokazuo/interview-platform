@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\StoreRequest;
+use App\Http\Resources\User\UserTokenResource;
 use App\Models\Candidate;
 use App\Models\Company;
 use App\Models\Role;
+use App\Traits\ApiResponse;
+use App\Traits\CurrentUser;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,12 +17,16 @@ use Illuminate\Http\Request;
 
 use Illuminate\Routing\Redirector;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 
 class AuthController extends Controller
 {
+    
+    use ApiResponse, CurrentUser;
+    
     /**
      * Create a new AuthController instance.
      *
@@ -34,27 +41,20 @@ class AuthController extends Controller
      * Login user and create token
      *
      * @param LoginRequest $request
-     * @return Application|RedirectResponse|Redirector|JsonResponse
+     * @return JsonResponse
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $login = $request->only(['email', 'password']);
+        $remember = $request->only(['remember']);
 
-        if (!$token = auth()->attempt($login)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if (!$token = auth('api')->attempt($login, $remember)) {
+            return $this->failedResult('Failed to login', 401); 
         }
-
-        $url = "/";
-        $role = auth()->user()->role ?? null;
-        if ($role == "ROLE_ADMIN") {
-            $url = "/admin";
-        } else if ($role == "ROLE_CANDIDATE") {
-            $url = "/candidate";
-        } else if ($role == "ROLE_COMPANY") {
-            $url = "/company";
-        }
-
-        return redirect("$url?accessToken=$token");
+       
+        auth()->login(auth('api')->user());
+        auth()->attempt($login, $remember);
+        return $this->successfulResult('Login successfully!!!', $this->user(), ["accessToken" => $token]);
     }
 
     /**
@@ -106,7 +106,7 @@ class AuthController extends Controller
      */
     public function userProfile(): JsonResponse
     {
-        return response()->json(auth()->user());
+        return response()->json(auth('api')->user());
     }
 
 

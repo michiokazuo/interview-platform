@@ -174,7 +174,7 @@ export default [
 
   {
     path: '/pages/faq',
-    name: 'pages-faq',
+    name: 'pages-faq-1',
     component: () => import('@/views/pages/faq/Faq.vue'),
     meta: {
       pageTitle: 'FAQ',
@@ -191,7 +191,7 @@ export default [
   },
   {
     path: '/pages/knowledge-base',
-    name: 'pages-knowledge-base',
+    name: 'pages-knowledge-base-1',
     component: () => import('@/views/pages/Knowledge-base/KnowledgeBase.vue'),
     meta: {
       pageTitle: 'Knowledge Base',

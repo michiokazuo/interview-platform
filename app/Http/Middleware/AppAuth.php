@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class AppAuthShop
+class AppAuth
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class AppAuthShop
      */
     public function handle(Request $request, Closure $next)
     {
-        $userFromToken = auth()->user();
+        $userFromToken = auth('api')->user();
         logger()->info('User from token:' . $userFromToken);
         if (empty($userFromToken)) {
             return response()->json([

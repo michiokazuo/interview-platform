@@ -7,7 +7,7 @@ export const validatorPositive = value => {
 
 export const validatorPassword = password => {
   /* eslint-disable no-useless-escape */
-  const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/
+  const regExp = /(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%&*()]).{8,}/
   /* eslint-enable no-useless-escape */
   const validPassword = regExp.test(password)
   return validPassword
@@ -29,4 +29,16 @@ export const validatorUrlValidator = val => {
   const re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/
   /* eslint-enable no-useless-escape */
   return re.test(val)
+}
+
+export const validatorPhone = val => {
+  if (val === undefined || val === null || val.length === 0) {
+    return true
+  }
+
+  const phone = val.trim().replace('+84', '0')
+  /* eslint-disable no-useless-escape */
+  const re = /((09|03|07|08|05)+([0-9]{8})\b)/g
+  /* eslint-enable no-useless-escape */
+  return re.test(phone)
 }

@@ -5,7 +5,6 @@ import VueRouter from 'vue-router'
 import { canNavigate } from '../libs/acl/routeProtection'
 import {
   isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser,
-  setToken, setUser, removeToken, removeUser, checkUserLoggedIn, checkRouterRole,
 } from '../auth/utils'
 import apps from './routes/apps'
 import dashboard from './routes/dashboard'
@@ -14,6 +13,7 @@ import pages from './routes/pages'
 import chartsMaps from './routes/charts-maps'
 import formsTable from './routes/forms-tables'
 import others from './routes/others'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -39,49 +39,20 @@ const router = new VueRouter({
   ],
 })
 
-const checkLogin = () => {
-  let isLogged = false
-  let status
-  let checkingLogin
-  // eslint-disable-next-line no-restricted-globals
-  if (location.pathname === '/dashboard' && location.search !== '') {
-    status = 'checking'
-    // eslint-disable-next-line no-restricted-globals
-    const { search } = location
-    const accessToken = new URLSearchParams(search).get('accessToken')
-    setToken(accessToken)
-    checkingLogin = checkUserLoggedIn()
-      .then(response => {
-        isLogged = true
-        setUser(response.data)
-        setToken(response.data.accessToken)
-        status = 'done'
-      })
-      .catch(() => {
-        removeToken()
-        removeUser()
-        status = 'error'
-      })
-  }
-  return () => {
-    if (status === 'checking') {
-      throw checkingLogin
-    } else if (status === 'error') {
-      return false
-    }
-
-    return isLogged
-  }
-}
-
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
-  const checkLoginRs = checkLogin()
-  const oAuthLogin = checkLoginRs ?? false
+
+  const pathname = to.path
+
+  if (pathname.startsWith('/admin') || pathname.startsWith('/candidate') || pathname.startsWith('/company')) {
+    // eslint-disable-next-line no-const-assign
+    store.commit('appConfig/UPDATE_NAV_MENU_HIDDEN', false)
+    store.commit('appConfig/UPDATE_NAVBAR_CONFIG', { type: 'floating' })
+  }
 
   if (!canNavigate(to)) {
     // Redirect to log in if not logged in
-    if (!(isLoggedIn && oAuthLogin)) return next({ name: 'auth-login' })
+    if (!isLoggedIn) return next({ name: 'auth-login' })
 
     // If logged in => not authorized
     return next({ name: 'misc-not-authorized' })
@@ -89,11 +60,11 @@ router.beforeEach((to, _, next) => {
 
   // Redirect if logged in
   const userData = getUserData()
-  if (to.meta.redirectIfLoggedIn && isLoggedIn && oAuthLogin) {
+  if (to.meta.redirectIfLoggedIn && isLoggedIn) {
     next(getHomeRouteForLoggedInUser(userData ? userData.role : null))
   }
 
-  return checkRouterRole(userData ? userData.role : null, next)
+  return next()
 })
 
 // ? For splash screen

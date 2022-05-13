@@ -3,7 +3,6 @@
     v-if="$route.meta.breadcrumb || $route.meta.pageTitle"
     class="content-header"
   >
-
     <!-- Content Left -->
     <b-col
       class="content-header-left mb-2"
@@ -17,7 +16,7 @@
           </h2>
           <div class="breadcrumb-wrapper">
             <b-breadcrumb class="breadcrumb-pipes">
-              <b-breadcrumb-item to="/">
+              <b-breadcrumb-item :to="home">
                 <feather-icon
                   icon="HomeIcon"
                   size="16"
@@ -61,7 +60,7 @@
           </b-button>
         </template>
 
-        <b-dropdown-item :to="{ name: 'auth-login-v2' }">
+        <b-dropdown-item :to="{ name: 'auth-login' }">
           <feather-icon
             icon="LogInIcon"
             size="16"
@@ -71,7 +70,7 @@
 
         <b-dropdown-item :to="{ name: 'auth-register' }">
           <feather-icon
-            icon="LogOutIcon"
+            icon="PlusSquareIcon"
             size="16"
           />
           <span class="align-middle ml-50">Đăng ký</span>
@@ -82,7 +81,9 @@
 </template>
 
 <script>
-import { BBreadcrumb, BBreadcrumbItem, BRow, BCol, BDropdown, BDropdownItem, BButton } from 'bootstrap-vue'
+import {
+  BBreadcrumb, BBreadcrumbItem, BRow, BCol, BDropdown, BDropdownItem, BButton,
+} from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { useUtils as useI18nUtils } from '@core/libs/i18n'
 
@@ -106,6 +107,22 @@ export default {
       // i18n
       t,
     }
+  },
+  data() {
+    return {
+      home: '/',
+    }
+  },
+  created() {
+    const { pathname } = window.location
+    if (pathname.startsWith('/admin')) {
+      this.home = '/admin-home'
+    } else if (pathname.startsWith('/candidate')) {
+      this.home = '/candidate-home'
+    } else if (pathname.startsWith('/company')) {
+      this.home = '/company-home'
+    }
+    console.log(this.home)
   },
 }
 </script>

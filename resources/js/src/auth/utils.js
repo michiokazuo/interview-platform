@@ -1,5 +1,6 @@
 import axios from 'axios'
 import useJwt from './jwt/useJwt'
+// import store from '@/store'
 
 /**
  * Return if user is logged in
@@ -30,33 +31,8 @@ export const checkUserLoggedIn = () => axios.get('/api/user')
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = userRole => {
-  // eslint-disable-next-line no-restricted-globals
-  const path = location.pathname
-  if (userRole === 'ROLE_ADMIN' && path === '/admin') return { name: 'admin-home' }
-  if (userRole === 'ROLE_CANDIDATE' && path === '/candidate') return { name: 'candidate-home' }
-  if (userRole === 'ROLE_COMPANY' && path === '/company') return { name: 'company-home' }
+  if (userRole === 'ROLE_ADMIN') return { name: 'admin-home' }
+  if (userRole === 'ROLE_CANDIDATE') return { name: 'candidate-home' }
+  if (userRole === 'ROLE_COMPANY') return { name: 'company-home' }
   return { name: 'access-control' }
-}
-
-/**
- * router role checker
- * @param userRole
- * @param next
- */
-export const checkRouterRole = (userRole, next) => {
-  // eslint-disable-next-line no-restricted-globals
-  const path = location.pathname
-
-  if (path.startsWith('/admin')) {
-    if (userRole === 'ROLE_ADMIN') next()
-    else next({ name: 'access-control' })
-  } else if (path.startsWith('/candidate')) {
-    if (userRole === 'ROLE_CANDIDATE') next()
-    else next({ name: 'access-control' })
-  } else if (path.startsWith('/company')) {
-    if (userRole === 'ROLE_COMPANY') next()
-    else next({ name: 'access-control' })
-  } else {
-    next()
-  }
 }

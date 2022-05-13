@@ -12,7 +12,7 @@
             Hãy trả lời một số câu hỏi
           </h2>
           <b-card-text class="mb-2">
-           hoặc chọn danh mục mà bạn cần tìm đề tìm câu hỏi liên quan
+            hoặc chọn danh mục mà bạn cần tìm đề tìm câu hỏi liên quan
           </b-card-text>
 
           <!-- form -->

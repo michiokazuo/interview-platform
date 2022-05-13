@@ -12,12 +12,16 @@ import {
   alpha_dash as rule_alpha_dash,
   alpha_num as rule_alpha_num,
   length as rule_length,
+  image as rule_image,
+  size as rule_size,
 } from 'vee-validate/dist/rules'
-import ar from 'vee-validate/dist/locale/ar.json'
+import vi from 'vee-validate/dist/locale/vi.json'
 import en from 'vee-validate/dist/locale/en.json'
 
 // eslint-disable-next-line object-curly-newline
-import { validatorPositive, validatorUrlValidator, validatorPassword, validatorCreditCard } from './validators'
+import { validatorPositive, validatorUrlValidator, validatorPassword,
+  validatorCreditCard, validatorPhone,
+} from './validators'
 
 // ////////////////////////////////////////////////////////
 // General
@@ -59,12 +63,17 @@ export const credit = extend('credit-card', {
 
 export const password = extend('password', {
   validate: validatorPassword,
-  message: 'Your {_field_} must contain at least one uppercase, one lowercase, one special character and one digit',
+  message: 'Your {_field_} must contain at least one alpha, one special character and one digit',
 })
 
 export const url = extend('url', {
   validate: validatorUrlValidator,
   message: 'URL is invalid',
+})
+
+export const phone = extend('phone', {
+  validate: validatorPhone,
+  message: 'Phone number is invalid',
 })
 
 // Install English and Arabic localizations.
@@ -81,15 +90,15 @@ localize({
       },
     },
   },
-  ar: {
-    messages: ar.messages,
+  vi: {
+    messages: vi.messages,
     names: {
-      email: 'البريد الإلكتروني',
-      password: 'كلمة السر',
+      email: 'Email',
+      password: 'Mật khẩu',
     },
     fields: {
       password: {
-        min: 'كلمة السر قصيرة جداً سيتم اختراقك',
+        min: '{_field_} quá ngắn, bạn muốn được hack?',
       },
     },
   },

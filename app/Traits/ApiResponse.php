@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Http\Resources\User\UserTokenResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -18,7 +19,7 @@ trait ApiResponse
         return response()->json([
             'success' => true,
             'message' => $message,
-            'shop' => $user,
+            'user' => new UserTokenResource($user),
             'data' => $data,
         ]);
     }
