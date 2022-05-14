@@ -209,14 +209,13 @@ import {
   BAlert,
   VBTooltip,
 } from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
 import { required, email, password } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 import auth from '@/store/api/Auth'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   directives: {
@@ -252,6 +251,7 @@ export default {
       // validation rules
       required,
       email,
+      password,
     }
   },
   computed: {
@@ -308,13 +308,12 @@ export default {
                 },
               })
             })
-          })
-            .catch(error => {
-              console.log(error)
-              this.$refs.loginForm.setErrors({
-                email: 'Email or password is incorrect',
-              })
+          }).catch(error => {
+            console.log(error)
+            this.$refs.loginForm.setErrors({
+              email: 'Email or password is incorrect',
             })
+          })
         }
       })
     },

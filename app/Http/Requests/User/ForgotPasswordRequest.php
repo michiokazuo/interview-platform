@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
-class LoginRequest extends FormRequest
+class ForgotPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,18 +28,12 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'password' => 'required|string|regex:/(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%&*()]).{8,}/',
-            'remember' => 'nullable|boolean',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'email.required' => __('Email is required.'),
-            'email.email' => __('Email must be a valid email.'),
-            'password.required' => __('Password is required.'),
-            'password.string' => __('Password must be a string.'),
         ];
     }
 

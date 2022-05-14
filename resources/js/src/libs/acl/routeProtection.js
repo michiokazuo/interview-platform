@@ -12,6 +12,12 @@ export const canNavigate = to => to.matched.some(route => {
   console.log(rules)
   console.log(routeOption)
 
+  // temporary
+  if (rules[0].subject === 'all') {
+    console.log(1234)
+    return true
+  }
+
   if ((!routeOption.subject && !pathname.startsWith('/admin')
     && !pathname.startsWith('/candidate')
     && !pathname.startsWith('/company')) || routeOption.subject === 'Auth') {

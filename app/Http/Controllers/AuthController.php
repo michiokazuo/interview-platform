@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\LoginRequest;
+use App\Http\Requests\User\ForgotPasswordRequest;
+use App\Http\Requests\User\MailForgotPass;
+use App\Http\Requests\User\ResetPasswordRequest;
 use App\Http\Requests\User\StoreRequest;
-use App\Http\Resources\User\UserTokenResource;
+use App\Http\Requests\User\UpdateRequest;
 use App\Models\Candidate;
 use App\Models\Company;
 use App\Models\Role;
+use App\Services\User\UserService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
 use Illuminate\Contracts\Foundation\Application;
@@ -15,45 +18,46 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-use Illuminate\Routing\Redirector;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-
 class AuthController extends Controller
 {
-    
+
     use ApiResponse, CurrentUser;
-    
+
+    private $userService;
+
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->userService = $userService;
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword', 'resetPassword']]);
     }
 
     /**
      * Login user and create token
      *
-     * @param LoginRequest $request
+     * @param ForgotPasswordRequest $request
      * @return JsonResponse
      */
-    public function login(LoginRequest $request): JsonResponse
+    public function login(ForgotPasswordRequest $request): JsonResponse
     {
         $login = $request->only(['email', 'password']);
-        $remember = $request->only(['remember']);
+        $remember = $request->input('remember');
 
-        if (!$token = auth('api')->attempt($login, $remember)) {
-            return $this->failedResult('Failed to login', 401); 
+        $token = $this->userService->login($login, $remember ?? false);
+
+        if (!$token) {
+            return $this->failedResult('Failed to login', 401);
         }
-       
-        auth()->login(auth('api')->user());
-        auth()->attempt($login, $remember);
+
         return $this->successfulResult('Login successfully!!!', $this->user(), ["accessToken" => $token]);
     }
 
@@ -62,41 +66,37 @@ class AuthController extends Controller
      *
      * @param StoreRequest $request
      * @return JsonResponse
-     * @throws ValidationException
      */
     public function register(StoreRequest $request): JsonResponse
     {
         $dataUser = $request->all();
-        
-        $dataUser->role_id = Role::where('name', $dataUser->role_name)->first()->id;
-        
-        if($dataUser->role_name == "ROLE_CANDIDATE") {
-            $candidate = Candidate::create();
-        } else if($dataUser->role_name == "ROLE_COMPANY") {
-            $company = Company::create([
-                'url' => $dataUser->url,
-            ]);
-        }
-        
-        $user = User::create($dataUser);
 
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        $user = $this->userService->register($dataUser);
+
+        if ($user) {
+            $token = auth('api')->attempt([
+                'email' => $dataUser['email'],
+                'password' => $dataUser['password']
+            ]);
+            auth()->login(auth('api')->user());
+
+            return $this->successfulResult('Register successfully!!!', $this->user(), ["accessToken" => $token]);
+        }
+        return $this->failedResult('Failed register', 500);
     }
 
 
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return JsonResponse
+     * @return Application|Redirector|RedirectResponse
      */
-    public function logout(): JsonResponse
+    public function logout()
     {
         auth()->logout();
+        auth('api')->logout();
 
-        return response()->json(['message' => 'User successfully signed out']);
+        return redirect('/');
     }
 
     /**
@@ -106,29 +106,65 @@ class AuthController extends Controller
      */
     public function userProfile(): JsonResponse
     {
-        return response()->json(auth('api')->user());
+        $user = $this->user();
+        return $this->successfulResult('Register successfully!!!', $user, $user);
     }
 
 
-    public function changePassWord(Request $request)
+    /**
+     * Update the authenticated User.
+     *
+     * @param UpdateRequest $request
+     * @return JsonResponse
+     */
+    public function updateUser(UpdateRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'old_password' => 'required|string|min:6',
-            'new_password' => 'required|string|confirmed|min:6',
-        ]);
+        $dataUser = $request->all();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+        $user = $this->userService->update($this->user(), $dataUser);
+
+        if ($user) {
+            return $this->successfulResult('Update successfully!!!', $user, $user);
         }
-        $userId = auth()->user()->id;
-
-        $user = User::where('id', $userId)->update(
-            ['password' => bcrypt($request->new_password)]
-        );
-
-        return response()->json([
-            'message' => 'User successfully changed password',
-            'user' => $user,
-        ], 201);
+        return $this->failedResult('Failed update', 500);
     }
+
+    /**
+     * Send link forgot password.
+     *
+     * @param ForgotPasswordRequest $request
+     * @return JsonResponse
+     */
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $email = $request->input('email');
+
+        $forgot = $this->userService->forgotPassword($email);
+
+        if ($forgot) {
+            return $this->successfulResultWithoutAuth('Send link forgot password successfully!!!', []);
+        }
+        return $this->failedResult('Failed send link forgot password', 500);
+    }
+
+    /**
+     * Reset password.
+     *
+     * @param ResetPasswordRequest $request
+     * @return JsonResponse
+     */
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $token = $request->input('token');
+
+        $reset = $this->userService->resetPassword($email, $password, $token);
+
+        if ($reset) {
+            return $this->successfulResultWithoutAuth('Reset password successfully!!!', []);
+        }
+        return $this->failedResult('Failed reset password', 500);
+    }
+
 }

@@ -21,9 +21,9 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone')->unique();
             $table->string('address');
-            $table->string('avatar');
+            $table->text('avatar');
             $table->text('introduction')->nullable();
-            $table->string('social_network')->nullable();
+            $table->json('social_network')->nullable();
             $table->string('major')->nullable();
             $table->unsignedBigInteger('role_id')->unsigned();
             $table->unsignedBigInteger('candidate_id')->unsigned()->nullable();

@@ -33,15 +33,15 @@ class UpdateRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'phone' => 'required|string|max:10|unique:users',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|regex:/(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%&*()]).{8,}/',
+            'phone' => 'required|string|max:10',
             'address' => 'required|string',
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5012',
             'introduction' => 'nullable|string',
-            'social_networks' => 'nullable|array',
+            'social_networks' => 'nullable',
             'major' => 'required|string',
-            'role_id' => 'required|numeric',
+            'role_id' => 'required|numeric|min:1',
             'role_name' => 'required|in:ROLE_CANDIDATE,ROLE_COMPANY',
             'url' => $urlRule,
         ];

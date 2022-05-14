@@ -51,6 +51,10 @@ export const alphaNum = extend('alpha-num', rule_alpha_num)
 
 export const length = extend('length', rule_length)
 
+export const image = extend('image', rule_image)
+
+export const size = extend('size', rule_size)
+
 export const positive = extend('positive', {
   validate: validatorPositive,
   message: 'Please enter positive number!',
@@ -63,7 +67,7 @@ export const credit = extend('credit-card', {
 
 export const password = extend('password', {
   validate: validatorPassword,
-  message: 'Your {_field_} must contain at least one alpha, one special character and one digit',
+  message: 'Your {_field_} must contain at least one alpha, one special character, one digit and at least 8 characters!',
 })
 
 export const url = extend('url', {

@@ -23,6 +23,20 @@ trait ApiResponse
             'data' => $data,
         ]);
     }
+    
+    /**
+     * @param string $message
+     * @param $data
+     * @return JsonResponse
+     */
+    function successfulResultWithoutAuth(string $message, $data): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+        ]);
+    }
 
     /**
      * @param string $message

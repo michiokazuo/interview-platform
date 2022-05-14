@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +13,13 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
+    /**
+     * The name of table mapped to the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -50,6 +57,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'social_network' => 'array',
     ];
 
     /**
@@ -75,5 +83,15 @@ class User extends Authenticatable implements JWTSubject
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+    
+    public function candidate(): BelongsTo
+    {
+        return $this->belongsTo(Candidate::class);
+    }
+    
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }

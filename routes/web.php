@@ -14,9 +14,7 @@ use App\Http\Controllers\ApplicationController;
 |
 */
 
-Route::get('/user', [ApplicationController::class, 'user']);
-
-Route::get('{any}', [ApplicationController::class, 'index'])->where('any', '^(?!\/api\/).*$');
+Route::get('{any}', [ApplicationController::class, 'index'])->where('any', '^(?!\/api\/).*');
 
 Route::get('/login', [ApplicationController::class, 'index'])->name('login');
 

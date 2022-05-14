@@ -38,7 +38,7 @@ export const validatorPhone = val => {
 
   const phone = val.trim().replace('+84', '0')
   /* eslint-disable no-useless-escape */
-  const re = /((09|03|07|08|05)+([0-9]{8})\b)/g
+  const re = /^((09|03|07|08|05)+([0-9]{8})\b)/g
   /* eslint-enable no-useless-escape */
   return re.test(phone)
 }
