@@ -7,7 +7,7 @@
         <vuexy-logo />
 
         <h2 class="brand-text text-primary ml-1">
-          Vuexy
+          Interview Platform
         </h2>
       </b-link>
       <!-- /Brand logo-->
@@ -97,10 +97,13 @@
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
-import { BRow, BCol, BLink, BCardTitle, BCardText, BImg, BForm, BFormGroup, BFormInput, BButton } from 'bootstrap-vue'
+import {
+  BRow, BCol, BLink, BCardTitle, BCardText, BImg, BForm, BFormGroup, BFormInput, BButton,
+} from 'bootstrap-vue'
 import { required, email } from '@validations'
-import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import store from '@/store/index'
+import auth from '@/store/api/Auth'
 
 export default {
   components: {
@@ -141,13 +144,29 @@ export default {
     validationForm() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'This is for UI purpose only.',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
+          auth.forgotPassword({ email: this.userEmail }).then(response => {
+            console.log(response)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Send mail reset password successfully. Please check your email!!!',
+                icon: 'EditIcon',
+                variant: 'success',
+              },
+            })
+            this.$router.push({ name: 'auth-login' })
+          }).catch(error => {
+            console.log(error)
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Error',
+                icon: 'AlertTriangleIcon',
+                variant: 'danger',
+                text: 'You are not registered yet or this link is not available!!!',
+              },
+            })
           })
         }
       })

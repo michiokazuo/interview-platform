@@ -9,11 +9,11 @@
       >
         <b-card-body class="card-body">
           <h2 class="text-primary">
-            Interview Platform
+            Dedicated Source Used on Website
           </h2>
           <b-card-text class="mb-2">
-            <span>Xin chào!!! </span>
-            <span class="font-weight-bolder">Nền tảng hỗ trợ phỏng vấn cho doanh nghiệp và ứng viên</span>
+            <span>Popular searches: </span>
+            <span class="font-weight-bolder">Sales automation, Email marketing</span>
           </b-card-text>
 
           <!-- form -->
@@ -25,7 +25,7 @@
               <b-form-input
                 id="searchbar"
                 v-model="knowledgeBaseSearchQuery"
-                placeholder="...."
+                placeholder="Ask a question...."
               />
             </b-input-group>
           </b-form>

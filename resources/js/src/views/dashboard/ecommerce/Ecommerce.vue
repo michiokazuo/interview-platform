@@ -111,7 +111,6 @@ import EcommerceMeetup from './EcommerceMeetup.vue'
 import EcommerceBrowserStates from './EcommerceBrowserStates.vue'
 import EcommerceGoalOverview from './EcommerceGoalOverview.vue'
 import EcommerceTransactions from './EcommerceTransactions.vue'
-import axios from 'axios'
 
 export default {
   components: {
@@ -136,13 +135,6 @@ export default {
     }
   },
   created() {
-    // data
-    axios.get('/api/auth/user-profile').then(response => {
-      console.log(response)
-    }).catch(error => {
-      console.log(error)
-    })
-
     this.$http.get('/ecommerce/data').then(response => {
       this.data = response.data
 

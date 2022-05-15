@@ -16,7 +16,7 @@ class AppAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        $userFromToken = auth('api')->user();
+        $userFromToken = auth()->user();
         logger()->info('User from token:' . $userFromToken);
         if (empty($userFromToken)) {
             return response()->json([

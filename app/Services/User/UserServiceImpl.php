@@ -39,6 +39,7 @@ class UserServiceImpl implements UserService
     public function login(array $login, bool $remember = false)
     {
         try {
+            auth()->attempt($login, $remember);
             if (!$token = auth('api')->attempt($login)) {
                 return false;
             }

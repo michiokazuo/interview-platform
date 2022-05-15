@@ -20,7 +20,7 @@ class JWTApi
         if (empty($userFromToken)){
             return response()->json([
                 'errors' => [
-                    'message' => 'Session jwt expired. Please log in again through Shopify.'
+                    'message' => 'Session jwt expired. Please log in.'
                 ]
             ], 401);
         }

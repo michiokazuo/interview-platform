@@ -6,6 +6,8 @@ use App\Services\Candidate\CandidateService;
 use App\Services\Candidate\CandidateServiceImpl;
 use App\Services\Company\CompanyService;
 use App\Services\Company\CompanyServiceImpl;
+use App\Services\CV\CVService;
+use App\Services\CV\CVServiceImpl;
 use App\Services\Mail\MailService;
 use App\Services\Mail\MailServiceImpl;
 use App\Services\User\UserService;
@@ -35,5 +37,6 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->bind(CandidateService::class, CandidateServiceImpl::class);
         $this->app->bind(CompanyService::class, CompanyServiceImpl::class);
         $this->app->bind(MailService::class, MailServiceImpl::class);
+        $this->app->bind(CVService::class, CVServiceImpl::class);
     }
 }

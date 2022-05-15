@@ -9,7 +9,7 @@
           <vuexy-logo />
 
           <h2 class="brand-text text-primary ml-1">
-            Vuexy
+            Interview Platform
           </h2>
         </b-link>
 
@@ -27,7 +27,25 @@
             class="auth-reset-password-form mt-2"
             @submit.prevent="validationForm"
           >
-
+            <b-form-group
+              label="Email"
+              label-for="forgot-password-email"
+            >
+              <validation-provider
+                #default="{ errors }"
+                name="Email"
+                rules="required|email"
+              >
+                <b-form-input
+                  id="forgot-password-email"
+                  v-model="reset.email"
+                  :state="errors.length > 0 ? false:null"
+                  name="forgot-password-email"
+                  placeholder="john@example.com"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
             <!-- password -->
             <b-form-group
               label="New Password"
@@ -45,7 +63,7 @@
                 >
                   <b-form-input
                     id="reset-password-new"
-                    v-model="password"
+                    v-model="reset.password"
                     :type="password1FieldType"
                     :state="errors.length > 0 ? false:null"
                     class="form-control-merge"
@@ -72,7 +90,7 @@
               <validation-provider
                 #default="{ errors }"
                 name="Confirm Password"
-                rules="required|confirmed:Password"
+                rules="required|password|confirmed:Password"
               >
                 <b-input-group
                   class="input-group-merge"
@@ -80,7 +98,7 @@
                 >
                   <b-form-input
                     id="reset-password-confirm"
-                    v-model="cPassword"
+                    v-model="reset.password_confirmation"
                     :type="password2FieldType"
                     class="form-control-merge"
                     :state="errors.length > 0 ? false:null"
@@ -138,8 +156,9 @@ import {
   BFormInput,
   BButton,
 } from 'bootstrap-vue'
-import { required } from '@validations'
+import { required, email, password } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import auth from '@/store/api/Auth'
 
 export default {
   components: {
@@ -159,11 +178,16 @@ export default {
   },
   data() {
     return {
-      userEmail: '',
-      cPassword: '',
-      password: '',
+      reset: {
+        email: '',
+        password: '',
+        password_confirmation: '',
+        token: '',
+      },
       // validation
       required,
+      email,
+      password,
 
       // Toggle Password
       password1FieldType: 'password',
@@ -178,6 +202,10 @@ export default {
       return this.password2FieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
   },
+  created() {
+    const { search } = window.location
+    this.reset.token = new URLSearchParams(search).get('token')
+  },
   methods: {
     togglePassword1Visibility() {
       this.password1FieldType = this.password1FieldType === 'password' ? 'text' : 'password'
@@ -188,13 +216,29 @@ export default {
     validationForm() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
+          auth.resetPassword(this.reset).then(response => {
+            console.log(response)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Reset password successfully. Please check again!!!',
+                icon: 'EditIcon',
+                variant: 'success',
+              },
+            })
+            this.$router.push({ name: 'auth-login' })
+          }).catch(error => {
+            console.log(error)
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Error',
+                icon: 'AlertTriangleIcon',
+                variant: 'danger',
+                text: 'You are not registered yet. Please register first!!!',
+              },
+            })
           })
         }
       })

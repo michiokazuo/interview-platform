@@ -18,3 +18,4 @@ Route::get('{any}', [ApplicationController::class, 'index'])->where('any', '^(?!
 
 Route::get('/login', [ApplicationController::class, 'index'])->name('login');
 
+

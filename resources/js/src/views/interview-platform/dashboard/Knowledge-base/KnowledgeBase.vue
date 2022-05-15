@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- search input -->
-    <section id="kb-category-search">
+    <section id="knowledge-base-search">
       <b-card
         no-body
         class="knowledge-base-bg text-center"
@@ -9,11 +9,11 @@
       >
         <b-card-body class="card-body">
           <h2 class="text-primary">
-            Dedicated Source Used on Website
+            Interview Platform
           </h2>
           <b-card-text class="mb-2">
-            <span>Popular searches: </span>
-            <span class="font-weight-bolder">Sales automation, Email marketing</span>
+            <span>Xin chào!!! </span>
+            <span class="font-weight-bolder">Nền tảng hỗ trợ phỏng vấn cho doanh nghiệp và ứng viên</span>
           </b-card-text>
 
           <!-- form -->
@@ -25,7 +25,7 @@
               <b-form-input
                 id="searchbar"
                 v-model="knowledgeBaseSearchQuery"
-                placeholder="Ask a question...."
+                placeholder="...."
               />
             </b-input-group>
           </b-form>
@@ -35,37 +35,30 @@
     </section>
     <!--/ search input -->
 
-    <div id="knowledge-base-category">
-      <b-row class="match-height">
+    <section id="knowledge-base-content">
+
+      <!-- content -->
+      <b-row class="kb-search-content-info match-height">
         <b-col
-          v-for="(data,index) in filteredKB"
-          :key="index"
+          v-for="item in filteredKB"
+          :key="item.id"
           md="4"
           sm="6"
+          class="kb-search-content"
         >
-          <b-card>
-            <h6 class="kb-title">
-              <feather-icon
-                :icon="data.icon"
-                size="20"
-                class="mr-50"
-                :class="data.iconColor"
-              />{{ data.title }} ({{ data.questions.length }})
-            </h6>
-            <b-list-group class="list-group-circle mt-2">
-              <b-list-group-item
-                v-for="(que) in data.questions"
-                :key="que.question"
-                class="text-body"
-                :to="{ name: 'pages-knowledge-base-question', params: { category: $route.params.category, slug: que.slug } }"
-              >
-                {{ que.question }}
-              </b-list-group-item>
-            </b-list-group>
+          <b-card
+            class="text-center cursor-pointer"
+            :img-src="item.img"
+            :img-alt="item.img.slice(5)"
+            img-top
+            @click="$router.push({ name: 'dashboard-category', params: { category: item.category } })"
+          >
+            <h4>{{ item.title }}</h4>
+            <b-card-text class="mt-1">
+              {{ item.desc }}
+            </b-card-text>
           </b-card>
         </b-col>
-
-        <!-- no result found -->
         <b-col
           v-show="!filteredKB.length"
           cols="12"
@@ -75,9 +68,8 @@
             Search result not found!!
           </h4>
         </b-col>
-        <!--/ no result found -->
       </b-row>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -86,14 +78,12 @@ import {
   BRow,
   BCol,
   BCard,
-  BListGroup,
-  BListGroupItem,
   BCardBody,
-  BCardText,
   BForm,
   BInputGroup,
-  BInputGroupPrepend,
   BFormInput,
+  BCardText,
+  BInputGroupPrepend,
 } from 'bootstrap-vue'
 
 export default {
@@ -101,8 +91,6 @@ export default {
     BRow,
     BCol,
     BCard,
-    BListGroup,
-    BListGroupItem,
     BCardBody,
     BCardText,
     BForm,
@@ -123,14 +111,12 @@ export default {
         item =>
           // eslint-disable-next-line implicit-arrow-linebreak, operator-linebreak
           item.title.toLowerCase().includes(knowledgeBaseSearchQueryLower) ||
-          item.questions.filter(queObj => queObj.question.toLowerCase().includes(knowledgeBaseSearchQueryLower)).length,
+          item.desc.toLowerCase().includes(knowledgeBaseSearchQueryLower),
       )
     },
   },
   created() {
-    // ! You have to update the below API call according to route parameter
-    // * We are using fixed API call for all categories for demo purposes
-    this.$http.get('/kb/data/category').then(res => {
+    this.$http.get('/kb/data/knowledge_base').then(res => {
       this.kb = res.data
     })
   },
