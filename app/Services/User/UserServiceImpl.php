@@ -43,7 +43,7 @@ class UserServiceImpl implements UserService
             if (!$token = auth('api')->attempt($login)) {
                 return false;
             }
-            
+
             $this->passwordService->where('email', $login['email'])->delete();
             return $token;
         } catch (Exception $e) {
@@ -59,7 +59,7 @@ class UserServiceImpl implements UserService
     {
         try {
             $inputUser['role_id'] = $this->roleService->where('name', $inputUser['role_name'])->first()->id;
-            $inputUser['social_network'] = json_encode($inputUser['social_network']);
+            $inputUser['social_network'] = json_decode($inputUser['social_network'] ?? '{}');
             $existUser = $this->_repository->where('email', $inputUser['email'])
                 ->orWhere('phone', $inputUser['phone'])->exists();
 
@@ -106,7 +106,8 @@ class UserServiceImpl implements UserService
             $updateUser['role_id'] = $user->role_id;
             $updateUser['candidate_id'] = $user->candidate_id;
             $updateUser['company_id'] = $user->company_id;
-            $updateUser['social_network'] = json_encode($updateUser['social_network']);
+            $updateUser['social_network'] = json_decode($updateUser['social_network']);
+
             $existUser = $this->_repository->where('email', $updateUser['email'])
                 ->orWhere('phone', $updateUser['phone'])->get();
 
@@ -115,20 +116,21 @@ class UserServiceImpl implements UserService
                 return false;
             }
 
-            if (isset($inputUser['avatar'])) {
+            if (isset($updateUser['avatar'])) {
                 $time = strtotime("now");
                 $path = "images/local/$time";
-                $inputUser['avatar']->move(public_path($path), $inputUser['avatar']->getClientOriginalName());
-                $inputUser['avatar'] = $path . '/' . $inputUser['avatar']->getClientOriginalName();
+                $updateUser['avatar']->move(public_path($path), $updateUser['avatar']->getClientOriginalName());
+                $updateUser['avatar'] = $path . '/' . $updateUser['avatar']->getClientOriginalName();
             } else {
-                $inputUser['avatar'] = $user->avatar;
+                $updateUser['avatar'] = $user->avatar;
             }
 
             $userOwner = null;
-            $role = $user->role();
-            if ($role['name'] == "ROLE_CANDIDATE") {
-                $userOwner = $user->candidate();
+            $role = $user->role;
+            if ($role->name == "ROLE_CANDIDATE") {
+                $userOwner = $user->candidate;
                 $userOwner['candidate_id'] = $userOwner ? $userOwner->id : null;
+
             } else if ($role['name'] == "ROLE_COMPANY") {
                 $updateCompany = [
                     'id' => $user->company_id,
@@ -137,9 +139,7 @@ class UserServiceImpl implements UserService
                 $userOwner = $this->companyService->store($updateCompany);
                 $updateUser['company_id'] = $userOwner ? $userOwner->id : null;
             }
-
             if ($userOwner) {
-                $updateUser['password'] = bcrypt($updateUser['password']);
                 return $this->_repository->find($user['id'])->update($updateUser);
             }
 
@@ -174,7 +174,7 @@ class UserServiceImpl implements UserService
                     'name' => $user->name,
                     'body' => 'This is mail to reset password. Follow on that link to reset your password.',
                     'note' => 'Note: Please do not public this link to anyone!!!',
-                    'actionUrl' => env("APP_URL") . "/pages/authentication/reset-password-v1?token=" . $token,
+                    'actionUrl' => env("APP_URL") . "reset-password?token=" . $token,
                     'actionText' => 'Reset Password',
                 ]);
 
@@ -204,6 +204,28 @@ class UserServiceImpl implements UserService
 
                     return true;
                 }
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function changePassword(User $user, array $data): bool
+    {
+        try {
+            $email = $user->email;
+            $userChange = $this->_repository->where('email', $email)->first();
+
+            if ($userChange && Hash::check($data['old_password'], $userChange->password)) {
+                $userChange->update(['password' => bcrypt($data['password'])]);
+
+                return true;
             }
 
             return false;

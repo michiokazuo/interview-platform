@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $urlRule = 'string';
+        $urlRule = 'nullable';
         if (request('role_name') === 'ROLE_COMPANY') {
             $urlRule = 'required|url';
         }

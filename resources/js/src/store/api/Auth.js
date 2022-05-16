@@ -16,12 +16,15 @@ export default {
     return axios.get(`${apiUser}user`)
   },
   updateUser(data) {
-    return axios.put(`${apiUser}user`, data)
+    return axios.post(`${apiUser}user`, data)
   },
   forgotPassword(data) {
     return axios.post(`${apiUser}forgot-password`, data)
   },
   resetPassword(data) {
     return axios.post(`${apiUser}reset-password`, data)
+  },
+  changePassword(data) {
+    return axios.post(`${apiUser}change-password`, data)
   },
 }

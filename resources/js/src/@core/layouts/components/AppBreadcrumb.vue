@@ -39,6 +39,7 @@
 
     <!-- Content Right -->
     <b-col
+      v-if="!checkLogin"
       class="content-header-right text-md-right d-md-block d-none mb-1"
       md="3"
       cols="12"
@@ -111,18 +112,35 @@ export default {
   data() {
     return {
       home: '/',
+      checkLogin: false,
     }
   },
   created() {
-    const { pathname } = window.location
-    if (pathname.startsWith('/admin')) {
-      this.home = '/admin-home'
-    } else if (pathname.startsWith('/candidate')) {
-      this.home = '/candidate-home'
-    } else if (pathname.startsWith('/company')) {
-      this.home = '/company-home'
-    }
-    console.log(this.home)
+    this.updateState()
+  },
+  beforeUpdate() {
+    this.updateState()
+  },
+  methods: {
+    updateState() {
+      const { pathname } = window.location
+      this.checkLogin = false
+      if (pathname.startsWith('/admin')) {
+        this.home = '/admin-home'
+        this.checkLogin = true
+      } else if (pathname.startsWith('/candidate')) {
+        this.home = '/candidate-home'
+        this.checkLogin = true
+      } else if (pathname.startsWith('/company')) {
+        this.home = '/company-home'
+        this.checkLogin = true
+      } else if (pathname.startsWith('/user')) {
+        console.log(pathname)
+        this.checkLogin = true
+      } else {
+        this.home = '/'
+      }
+    },
   },
 }
 </script>

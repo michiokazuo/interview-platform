@@ -25,9 +25,5 @@ class Company extends Model
     protected $fillable = [
         'url',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+    
 }

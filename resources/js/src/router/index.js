@@ -12,7 +12,7 @@ import {
 // import uiElements from './routes/ui-elements/index'
 // import pages from './routes/pages'
 // import chartsMaps from './routes/charts-maps'
-// import formsTable from './routes/forms-tables'
+import formsTable from './routes/forms-tables'
 // import others from './routes/others'
 import store from '@/store'
 // custom routes
@@ -34,7 +34,7 @@ const router = new VueRouter({
     // ...dashboard,
     // ...pages,
     // ...chartsMaps,
-    // ...formsTable,
+    ...formsTable,
     // ...uiElements,
     // ...others,
     ...auth,
@@ -52,7 +52,10 @@ router.beforeEach(async (to, _, next) => {
 
   const pathname = to.path
 
-  if (pathname.startsWith('/admin') || pathname.startsWith('/candidate') || pathname.startsWith('/company')) {
+  if (pathname.startsWith('/admin')
+    || pathname.startsWith('/candidate')
+    || pathname.startsWith('/company')
+    || pathname.startsWith('/user')) {
     // eslint-disable-next-line no-const-assign
     store.commit('appConfig/UPDATE_NAV_MENU_HIDDEN', false)
     store.commit('appConfig/UPDATE_NAVBAR_CONFIG', { type: 'floating' })

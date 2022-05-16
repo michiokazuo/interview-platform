@@ -72,7 +72,7 @@
                         v-model="user.name"
                         name="register-username"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="Tên"
+                        placeholder="Name"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -292,48 +292,22 @@
                   class=""
                 >
                   <b-form-group
-                    label="Facebook"
-                    label-for="register-fb"
+                    label="Introduction"
+                    label-for="register-introduction"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Facebook"
-                      vid="fb"
-                      rules="|url"
+                      name="Introduction"
+                      vid="introduction"
+                      rules=""
                     >
-                      <b-form-input
-                        id="register-fb"
-                        v-model="user.social_network.fb"
-                        name="register-fb"
+                      <b-form-textarea
+                        id="register-introduction"
+                        v-model="user.introduction"
+                        name="register-introduction"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="Facebook"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col
-                  sm="8"
-                  md="8"
-                  lg="6"
-                  class=""
-                >
-                  <b-form-group
-                    label="Linkedin"
-                    label-for="register-linkedin"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Linkedin"
-                      vid="linkedin"
-                      rules="|url"
-                    >
-                      <b-form-input
-                        id="register-linkedin"
-                        v-model="user.social_network.linkedin"
-                        name="register-linkedin"
-                        :state="errors.length > 0 ? false:null"
-                        placeholder="Linkedin"
+                        placeholder="Introduction"
+                        rows="3"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -376,35 +350,6 @@
                 </b-col>
                 <b-col
                   sm="8"
-                  md="8"
-                  lg="6"
-                  class=""
-                >
-                  <b-form-group
-                    label="Introduction"
-                    label-for="register-introduction"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Introduction"
-                      vid="introduction"
-                      rules=""
-                    >
-                      <b-form-textarea
-                        id="register-introduction"
-                        v-model="user.introduction"
-                        name="register-introduction"
-                        :state="errors.length > 0 ? false:null"
-                        placeholder="Introduction"
-                        rows="3"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-
-                <b-col
-                  sm="8"
                   md="6"
                   lg="6"
                   class="mt-1"
@@ -442,39 +387,6 @@
             </p>
           </b-row>
 
-          <!-- divider -->
-          <!-- <div class="divider my-2">
-            <div class="divider-text">
-              or
-            </div>
-          </div>
-
-          <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button
-              variant="facebook"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button
-              variant="twitter"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button
-              variant="google"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button
-              variant="github"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div> -->
         </b-row>
       </b-col>
       <!-- /Register-->
@@ -545,10 +457,6 @@ export default {
         name: '',
         email: '',
         password: '',
-        social_network: {
-          fb: '',
-          linkedin: '',
-        },
       },
       sideImg: require('@/assets/images/pages/register-v2.svg'),
       avatar: require('@/assets/images/avatars/avatar-user.png'),

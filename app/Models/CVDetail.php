@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class CV extends Model
+class CVDetail extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class CV extends Model
      *
      * @var string
      */
-    protected $table = 'cv';
+    protected $table = 'cv_details';
 
     /**
      * The attributes that are mass assignable.
@@ -24,14 +24,15 @@ class CV extends Model
      * @var array
      */
     protected $fillable = [
-        'link',
-        'detail',
-        'candidate_id'
+        'cv_id',
+        'candidate_id',
+        'key',
+        'value',
     ];
 
-    public function cvDetail(): HasMany
+    public function cv(): BelongsTo
     {
-        return $this->hasMany(CVDetail::class, 'cv_id', 'id');
+        return $this->belongsTo(CV::class, 'cv_id', 'id');
     }
     
     public function candidate(): BelongsTo

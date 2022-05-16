@@ -1,16 +1,30 @@
 export default [
   {
-    path: '/pages/account-setting',
-    name: 'pages-account-setting',
-    component: () => import('@/views/pages/account-setting/AccountSetting.vue'),
+    path: '/user-settings',
+    name: 'pages-setting',
+    component: () => import('@/views/interview-platform/user/account-setting/AccountSetting.vue'),
     meta: {
-      pageTitle: 'Account Settings',
+      pageTitle: 'Account Setting',
+      breadcrumb: [
+        {
+          text: 'Account Setting',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/user-profile',
+    name: 'pages-profile',
+    component: () => import('@/views/pages/profile/Profile.vue'),
+    meta: {
+      pageTitle: 'Profile',
       breadcrumb: [
         {
           text: 'Pages',
         },
         {
-          text: 'Account Settings',
+          text: 'Profile',
           active: true,
         },
       ],

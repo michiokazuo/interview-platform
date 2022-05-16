@@ -40,4 +40,12 @@ interface UserService
      * @return bool
      */
     public function resetPassword(string $email, string $password, string $token): bool;
+    
+    /**
+     * @param User $user
+     * @param array $data
+     * @return bool
+     */
+    public function changePassword(User $user, array $data): bool;
+    
 }

@@ -18,7 +18,6 @@ class CreateBlogCommentTable extends Migration
             $table->unsignedBigInteger('blog_id')->unsigned();
             $table->unsignedBigInteger('user_id')->unsigned();
             $table->text('content');
-            $table->integer('rate')->default(0);
             $table->timestamps();
 
             $table->foreign('blog_id')->references('id')->on('interview_experience_blog')

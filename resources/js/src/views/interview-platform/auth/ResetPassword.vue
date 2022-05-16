@@ -21,7 +21,10 @@
         </b-card-text>
 
         <!-- form -->
-        <validation-observer ref="simpleRules">
+        <validation-observer
+          ref="simpleRules"
+          #default="{invalid}"
+        >
           <b-form
             method="POST"
             class="auth-reset-password-form mt-2"
@@ -122,6 +125,7 @@
               block
               type="submit"
               variant="primary"
+              :disabled="invalid"
             >
               Set New Password
             </b-button>

@@ -3,66 +3,66 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CV\StoreCVRequest;
+use App\Http\Resources\CV\CVResource;
+use App\Services\CV\CVService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CVController extends Controller
 {
     use ApiResponse, CurrentUser;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index(): Response
-    {
-        
-    }
 
+    private $cvService;
+
+    /**
+     * Create a new instance.
+     *
+     * @return void
+     */
+    public function __construct(CVService $cvService)
+    {
+        $this->cvService = $cvService;
+    }
+    
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @param StoreCVRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request): Response
+    public function store(StoreCVRequest $request): JsonResponse
     {
-        //
+        $dataCV = $request->all();
+        $user = $this->user();
+
+        $cv = $this->cvService->store($user, $dataCV);
+
+        if ($cv) {
+            return $this->successfulResultWithoutAuth('Store CV successfully!!!', new CVResource($cv));
+        }
+        return $this->failedResult('Failed store CV!!!', 500);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function show(int $id): Response
+    public function show(): JsonResponse
     {
-        //
-    }
+        $id = request('id');
+        
+        $user = $this->user();
+        $cv = $this->cvService->findById($user, $id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, int $id): Response
-    {
-        //
+        if ($cv) {
+            return $this->successfulResultWithoutAuth('Get CV successfully!!!', new CVResource($cv));
+        }
+        return $this->failedResult('Failed get CV!!!', 500);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function destroy(int $id): Response
-    {
-        //
-    }
+    
 }

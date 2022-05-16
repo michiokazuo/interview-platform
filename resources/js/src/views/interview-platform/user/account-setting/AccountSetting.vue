@@ -21,8 +21,8 @@
       </template>
 
       <account-setting-general
-        v-if="options.general"
-        :general-data="options.general"
+        v-if="userInfo"
+        :user-info="userInfo"
       />
     </b-tab>
     <!--/ general tab -->
@@ -40,64 +40,27 @@
         <span class="font-weight-bold">Change Password</span>
       </template>
 
-      <account-setting-password />
+      <account-setting-password
+        :user-info="userInfo"
+      />
     </b-tab>
     <!--/ change password tab -->
 
-    <!-- info -->
     <b-tab>
 
       <!-- title -->
       <template #title>
         <feather-icon
-          icon="InfoIcon"
+          icon="LockIcon"
           size="18"
           class="mr-50"
         />
-        <span class="font-weight-bold">Information</span>
+        <span class="font-weight-bold">CV</span>
       </template>
 
-      <account-setting-information
-        v-if="options.info"
-        :information-data="options.info"
-      />
-    </b-tab>
-
-    <!-- social links -->
-    <b-tab>
-
-      <!-- title -->
-      <template #title>
-        <feather-icon
-          icon="LinkIcon"
-          size="18"
-          class="mr-50"
-        />
-        <span class="font-weight-bold">Social</span>
-      </template>
-
-      <account-setting-social
-        v-if="options.social"
-        :social-data="options.social"
-      />
-    </b-tab>
-
-    <!-- notification -->
-    <b-tab>
-
-      <!-- title -->
-      <template #title>
-        <feather-icon
-          icon="BellIcon"
-          size="18"
-          class="mr-50"
-        />
-        <span class="font-weight-bold">Notifications</span>
-      </template>
-
-      <account-setting-notification
-        v-if="options.notification"
-        :notification-data="options.notification"
+      <account-setting-c-v
+        v-if="userInfo.role.name = 'ROLE_CANDIDATE'"
+        :cv-info="cvInfo"
       />
     </b-tab>
   </b-tabs>
@@ -107,9 +70,9 @@
 import { BTabs, BTab } from 'bootstrap-vue'
 import AccountSettingGeneral from './AccountSettingGeneral.vue'
 import AccountSettingPassword from './AccountSettingPassword.vue'
-import AccountSettingInformation from './AccountSettingInformation.vue'
-import AccountSettingSocial from './AccountSettingSocial.vue'
-import AccountSettingNotification from './AccountSettingNotification.vue'
+import AccountSettingCV from './AccountSettingCV.vue'
+import auth from '@/store/api/Auth'
+import cv from '@/store/api/CV'
 
 export default {
   components: {
@@ -117,17 +80,34 @@ export default {
     BTab,
     AccountSettingGeneral,
     AccountSettingPassword,
-    AccountSettingInformation,
-    AccountSettingSocial,
-    AccountSettingNotification,
+    AccountSettingCV,
   },
   data() {
     return {
-      options: {},
+      userInfo: {
+        avatar: 'images/local/avatar-user.png',
+        social_network: {},
+        role: {},
+      },
+      cvInfo: {
+        detail: [],
+      },
     }
   },
   beforeCreate() {
-    this.$http.get('/account-setting/data').then(res => { this.options = res.data })
+    auth.getUser().then(response => {
+      const resp = response.data
+      this.userInfo = resp.data
+    }).catch(error => {
+      console.log(error)
+    })
+
+    cv.getCV().then(response => {
+      const resp = response.data
+      this.cvInfo = resp.data
+    }).catch(error => {
+      console.log(error)
+    })
   },
 }
 </script>

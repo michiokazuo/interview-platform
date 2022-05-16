@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\ForgotPasswordRequest;
-use App\Http\Requests\User\ResetPasswordRequest;
+use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Http\Resources\User\UserResource;
 use App\Services\User\UserService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
@@ -98,7 +99,11 @@ class AuthController extends Controller
     public function userProfile(): JsonResponse
     {
         $user = $this->user();
-        return $this->successfulResult('Register successfully!!!', $user, $user);
+        if ($user) {
+            return $this->successfulResult('Register successfully!!!', $user, new UserResource($user));
+        }
+
+        return $this->failedResult('Failed authenticate', 500);
     }
 
     /**
@@ -111,10 +116,11 @@ class AuthController extends Controller
     {
         $dataUser = $request->all();
 
-        $user = $this->userService->update($this->user(), $dataUser);
+        $userUpdate = $this->userService->update($this->user(), $dataUser);
 
-        if ($user) {
-            return $this->successfulResult('Update successfully!!!', $user, $user);
+        if ($userUpdate) {
+            $user = $this->user();
+            return $this->successfulResult('Update successfully!!!', $user, new UserResource($user));
         }
         return $this->failedResult('Failed update', 500);
     }
@@ -140,10 +146,10 @@ class AuthController extends Controller
     /**
      * Reset password.
      *
-     * @param ResetPasswordRequest $request
+     * @param ChangePasswordRequest $request
      * @return JsonResponse
      */
-    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    public function resetPassword(ChangePasswordRequest $request): JsonResponse
     {
         $email = $request->input('email');
         $password = $request->input('password');
@@ -153,6 +159,24 @@ class AuthController extends Controller
 
         if ($reset) {
             return $this->successfulResultWithoutAuth('Reset password successfully!!!', []);
+        }
+        return $this->failedResult('Failed reset password', 500);
+    }
+
+    /**
+     * Change password.
+     *
+     * @param ChangePasswordRequest $request
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $data = $request->only(['old_password', 'password', 'email']);
+        $user = $this->user();
+        $reset = $this->userService->changePassword($user, $data);
+
+        if ($reset) {
+            return $this->successfulResult('Reset password successfully!!!', $user, new UserResource($user));
         }
         return $this->failedResult('Failed reset password', 500);
     }

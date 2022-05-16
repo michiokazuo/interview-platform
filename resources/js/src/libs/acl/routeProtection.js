@@ -14,7 +14,6 @@ export const canNavigate = to => to.matched.some(route => {
 
   // temporary
   if (rules[0].subject === 'all') {
-    console.log(1234)
     return true
   }
 

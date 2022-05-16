@@ -26,7 +26,7 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $urlRule = 'string';
+        $urlRule = 'nullable';
         if (request('role_name') === 'ROLE_COMPANY') {
             $urlRule = 'required|url';
         }
@@ -34,12 +34,11 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string|regex:/(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%&*()]).{8,}/',
             'phone' => 'required|string|max:10',
             'address' => 'required|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5012',
             'introduction' => 'nullable|string',
-            'social_networks' => 'nullable',
+            'social_network' => 'nullable',
             'major' => 'required|string',
             'role_id' => 'required|numeric|min:1',
             'role_name' => 'required|in:ROLE_CANDIDATE,ROLE_COMPANY',
