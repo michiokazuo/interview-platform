@@ -171,7 +171,6 @@ import {
   BImg,
   BForm,
   BButton,
-  BAlert,
   VBTooltip,
 } from 'bootstrap-vue'
 import { required, email, password } from '@validations'
@@ -200,7 +199,6 @@ export default {
     BImg,
     BForm,
     BButton,
-    BAlert,
     VuexyLogo,
     ValidationProvider,
     ValidationObserver,

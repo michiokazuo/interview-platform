@@ -71,9 +71,9 @@ class UserServiceImpl implements UserService
                 $time = strtotime("now");
                 $path = "images/local/$time";
                 $inputUser['avatar']->move(public_path($path), $inputUser['avatar']->getClientOriginalName());
-                $inputUser['avatar'] = $path . '/' . $inputUser['avatar']->getClientOriginalName();
+                $inputUser['avatar'] = '/' .  $path . '/' . $inputUser['avatar']->getClientOriginalName();
             } else {
-                $inputUser['avatar'] = 'images/local/avatar-user.png';
+                $inputUser['avatar'] = '/images/local/avatar-user.png';
             }
 
             $userOwner = null;
@@ -120,7 +120,7 @@ class UserServiceImpl implements UserService
                 $time = strtotime("now");
                 $path = "images/local/$time";
                 $updateUser['avatar']->move(public_path($path), $updateUser['avatar']->getClientOriginalName());
-                $updateUser['avatar'] = $path . '/' . $updateUser['avatar']->getClientOriginalName();
+                $updateUser['avatar'] = '/' . $path . '/' . $updateUser['avatar']->getClientOriginalName();
             } else {
                 $updateUser['avatar'] = $user->avatar;
             }

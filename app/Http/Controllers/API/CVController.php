@@ -9,14 +9,12 @@ use App\Services\CV\CVService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class CVController extends Controller
 {
     use ApiResponse, CurrentUser;
 
-    private $cvService;
+    private $cvService, $blogService;
 
     /**
      * Create a new instance.

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Blog_Comment;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JsonSerializable;
 
-class UserTokenResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,11 +19,11 @@ class UserTokenResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            "fullName" => $this->name,
-            'avatar' => $this->avatar,
-            "email" => $this->email,
-            "username" => $this->name,
-            "role" => $this->role->name,
+            'blog' => $this->blog,
+            'user' => $this->user,
+            'content' => $this->content,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

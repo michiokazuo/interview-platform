@@ -2,19 +2,19 @@
 
 namespace App\Traits;
 
-use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 trait CurrentUser
 {
     /**
      * Get User
      *
-     * @return User | false
+     * @return false|Authenticatable
      */
     function user(array $fields = ['*'])
     {
         if (auth('api')->check()) {
-            return User::find(auth('api')->user()->id, $fields);
+            return auth('api')->user();
         } else {
             return false;
         }

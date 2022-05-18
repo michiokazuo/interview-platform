@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Services\Blog\BlogService;
+use App\Services\Blog\BlogServiceImpl;
 use App\Services\Candidate\CandidateService;
 use App\Services\Candidate\CandidateServiceImpl;
+use App\Services\Comment\CommentService;
+use App\Services\Comment\CommentServiceImpl;
 use App\Services\Company\CompanyService;
 use App\Services\Company\CompanyServiceImpl;
 use App\Services\CV\CVService;
@@ -41,5 +45,7 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->bind(MailService::class, MailServiceImpl::class);
         $this->app->bind(CVService::class, CVServiceImpl::class);
         $this->app->bind(CVDetailService::class, CVDetailServiceImpl::class);
+        $this->app->bind(BlogService::class, BlogServiceImpl::class);
+        $this->app->bind(CommentService::class, CommentServiceImpl::class);
     }
 }

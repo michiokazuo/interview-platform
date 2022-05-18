@@ -10,15 +10,16 @@ import {
 // import apps from './routes/apps'
 // import dashboard from './routes/dashboard'
 // import uiElements from './routes/ui-elements/index'
-// import pages from './routes/pages'
+// import pages1 from './routes/pages'
 // import chartsMaps from './routes/charts-maps'
-import formsTable from './routes/forms-tables'
+// import formsTable from './routes/forms-tables'
 // import others from './routes/others'
 import store from '@/store'
 // custom routes
 import auth from './routes/interview-platform/auth'
 import dashboard from './routes/interview-platform/dashboard'
 import pages from './routes/interview-platform/pages'
+import blog from './routes/interview-platform/blog'
 
 Vue.use(VueRouter)
 
@@ -32,14 +33,15 @@ const router = new VueRouter({
     { path: '/', redirect: { name: 'dashboard' } },
     // ...apps,
     // ...dashboard,
-    // ...pages,
+    // ...pages1,
     // ...chartsMaps,
-    ...formsTable,
+    // ...formsTable,
     // ...uiElements,
     // ...others,
     ...auth,
     ...dashboard,
     ...pages,
+    ...blog,
     {
       path: '*',
       redirect: 'error-404',

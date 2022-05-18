@@ -17,7 +17,7 @@ class CreateInterviewExperienceBlogTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('topics');
-            $table->text('content');
+            $table->longText('content');
             $table->unsignedBigInteger('user_id')->unsigned();
             $table->timestamps();
 

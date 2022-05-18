@@ -46,7 +46,7 @@
     </b-tab>
     <!--/ change password tab -->
 
-    <b-tab>
+    <b-tab v-if="userInfo.role.name === 'ROLE_CANDIDATE'">
 
       <!-- title -->
       <template #title>
@@ -59,7 +59,6 @@
       </template>
 
       <account-setting-c-v
-        v-if="userInfo.role.name = 'ROLE_CANDIDATE'"
         :cv-info="cvInfo"
       />
     </b-tab>

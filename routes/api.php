@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\BlogController;
+use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,5 +38,10 @@ Route::group(['middleware' => 'api'], function () {
 
     Route::get('/cv', [CvController::class, 'show']);
     Route::post('/cv', [CvController::class, 'store']);
+    
+    Route::apiResource('blog', BlogController::class);
+    Route::get('/blog-edit/{id}', [BlogController::class, 'showToEdit']);
+    Route::get('/blog-by-user', [BlogController::class, 'showAllByUser']);
+    Route::apiResource('comment', CommentController::class);
 });
 
