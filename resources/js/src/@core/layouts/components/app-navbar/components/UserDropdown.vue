@@ -1,5 +1,6 @@
 <template>
   <b-nav-item-dropdown
+    v-if="userData"
     right
     toggle-class="d-flex align-items-center dropdown-user-link"
     class="dropdown-user"
@@ -102,9 +103,10 @@
 import {
   BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
+import { avatarText } from '@core/utils/filter'
 import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
-import { avatarText } from '@core/utils/filter'
+import auth from '@/store/api/Auth'
 
 export default {
   components: {
@@ -133,7 +135,12 @@ export default {
       this.$ability.update(initialAbility)
 
       // Redirect to login page
-      this.$router.push({ name: 'auth-login' })
+      auth.logout().then(() => {
+        this.$router.push({ name: 'dashboard' })
+      }).catch(error => {
+        console.log(error)
+        this.$router.push({ name: 'auth-login' })
+      })
     },
   },
 }

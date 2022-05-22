@@ -39,8 +39,8 @@ class CommentController extends Controller
         $comments = $this->commentService->showAllByUser($user);
 
         if ($comments) {
-            return $this->successfulResultWithoutAuth('Blogs display successfully!!!'
-                , new CommentCollection($comments));
+            return $this->successfulResult('Blogs display successfully!!!', $user,
+                new CommentCollection($comments));
         }
 
         return $this->failedResult('Blogs display failed!!!', 500);
@@ -58,7 +58,8 @@ class CommentController extends Controller
         $comment = $this->commentService->store($user, $request->all());
 
         if ($comment) {
-            return $this->successfulResultWithoutAuth('Comment created successfully!!!', new CommentResource($comment));
+            return $this->successfulResult('Comment created successfully!!!', $user,
+                new CommentResource($comment));
         }
 
         return $this->failedResult('Comment created failed!!!', 500);
@@ -76,7 +77,8 @@ class CommentController extends Controller
         $comment = $this->commentService->findById($user, $id);
 
         if ($comment) {
-            return $this->successfulResultWithoutAuth('Comment display successfully!!!', new CommentResource($comment));
+            return $this->successfulResult('Comment display successfully!!!', $user,
+                new CommentResource($comment));
         }
 
         return $this->failedResult('Comment display failed!!!', 500);
@@ -95,7 +97,8 @@ class CommentController extends Controller
         $comment = $this->commentService->update($user, $request->all(), $id);
 
         if ($comment) {
-            return $this->successfulResultWithoutAuth('Comment updated successfully!!!', new CommentResource($comment));
+            return $this->successfulResult('Comment updated successfully!!!', $user,
+                new CommentResource($comment));
         }
 
         return $this->failedResult('Comment updated failed!!!', 500);
@@ -113,7 +116,7 @@ class CommentController extends Controller
         $comment = $this->commentService->delete($user, $id);
 
         if ($comment) {
-            return $this->successfulResultWithoutAuth('Comment deleted successfully!!!', ['id' => $id]);
+            return $this->successfulResult('Comment deleted successfully!!!', $user, ['id' => $id]);
         }
 
         return $this->failedResult('Comment deleted failed!!!', 500);

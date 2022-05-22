@@ -15,10 +15,11 @@ interface BlogService
 
     /**
      * @param User $user
+     * @param int $user_id
      * @param int $per_page
      * @return mixed
      */
-    public function showAllByUser(User $user, int $per_page);
+    public function showAllByUser(User $user, int $user_id, int $per_page);
 
     /**
      * @param User $user

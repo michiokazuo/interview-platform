@@ -30,7 +30,7 @@ class CVServiceImpl implements CVService
             $cv = $user->candidate->cv;
 
             if ($cv) {
-                $cv[0]->update([
+                $cv->update([
                     'link' => $data['link'],
                 ]);
                 $cv = $cv[0];

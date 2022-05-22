@@ -203,6 +203,7 @@ import { heightTransition } from '@core/mixins/ui/transition'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import cv from '@/store/api/CV'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -213,7 +214,6 @@ export default {
     BRow,
     BCol,
     BCard,
-    vSelect,
     BFormTextarea,
     ValidationProvider,
     ValidationObserver,
@@ -313,7 +313,14 @@ export default {
           cv.storeCV(data)
             .then(response => {
               const resp = response.data
-
+              utils.updateUser(resp.user)
+              this.$ability.update([
+                {
+                  action: 'manage',
+                  subject: 'all',
+                  // subject: userData.role,
+                },
+              ])
               this.$toast({
                 component: ToastificationContent,
                 position: 'top-right',

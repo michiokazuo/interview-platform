@@ -19,5 +19,5 @@ interface CVService
      * 
      * @return mixed
      */
-    public function findById(User $user, int $id);
+    public function findById(User $user, $id);
 }

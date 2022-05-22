@@ -1,10 +1,10 @@
 <template>
   <content-with-sidebar
-    v-if="blogList && blogList.length"
     class="blog-wrapper"
   >
     <!-- blogs -->
     <b-row
+      v-if="blogList && blogList.length"
       class="blog-list-wrapper"
     >
       <b-col cols="12">
@@ -53,7 +53,7 @@
               <b-media-body>
                 <small class="text-muted mr-50">by</small>
                 <small>
-                  <b-link class="text-body">{{ blog.user.name }}</b-link>
+                  <b-link class="text-body">{{ blog.user.name || blog.user.fullName }}</b-link>
                 </small>
                 <span class="text-muted ml-75 mr-50">|</span>
                 <small class="text-muted">{{ blog.created_at }}</small>
@@ -80,6 +80,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center mr-1">
                 <b-link
+                  v-if="userOn && blog.user.id === userOne.id"
                   :to="{ name: 'pages-blog-edit', params: { id: blog.id } }"
                   class="font-weight-bold mr-1"
                 >
@@ -92,7 +93,10 @@
                     <span>Edit</span>
                   </div>
                 </b-link>
-                <b-link @click.prevent="getBlogDelete(blog.id)">
+                <b-link
+                  v-if="userOn && blog.user.id === userOne.id"
+                  @click.prevent="getBlogDelete(blog.id)"
+                >
                   <div class="d-inline-flex align-items-center text-danger">
                     <feather-icon
                       icon="Trash2Icon"
@@ -126,6 +130,38 @@
         </div>
       </b-col>
     </b-row>
+    <b-row v-else>
+      <b-col cols="12">
+        <b-link
+          :to="{ name: 'pages-blog-create' }"
+          class="font-weight-bold mb-2"
+        >
+          <b-button
+            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+            variant="primary"
+            class="mb-2"
+          >
+            Create new Blog
+          </b-button>
+        </b-link>
+      </b-col>
+      <b-col cols="12">
+        <b-card
+          no-body
+          class="faq-search pt-5 pb-5"
+          :style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
+        >
+          <b-card-body class="text-center">
+            <h2 class="text-primary">
+              Nothing to show...
+            </h2>
+            <b-card-text class="mb-2">
+              Please try again!!!
+            </b-card-text>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
 
     <!-- sidebar -->
     <div
@@ -143,7 +179,7 @@
           no-body
           :class="index? 'mt-2':''"
         >
-          <b-media-body>
+          <b-media-body v-if="blogSidebar && blogSidebar.length">
             <h6 class="blog-recent-post-title">
               <b-link
                 :to="{ name: 'pages-blog-detail', params:{ id :recentpost.blog.id } }"
@@ -156,7 +192,13 @@
               {{ new Date(recentpost.created_at).toDateString() }}
             </span>
           </b-media-body>
+          <b-media-body v-else>
+            <span class="text-muted mb-0 text-center">
+              Nothing to show here
+            </span>
+          </b-media-body>
         </b-media>
+
       </div>
       <!--/ recent posts -->
     </div>
@@ -177,38 +219,6 @@
     </b-modal>
   <!--/ blogs -->
   </content-with-sidebar>
-  <b-row v-else>
-    <b-col cols="12">
-      <b-link
-        :to="{ name: 'pages-blog-create' }"
-        class="font-weight-bold mb-2"
-      >
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          class="mb-2"
-        >
-          Create new Blog
-        </b-button>
-      </b-link>
-    </b-col>
-    <b-col cols="12">
-      <b-card
-        no-body
-        class="faq-search pt-5 pb-5"
-        :style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
-      >
-        <b-card-body class="text-center">
-          <h2 class="text-primary">
-            Nothing to show...
-          </h2>
-          <b-card-text class="mb-2">
-            Please try again!!!
-          </b-card-text>
-        </b-card-body>
-      </b-card>
-    </b-col>
-  </b-row>
 </template>
 
 <script>
@@ -234,6 +244,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import Ripple from 'vue-ripple-directive'
 import blog from '@/store/api/Blog'
 import comment from '@/store/api/Comment'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -264,6 +275,7 @@ export default {
       rows: 100,
       blogSidebar: [],
       idDelete: null,
+      userOn: {},
     }
   },
   watch: {
@@ -272,6 +284,7 @@ export default {
     },
   },
   created() {
+    this.userOn = JSON.parse(localStorage.getItem('userData'))
     this.getData()
     this.getDataComment()
   },
@@ -279,20 +292,28 @@ export default {
     kFormatter,
     tagsColor(tag) {
       console.log(tag)
-      const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+      const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[Math.floor(Math.random() * color.length)]
       return `light-${rd}`
     },
     getData() {
-      blog.showByUser({
+      blog.showByUser(this.userOn.id, {
         page: this.currentPage,
         per_page: this.perPage,
       }).then(resp => {
         const rs = resp.data.data
-        console.log(rs)
         this.blogList = rs.data
         this.currentPage = rs.current_page
         this.rows = rs.last_page
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
       }).catch(err => {
         console.log(err)
         this.blogList = null
@@ -302,6 +323,15 @@ export default {
       comment.showByUser().then(resp => {
         const rs = resp.data
         this.blogSidebar = rs.data.slice(0, 6)
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
       }).catch(err => {
         console.log(err)
         this.blogSidebar = null
@@ -311,7 +341,7 @@ export default {
       bvModalEvent.preventDefault()
 
       blog.delete(this.idDelete).then(resp => {
-        console.log(resp)
+        const rs = resp.data
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',
@@ -323,6 +353,15 @@ export default {
         })
 
         this.blogList = this.blogList.filter(item => item.id !== this.idDelete)
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
 
         this.$nextTick(() => {
           this.$bvModal.hide('modal-danger')

@@ -16,6 +16,12 @@ use App\Services\CVDetail\CVDetailService;
 use App\Services\CVDetail\CVDetailServiceImpl;
 use App\Services\Mail\MailService;
 use App\Services\Mail\MailServiceImpl;
+use App\Services\Project\ProjectService;
+use App\Services\Project\ProjectServiceImpl;
+use App\Services\RNews\NewsService;
+use App\Services\RNews\NewsServiceImpl;
+use App\Services\RProcess\ProcessService;
+use App\Services\RProcess\ProcessServiceImpl;
 use App\Services\User\UserService;
 use App\Services\User\UserServiceImpl;
 use Illuminate\Support\ServiceProvider;
@@ -47,5 +53,8 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->bind(CVDetailService::class, CVDetailServiceImpl::class);
         $this->app->bind(BlogService::class, BlogServiceImpl::class);
         $this->app->bind(CommentService::class, CommentServiceImpl::class);
+        $this->app->bind(ProjectService::class, ProjectServiceImpl::class);
+        $this->app->bind(NewsService::class, NewsServiceImpl::class);
+        $this->app->bind(ProcessService::class, ProcessServiceImpl::class);
     }
 }

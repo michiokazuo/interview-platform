@@ -264,13 +264,13 @@
                 vid="introduction"
                 rules=""
               >
-                <b-form-textarea
+                <quill-editor
                   id="register-introduction"
                   v-model="user.introduction"
                   name="register-introduction"
                   :state="errors.length > 0 ? false:null"
-                  placeholder="Introduction"
-                  rows="3"
+                  :options="snowOption"
+                  aria-placeholder="Introduction"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -420,10 +420,12 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import Ripple from 'vue-ripple-directive'
 import { useInputImageRenderer } from '@core/comp-functions/forms/form-utils'
 import { ref } from '@vue/composition-api'
+import { quillEditor } from 'vue-quill-editor'
 import {
   required, email, alpha, phone, url, image, size,
 } from '@validations'
 import auth from '@/store/api/Auth'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -443,6 +445,7 @@ export default {
     BMediaBody,
     BLink,
     BFormTextarea,
+    quillEditor,
     // validations
     ValidationProvider,
     ValidationObserver,
@@ -470,6 +473,9 @@ export default {
         avatar: 'images/local/avatar-user.png',
       },
       profileFile: null,
+      snowOption: {
+        theme: 'snow',
+      },
     }
   },
   watch: {
@@ -528,20 +534,12 @@ export default {
           auth.updateUser(formData)
             .then(response => {
               const resp = response.data
-              const userData = resp.user
-              userData.ability = [
-                {
-                  action: 'manage',
-                  resource: 'all',
-                // subject: userData.role,
-                },
-              ]
-              localStorage.setItem('userData', JSON.stringify(userData))
+              utils.updateUser(resp.user)
               this.$ability.update([
                 {
                   action: 'manage',
                   subject: 'all',
-                // subject: userData.role,
+                  // subject: userData.role,
                 },
               ])
 
@@ -588,3 +586,7 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+@import '~@core/scss/vue/libs/quill.scss';
+</style>

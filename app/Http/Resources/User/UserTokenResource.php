@@ -24,6 +24,8 @@ class UserTokenResource extends JsonResource
             "email" => $this->email,
             "username" => $this->name,
             "role" => $this->role->name,
+            'company_id' => $this->company_id,
+            'candidate_id' => $this->candidate_id,
         ];
     }
 }

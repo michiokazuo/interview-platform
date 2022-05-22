@@ -4,13 +4,12 @@ namespace App\Services\Blog;
 
 use App\Models\InterviewBlog;
 use App\Models\User;
-use App\Services\Comment\CommentService;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 class BlogServiceImpl implements BlogService
 {
-    protected $_repository;
+    protected $_repository, $userRepository;
 
     /**
      * @throws BindingResolutionException
@@ -18,6 +17,7 @@ class BlogServiceImpl implements BlogService
     public function __construct()
     {
         $this->_repository = app()->make(InterviewBlog::class);
+        $this->userRepository = app()->make(User::class);
     }
 
     /**
@@ -47,10 +47,10 @@ class BlogServiceImpl implements BlogService
     /**
      * @inheritDoc
      */
-    public function findById(User $user, $id)
+    public function findById(User $user, int $blog_id)
     {
         try {
-            $blog = $this->_repository->find($id);
+            $blog = $this->_repository->find($blog_id);
 
             if ($blog) {
                 return $blog;
@@ -62,7 +62,10 @@ class BlogServiceImpl implements BlogService
             return false;
         }
     }
-
+    
+    /**
+     * @inheritDoc
+     */
     public function showAll(User $user, int $per_page = 8)
     {
         try {
@@ -84,18 +87,23 @@ class BlogServiceImpl implements BlogService
         }
     }
 
-    public function showAllByUser(User $user, int $per_page = 8)
+    /**
+     * @inheritDoc
+     */
+    public function showAllByUser(User $user, int $user_id,int $per_page = 8)
     {
         try {
-            $blogs = $this->_repository->where('user_id', $user->id)->orderBy('created_at', 'desc')
+            $userOwner = $this->userRepository->find($user_id);
+            $blogs = $this->_repository->where('user_id', $user_id)->orderBy('created_at', 'desc')
                 ->paginate($per_page);
 
-            if ($blogs) {
+            if ($blogs && $userOwner) {
                 return [
                     'current_page' => $blogs->currentPage(),
                     'data' => $blogs->items(),
                     'total' => $blogs->total(),
                     'last_page' => $blogs->lastPage(),
+                    'user' => $userOwner,
                 ];
             }
 
@@ -106,6 +114,9 @@ class BlogServiceImpl implements BlogService
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function update(User $user, array $data, int $blog_id)
     {
         try {
@@ -128,6 +139,9 @@ class BlogServiceImpl implements BlogService
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete(User $user, int $blog_id): bool
     {
         try {

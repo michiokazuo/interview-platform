@@ -16,17 +16,10 @@ class CreateProjectTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->dateTime('end_time')->nullable();
             $table->string('status');
-            $table->string('salary');
-            $table->string('job_position');
-            $table->string('working_form');
-            $table->string('gender');
-            $table->integer('experience');
-            $table->string('workplace');
-            $table->integer('number_of_recruits');
             $table->unsignedBigInteger('company_id')->unsigned();
             $table->timestamps();
 

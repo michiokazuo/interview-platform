@@ -36,26 +36,30 @@
               {{ blog.title }}
             </b-link>
           </b-card-title>
-          <b-media no-body>
-            <b-media-aside
-              vertical-align="center"
-              class="mr-50"
-            >
-              <b-avatar
-                href="javascript:void(0)"
-                size="24"
-                :src="blog.user.avatar"
-              />
-            </b-media-aside>
-            <b-media-body>
-              <small class="text-muted mr-50">by</small>
-              <small>
-                <b-link class="text-body">{{ blog.user.name }}</b-link>
-              </small>
-              <span class="text-muted ml-75 mr-50">|</span>
-              <small class="text-muted">{{ blog.created_at }}</small>
-            </b-media-body>
-          </b-media>
+          <b-link
+            :to="{ name: 'pages-another-user-blog-list', params: { id: blog.user.id } }"
+          >
+            <b-media no-body>
+              <b-media-aside
+                vertical-align="center"
+                class="mr-50"
+              >
+                <b-avatar
+                  href="javascript:void(0)"
+                  size="24"
+                  :src="blog.user.avatar"
+                />
+              </b-media-aside>
+              <b-media-body>
+                <small class="text-muted mr-50">by</small>
+                <small>
+                  <b-link class="text-body">{{ blog.user.name }}</b-link>
+                </small>
+                <span class="text-muted ml-75 mr-50">|</span>
+                <small class="text-muted">{{ new Date(blog.created_at).toDateString() }}</small>
+              </b-media-body>
+            </b-media>
+          </b-link>
           <div class="my-1 py-25">
             <b-link
               v-for="(tag,index) in blog.topics.split(',')"
@@ -163,6 +167,7 @@ import {
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
 import blog from '@/store/api/Blog'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -213,11 +218,18 @@ export default {
         page: this.currentPage,
         per_page: this.perPage,
       }).then(resp => {
-        const rs = resp.data.data
-        console.log(rs)
-        this.blogList = rs.data
-        this.currentPage = rs.current_page
-        this.rows = rs.last_page
+        const rs = resp.data
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
+        this.blogList = rs.data.data
+        this.currentPage = rs.data.current_page
+        this.rows = rs.data.last_page
       }).catch(err => {
         console.log(err)
         this.blogList = null

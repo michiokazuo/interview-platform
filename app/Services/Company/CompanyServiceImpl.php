@@ -29,9 +29,11 @@ class CompanyServiceImpl implements CompanyService
             if (!empty($inputCompany['id'])) {
                 $company = $this->_repository->findOrFail($inputCompany['id']) ?? [];
                 if($urls->count() == 1 && $company['id'] == $urls[0]['id']) {
-                    return $company->update([
+                    $company->update([
                         'url' => $inputCompany['url'],
                     ]);
+                    
+                    return $this->_repository->find($company->id);
                 }
             } else if(!$urls->count()) {
                 return $this->_repository->create([

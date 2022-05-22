@@ -16,16 +16,27 @@ class CreateRecruitmentNewsTable extends Migration
         Schema::create('recruitment_news', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('benefits');
-            $table->json('requirements');
-            $table->text('description')->nullable();
+            $table->longText('benefits');
+            $table->longText('requirements')->nullable();
+            $table->longText('description')->nullable();
             $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->dateTime('end_time')->nullable();
+            $table->string('salary');
+            $table->string('job_position');
+            $table->string('working_form');
+            $table->string('gender');
+            $table->string('experience');
+            $table->string('workplace');
+            $table->string('number_of_recruits');
             $table->unsignedBigInteger('project_id')->unsigned();
+            $table->unsignedBigInteger('company_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('project_id')
                 ->references('id')->on('projects')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
                 ->onDelete('cascade')->onUpdate('cascade');
         });
     }

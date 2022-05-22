@@ -16,7 +16,7 @@
       </b-media-aside>
       <b-media-body>
         <h6 class="mb-25">
-          {{ blogEdit.user.fullName }}
+          {{ blogEdit.user.fullName || blogEdit.user.name }}
         </h6>
         <b-card-text>{{ blogEdit.created_at ? new Date(blogEdit.created_at).toDateString() : new Date().toDateString() }}</b-card-text>
       </b-media-body>
@@ -68,14 +68,16 @@
                 vid="topics"
                 rules="required"
               >
-                <b-form-input
+                <v-select
                   id="blog-edit-topic"
                   v-model="blogEdit.topics"
+                  multiple
+                  taggable
+                  push-tags
                   name="topics"
                   placeholder="Topics"
                   :state="errors.length > 0 ? false:null"
                 />
-                <small class="text-primary">Use ',' to define multiple topics</small>
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
@@ -199,7 +201,9 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, email, password } from '@validations'
+import vSelect from 'vue-select'
 import blog from '@/store/api/Blog'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -220,6 +224,7 @@ export default {
     quillEditor,
     ValidationProvider,
     ValidationObserver,
+    vSelect,
   },
   directives: {
     Ripple,
@@ -236,22 +241,32 @@ export default {
     }
   },
   created() {
-    this.blogEdit = {
-      user: JSON.parse(localStorage.getItem('userData')),
-    }
     const { id } = this.$route.params
     if (id) {
       this.id = id
       this.getData()
     } else {
       this.id = null
+      this.blogEdit = {
+        user: JSON.parse(localStorage.getItem('userData')),
+      }
     }
   },
   methods: {
     getData() {
       blog.showToEdit(this.id).then(resp => {
         const rs = resp.data
+        rs.data.topics = rs.data.topics.split(',')
         this.blogEdit = rs.data
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
       }).catch(err => {
         console.log(err)
         this.blogEdit = null
@@ -261,10 +276,23 @@ export default {
     saveBlog() {
       this.$refs.blogForm.validate().then(success => {
         if (success) {
+          const data = {
+            ...this.blogEdit,
+            topics: this.blogEdit.topics.join(','),
+          }
           if (this.id) {
-            blog.update(this.id, this.blogEdit).then(resp => {
+            blog.update(this.id, data).then(resp => {
               const rs = resp.data
               this.blogEdit = rs.data
+              this.userOn = rs.user
+              utils.updateUser(rs.user)
+              this.$ability.update([
+                {
+                  action: 'manage',
+                  subject: 'all',
+                  // subject: userData.role,
+                },
+              ])
               this.$toast({
                 component: ToastificationContent,
                 position: 'top-right',
@@ -289,9 +317,18 @@ export default {
               })
             })
           } else {
-            blog.store(this.blogEdit).then(resp => {
+            blog.store(data).then(resp => {
               const rs = resp.data
               this.blogEdit = rs.data
+              this.userOn = rs.user
+              utils.updateUser(rs.user)
+              this.$ability.update([
+                {
+                  action: 'manage',
+                  subject: 'all',
+                  // subject: userData.role,
+                },
+              ])
               this.$toast({
                 component: ToastificationContent,
                 position: 'top-right',
@@ -323,7 +360,16 @@ export default {
       bvModalEvent.preventDefault()
 
       blog.delete(this.id).then(resp => {
-        console.log(resp)
+        const rs = resp.data
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',

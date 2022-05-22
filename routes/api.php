@@ -3,6 +3,9 @@
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
+use App\Http\Controllers\API\ProjectController;
+use App\Http\Controllers\API\RecruitmentNewsController;
+use App\Http\Controllers\API\RecruitmentProcessController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,7 +44,18 @@ Route::group(['middleware' => 'api'], function () {
     
     Route::apiResource('blog', BlogController::class);
     Route::get('/blog-edit/{id}', [BlogController::class, 'showToEdit']);
-    Route::get('/blog-by-user', [BlogController::class, 'showAllByUser']);
+    Route::get('/blog-by-user/{id}', [BlogController::class, 'showAllByUser']);
     Route::apiResource('comment', CommentController::class);
+
+    Route::apiResource('project', ProjectController::class);
+    Route::post('/project-change/{id}', [ProjectController::class, 'changeStatus']);
+    Route::apiResource('project-process', RecruitmentProcessController::class);
+    Route::post('/project-process-change/{id}', [RecruitmentProcessController::class, 'changeStatus']);
+    Route::apiResource('project-news', RecruitmentNewsController::class);
+    Route::post('/project-news-change/{id}', [RecruitmentNewsController::class, 'changeStatus']);
+    Route::get('/project-news-edit/{id}', [RecruitmentNewsController::class, 'showToEdit']);
+    Route::get('/news-by-user/{id}', [RecruitmentNewsController::class, 'showAllByUser']);
+    Route::get('/news-by-project/{id}', [RecruitmentNewsController::class, 'showAllByProject']);
+
 });
 

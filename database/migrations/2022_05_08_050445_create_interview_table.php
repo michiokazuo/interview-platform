@@ -22,6 +22,7 @@ class CreateInterviewTable extends Migration
             $table->string('time');
             $table->unsignedBigInteger('candidate_id')->unsigned();
             $table->unsignedBigInteger('company_id')->unsigned()->nullable();
+            $table->unsignedBigInteger('news_id')->unsigned()->nullable();
             $table->timestamps();
 
             $table->foreign('candidate_id')
@@ -29,6 +30,9 @@ class CreateInterviewTable extends Migration
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('company_id')
                 ->references('id')->on('company')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('news_id')
+                ->references('id')->on('recruitment_news')
                 ->onDelete('cascade')->onUpdate('cascade');
         });
     }

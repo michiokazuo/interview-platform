@@ -36,6 +36,24 @@ export default [
     },
   },
   {
+    path: '/user/blog/list-by-user/:id',
+    name: 'pages-another-user-blog-list',
+    component: () => import('@/views/interview-platform/blog/BlogListByAnotherUser.vue'),
+    meta: {
+      pageTitle: 'Blog List By Another User',
+      breadcrumb: [
+        {
+          text: 'Blog',
+          to: { name: 'pages-blog-list' },
+        },
+        {
+          text: 'List By Another User',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
     path: '/user/blog/edit/:id',
     name: 'pages-blog-edit',
     component: () => import('@/views/interview-platform/blog/BlogEdit.vue'),

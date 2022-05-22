@@ -11,26 +11,30 @@
           img-alt="Blog Detail Pic"
           :title="blogDetail.title"
         >
-          <b-media no-body>
-            <b-media-aside
-              vertical-align="center"
-              class="mr-50"
-            >
-              <b-avatar
-                href="javascript:void(0)"
-                size="24"
-                :src="blogDetail.user.avatar"
-              />
-            </b-media-aside>
-            <b-media-body>
-              <small class="text-muted mr-50">by</small>
-              <small>
-                <b-link class="text-body">{{ blogDetail.user.name }}</b-link>
-              </small>
-              <span class="text-muted ml-75 mr-50">|</span>
-              <small class="text-muted">{{ blogDetail.created_at }}</small>
-            </b-media-body>
-          </b-media>
+          <b-link
+            :to="{ name: 'pages-another-user-blog-list', params: { id: blogDetail.user.id } }"
+          >
+            <b-media no-body>
+              <b-media-aside
+                vertical-align="center"
+                class="mr-50"
+              >
+                <b-avatar
+                  href="javascript:void(0)"
+                  size="24"
+                  :src="blogDetail.user.avatar"
+                />
+              </b-media-aside>
+              <b-media-body>
+                <small class="text-muted mr-50">by</small>
+                <small>
+                  <b-link class="text-body">{{ blogDetail.user.name || blogDetail.user.fullName }}</b-link>
+                </small>
+                <span class="text-muted ml-75 mr-50">|</span>
+                <small class="text-muted">{{ blogDetail.created_at }}</small>
+              </b-media-body>
+            </b-media>
+          </b-link>
           <div class="my-1 py-25">
             <b-link
               v-for="tag in blogDetail.topics.split(',')"
@@ -74,7 +78,7 @@
             </div>
 
             <!-- dropdown -->
-            <div class="blog-detail-share" >
+            <div class="blog-detail-share">
               <b-link
                 v-if="userOn && userOn.id === blogDetail.user.id"
                 :to="{ name: 'pages-blog-edit', params: { id: blogDetail.id } }"
@@ -308,6 +312,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import { required, email, password } from '@validations'
 import blog from '@/store/api/Blog'
 import comment from '@/store/api/Comment'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -342,11 +347,10 @@ export default {
         id: null,
       },
       commentStore: '',
-      userOn: null,
+      userOn: {},
     }
   },
   created() {
-    this.userOn = JSON.parse(localStorage.getItem('userData'))
     const { id } = this.$route.params
     if (id) {
       this.id = id
@@ -368,6 +372,15 @@ export default {
       blog.findById(this.id).then(resp => {
         const rs = resp.data
         this.blogDetail = rs.data
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
       }).catch(err => {
         console.log(err)
         this.blogDetail = null
@@ -382,6 +395,15 @@ export default {
           }).then(resp => {
             const rs = resp.data
             this.blogDetail.comments.unshift(rs.data)
+            this.userOn = rs.user
+            utils.updateUser(rs.user)
+            this.$ability.update([
+              {
+                action: 'manage',
+                subject: 'all',
+                // subject: userData.role,
+              },
+            ])
             this.$refs.commentForm.reset()
             this.$toast({
               component: ToastificationContent,
@@ -423,6 +445,15 @@ export default {
               rs.data,
               ...this.blogDetail.comments.slice(index + 1),
             ]
+            this.userOn = rs.user
+            utils.updateUser(rs.user)
+            this.$ability.update([
+              {
+                action: 'manage',
+                subject: 'all',
+                // subject: userData.role,
+              },
+            ])
             this.$toast({
               component: ToastificationContent,
               position: 'top-right',
@@ -460,8 +491,17 @@ export default {
       bvModalEvent.preventDefault()
 
       comment.delete(this.commentUpdate.id).then(resp => {
-        console.log(resp)
+        const rs = resp.data
         this.blogDetail.comments = this.blogDetail.comments.filter(item => item.id !== this.commentUpdate.id)
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',

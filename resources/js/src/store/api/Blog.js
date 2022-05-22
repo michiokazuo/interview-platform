@@ -1,6 +1,8 @@
 import axios from 'axios'
 
 const apiBlog = '/api/blog/'
+const apiBlogShowEdit = '/api/blog-edit/'
+const apiBlogShowByUser = '/api/blog-by-user/'
 
 export default {
   getAll(params) {
@@ -15,13 +17,13 @@ export default {
   delete(id) {
     return axios.delete(`${apiBlog}${id}`)
   },
-  showByUser() {
-    return axios.get('/api/blog-by-user')
+  showByUser(id, params) {
+    return axios.get(`${apiBlogShowByUser}${id}`, { params })
   },
   findById(id) {
     return axios.get(`${apiBlog}${id}`)
   },
   showToEdit(id) {
-    return axios.get(`/api/blog-edit/${id}`)
+    return axios.get(`${apiBlogShowEdit}${id}`)
   },
 }

@@ -11,7 +11,7 @@ trait CurrentUser
      *
      * @return false|Authenticatable
      */
-    function user(array $fields = ['*'])
+    function user()
     {
         if (auth('api')->check()) {
             return auth('api')->user();

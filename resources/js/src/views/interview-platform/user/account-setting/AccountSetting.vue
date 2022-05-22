@@ -72,6 +72,7 @@ import AccountSettingPassword from './AccountSettingPassword.vue'
 import AccountSettingCV from './AccountSettingCV.vue'
 import auth from '@/store/api/Auth'
 import cv from '@/store/api/CV'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -97,16 +98,28 @@ export default {
     auth.getUser().then(response => {
       const resp = response.data
       this.userInfo = resp.data
+      utils.updateUser(resp.user)
+      this.$ability.update([
+        {
+          action: 'manage',
+          subject: 'all',
+          // subject: userData.role,
+        },
+      ])
     }).catch(error => {
       console.log(error)
     })
 
-    cv.getCV().then(response => {
-      const resp = response.data
-      this.cvInfo = resp.data
-    }).catch(error => {
-      console.log(error)
-    })
+    const userLogin = JSON.parse(localStorage.getItem('userData'))
+    if (userLogin.role === 'ROLE_CANDIDATE') {
+      cv.getCV().then(response => {
+        const resp = response.data
+        this.cvInfo = resp.data
+        utils.updateUser(resp.user)
+      }).catch(error => {
+        console.log(error)
+      })
+    }
   },
 }
 </script>

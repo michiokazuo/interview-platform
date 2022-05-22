@@ -138,7 +138,8 @@ class AuthController extends Controller
         $forgot = $this->userService->forgotPassword($email);
 
         if ($forgot) {
-            return $this->successfulResultWithoutAuth('Send link forgot password successfully!!!', []);
+            return $this->successfulResultWithoutAuth('Send link forgot password successfully!!!',
+                ['status' => true]);
         }
         return $this->failedResult('Failed send link forgot password', 500);
     }
@@ -158,7 +159,7 @@ class AuthController extends Controller
         $reset = $this->userService->resetPassword($email, $password, $token);
 
         if ($reset) {
-            return $this->successfulResultWithoutAuth('Reset password successfully!!!', []);
+            return $this->successfulResultWithoutAuth('Reset password successfully!!!', ['status' => true]);
         }
         return $this->failedResult('Failed reset password', 500);
     }

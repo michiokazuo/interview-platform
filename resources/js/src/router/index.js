@@ -7,19 +7,20 @@ import {
   isUserLoggedIn, getUserData, getHomeRouteForLoggedInUser,
 } from '../auth/utils'
 // theme
-// import apps from './routes/apps'
-// import dashboard from './routes/dashboard'
-// import uiElements from './routes/ui-elements/index'
+import apps from './routes/apps'
+import dashboard1 from './routes/dashboard'
+import uiElements from './routes/ui-elements/index'
 // import pages1 from './routes/pages'
-// import chartsMaps from './routes/charts-maps'
-// import formsTable from './routes/forms-tables'
-// import others from './routes/others'
+import chartsMaps from './routes/charts-maps'
+import formsTable from './routes/forms-tables'
+import others from './routes/others'
 import store from '@/store'
 // custom routes
 import auth from './routes/interview-platform/auth'
 import dashboard from './routes/interview-platform/dashboard'
 import pages from './routes/interview-platform/pages'
 import blog from './routes/interview-platform/blog'
+import project from './routes/interview-platform/project'
 
 Vue.use(VueRouter)
 
@@ -31,17 +32,18 @@ const router = new VueRouter({
   },
   routes: [
     { path: '/', redirect: { name: 'dashboard' } },
-    // ...apps,
-    // ...dashboard,
+    ...apps,
+    ...dashboard1,
     // ...pages1,
-    // ...chartsMaps,
-    // ...formsTable,
-    // ...uiElements,
-    // ...others,
+    ...chartsMaps,
+    ...formsTable,
+    ...uiElements,
+    ...others,
     ...auth,
     ...dashboard,
     ...pages,
     ...blog,
+    ...project,
     {
       path: '*',
       redirect: 'error-404',
@@ -61,6 +63,9 @@ router.beforeEach(async (to, _, next) => {
     // eslint-disable-next-line no-const-assign
     store.commit('appConfig/UPDATE_NAV_MENU_HIDDEN', false)
     store.commit('appConfig/UPDATE_NAVBAR_CONFIG', { type: 'floating' })
+  } else {
+    store.commit('appConfig/UPDATE_NAV_MENU_HIDDEN', true)
+    store.commit('appConfig/UPDATE_NAVBAR_CONFIG', { type: 'hidden' })
   }
 
   if (!canNavigate(to)) {

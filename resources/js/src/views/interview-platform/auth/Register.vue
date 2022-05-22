@@ -424,6 +424,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import auth from '@/store/api/Auth'
 import store from '@/store/index'
 import useJwt from '@/auth/jwt/useJwt'
+import utils from '@/store/utils'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 export default {
@@ -520,20 +521,14 @@ export default {
             .then(response => {
               const resp = response.data
               const userData = resp.user
-              userData.ability = [
-                {
-                  action: 'manage',
-                  resource: 'all',
-                // subject: userData.role,
-                },
-              ]
+
               useJwt.setToken(resp.data.accessToken)
-              localStorage.setItem('userData', JSON.stringify(userData))
+              utils.updateUser(userData)
               this.$ability.update([
                 {
                   action: 'manage',
                   subject: 'all',
-                // subject: userData.role,
+                  // subject: userData.role,
                 },
               ])
 

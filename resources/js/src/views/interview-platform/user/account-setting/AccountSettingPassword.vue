@@ -161,6 +161,7 @@ import { required, password } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import auth from '@/store/api/Auth'
+import utils from '@/store/utils'
 
 export default {
   components: {
@@ -229,7 +230,7 @@ export default {
         if (success) {
           this.resetPass.email = this.userInfo.email
           auth.changePassword(this.resetPass).then(response => {
-            console.log(response)
+            const resp = response.data
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -238,6 +239,14 @@ export default {
                 variant: 'success',
               },
             })
+            utils.updateUser(resp.user)
+            this.$ability.update([
+              {
+                action: 'manage',
+                subject: 'all',
+                // subject: userData.role,
+              },
+            ])
             this.resetForm()
           }).catch(error => {
             console.log(error)

@@ -25,5 +25,19 @@ class Company extends Model
     protected $fillable = [
         'url',
     ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
     
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id', 'company_id');
+    }
 }

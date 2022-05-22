@@ -3,7 +3,7 @@
 namespace App\Services\Mail;
 
 use Exception;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class MailServiceImpl implements MailService
 {

@@ -14,7 +14,7 @@ class CVController extends Controller
 {
     use ApiResponse, CurrentUser;
 
-    private $cvService, $blogService;
+    private $cvService;
 
     /**
      * Create a new instance.
@@ -40,7 +40,7 @@ class CVController extends Controller
         $cv = $this->cvService->store($user, $dataCV);
 
         if ($cv) {
-            return $this->successfulResultWithoutAuth('Store CV successfully!!!', new CVResource($cv));
+            return $this->successfulResult('Store CV successfully!!!', $user, new CVResource($cv));
         }
         return $this->failedResult('Failed store CV!!!', 500);
     }
@@ -58,7 +58,7 @@ class CVController extends Controller
         $cv = $this->cvService->findById($user, $id);
 
         if ($cv) {
-            return $this->successfulResultWithoutAuth('Get CV successfully!!!', new CVResource($cv));
+            return $this->successfulResult('Get CV successfully!!!', $user, new CVResource($cv));
         }
         return $this->failedResult('Failed get CV!!!', 500);
     }

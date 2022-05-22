@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Blog_Comment\StoreBlogRequest;
 use App\Http\Resources\Blog_Comment\BlogCollection;
 use App\Http\Resources\Blog_Comment\BlogResource;
+use App\Http\Resources\User\UserResource;
 use App\Services\Blog\BlogService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
@@ -42,7 +43,7 @@ class BlogController extends Controller
 
         if ($blogs) {
             $blogs['data'] = !empty($blogs['data']) ? new BlogCollection($blogs['data']) : [];
-            return $this->successfulResultWithoutAuth('Blogs display successfully!!!', $blogs);
+            return $this->successfulResult('Blogs display successfully!!!', $user, $blogs);
         }
 
         return $this->failedResult('Blogs display failed!!!', 500);
@@ -60,7 +61,7 @@ class BlogController extends Controller
         $blog = $this->blogService->store($user, $request->all());
 
         if ($blog) {
-            return $this->successfulResultWithoutAuth('Blog created successfully!!!', new BlogResource($blog));
+            return $this->successfulResult('Blog created successfully!!!', $user, new BlogResource($blog));
         }
 
         return $this->failedResult('Blog created failed!!!', 500);
@@ -78,7 +79,7 @@ class BlogController extends Controller
         $blog = $this->blogService->findById($user, $id);
 
         if ($blog) {
-            return $this->successfulResultWithoutAuth('Blog display successfully!!!', new BlogResource($blog));
+            return $this->successfulResult('Blog display successfully!!!', $user, new BlogResource($blog));
         }
 
         return $this->failedResult('Blog display failed!!!', 500);
@@ -97,7 +98,7 @@ class BlogController extends Controller
         $blog = $this->blogService->update($user, $request->all(), $id);
 
         if ($blog) {
-            return $this->successfulResultWithoutAuth('Blog updated successfully!!!', new BlogResource($blog));
+            return $this->successfulResult('Blog updated successfully!!!', $user, new BlogResource($blog));
         }
 
         return $this->failedResult('Blog updated failed!!!', 500);
@@ -115,7 +116,7 @@ class BlogController extends Controller
         $blog = $this->blogService->delete($user, $id);
 
         if ($blog) {
-            return $this->successfulResultWithoutAuth('Blog deleted successfully!!!', ['delete' => true]);
+            return $this->successfulResult('Blog deleted successfully!!!', $user, ['delete' => true]);
         }
 
         return $this->failedResult('Blog deleted failed!!!', 500);
@@ -124,18 +125,20 @@ class BlogController extends Controller
     /**
      * Display a listing of user.
      *
+     * @param int $id
      * @return JsonResponse
      */
-    public function showAllByUser(): JsonResponse
+    public function showAllByUser(int $id): JsonResponse
     {
         $per_page = request('per_page', 8);
 
         $user = $this->user();
-        $blogs = $this->blogService->showAllByUser($user, $per_page);
+        $blogs = $this->blogService->showAllByUser($user, $id, $per_page);
 
         if ($blogs) {
             $blogs['data'] = !empty($blogs['data']) ? new BlogCollection($blogs['data']) : [];
-            return $this->successfulResultWithoutAuth('Blogs display successfully!!!', $blogs);
+            $blogs['user'] = new UserResource($blogs['user']);
+            return $this->successfulResult('Blogs display successfully!!!', $user, $blogs);
         }
 
         return $this->failedResult('Blogs display failed!!!', 500);
@@ -153,7 +156,7 @@ class BlogController extends Controller
         $blog = $this->blogService->findById($user, $id);
 
         if ($blog && $blog->user_id === $user->id) {
-            return $this->successfulResultWithoutAuth('Blog display successfully!!!', new BlogResource($blog));
+            return $this->successfulResult('Blog display successfully!!!', $user, new BlogResource($blog));
         }
 
         return $this->failedResult('Blog display failed!!!', 500);

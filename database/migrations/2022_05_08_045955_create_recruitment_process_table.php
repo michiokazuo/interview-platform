@@ -16,9 +16,9 @@ class CreateRecruitmentProcessTable extends Migration
         Schema::create('recruitment_process', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->dateTime('end_time')->nullable();
             $table->unsignedBigInteger('project_id')->unsigned();
             $table->unsignedBigInteger('prev_step')->unsigned()->nullable();
             $table->unsignedBigInteger('next_step')->unsigned()->nullable();
