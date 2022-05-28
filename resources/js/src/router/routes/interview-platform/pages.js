@@ -16,13 +16,10 @@ export default [
   {
     path: '/user-profile',
     name: 'pages-profile',
-    component: () => import('@/views/pages/profile/Profile.vue'),
+    component: () => import('@/views/interview-platform/user/profile/ProfileInterview.vue'),
     meta: {
       pageTitle: 'Profile',
       breadcrumb: [
-        {
-          text: 'Pages',
-        },
         {
           text: 'Profile',
           active: true,

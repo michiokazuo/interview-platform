@@ -127,6 +127,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@core/scss/base/pages/app-chat-list.scss";
 </style>

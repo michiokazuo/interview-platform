@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
+use App\Http\Controllers\API\InterviewController;
 use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\RecruitmentNewsController;
 use App\Http\Controllers\API\RecruitmentProcessController;
@@ -57,5 +58,10 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/news-by-user/{id}', [RecruitmentNewsController::class, 'showAllByUser']);
     Route::get('/news-by-project/{id}', [RecruitmentNewsController::class, 'showAllByProject']);
 
+    Route::apiResource('interview', InterviewController::class)->except(['index']);
+    Route::get('/interviews-by-user/{id}', [InterviewController::class, 'showAllByUser']);
+    Route::get('/interview-find-news/{id}', [InterviewController::class, 'findByNewsId']);
+    Route::get('/interviews-by-news/{id}', [InterviewController::class, 'showAllByNews']);
+    Route::get('/interview-edit/{id}', [InterviewController::class, 'showToEdit']);
 });
 

@@ -430,7 +430,7 @@ export default {
 @import "~@core/scss/base/pages/app-invoice.scss";
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @media print {
 
   // Global Styles

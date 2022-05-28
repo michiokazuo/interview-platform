@@ -29,6 +29,7 @@
     </template>
 
     <b-dropdown-item
+      v-if="userData.role === 'ROLE_CANDIDATE'"
       :to="{ name: 'pages-profile'}"
       link-class="d-flex align-items-center"
     >

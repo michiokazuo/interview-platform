@@ -238,7 +238,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/quill.scss';
 @import '~@core/scss/vue/pages/page-blog.scss';

@@ -472,10 +472,18 @@ export default {
   directives: {
     Ripple,
   },
+  props: {
+    id: {
+      type: Number,
+      default: null,
+    },
+    idProject: {
+      type: Number,
+      default: null,
+    },
+  },
   data() {
     return {
-      id: null,
-      idProject: null,
       newsEdit: {
         user: {},
         start_time: new Date(),
@@ -492,14 +500,9 @@ export default {
     }
   },
   created() {
-    const { id } = this.$route.params
-    const { idProject } = this.$route.params
-    this.idProject = idProject
-    if (id) {
-      this.id = id
+    if (this.id && this.idProject) {
       this.getData()
     } else {
-      this.id = null
       this.newsEdit = {
         user: JSON.parse(localStorage.getItem('userData')),
         start_time: new Date(),
@@ -694,7 +697,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/quill.scss';
 @import '~@core/scss/vue/pages/page-blog.scss';

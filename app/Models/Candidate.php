@@ -38,6 +38,12 @@ class Candidate extends Model
 
     public function cv(): BelongsTo
     {
-        return $this->belongsTo(Cv::class, 'id', 'cv_id');
+        return $this->belongsTo(Cv::class, 'id', 'candidate_id');
     }
+    
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id', 'candidate_id');
+    }
+    
 }

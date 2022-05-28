@@ -75,7 +75,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // switchbutton position
 .switch-button{
   position: relative;

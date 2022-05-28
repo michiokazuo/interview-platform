@@ -14,6 +14,8 @@ use App\Services\CV\CVService;
 use App\Services\CV\CVServiceImpl;
 use App\Services\CVDetail\CVDetailService;
 use App\Services\CVDetail\CVDetailServiceImpl;
+use App\Services\Interview\InterviewService;
+use App\Services\Interview\InterviewServiceImpl;
 use App\Services\Mail\MailService;
 use App\Services\Mail\MailServiceImpl;
 use App\Services\Project\ProjectService;
@@ -56,5 +58,6 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->bind(ProjectService::class, ProjectServiceImpl::class);
         $this->app->bind(NewsService::class, NewsServiceImpl::class);
         $this->app->bind(ProcessService::class, ProcessServiceImpl::class);
+        $this->app->bind(InterviewService::class, InterviewServiceImpl::class);
     }
 }

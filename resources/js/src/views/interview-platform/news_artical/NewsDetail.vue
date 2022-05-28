@@ -168,6 +168,59 @@
 
             <!-- eslint-enable -->
             <hr class="my-2">
+
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <div
+                  v-if="userData"
+                  class="d-flex align-items-center mr-1"
+                >
+                  <b-link class="mr-50">
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                      size="21"
+                      class="text-body"
+                    />
+                  </b-link>
+                  <b-link>
+                    <div
+                      v-if="interviewOwner"
+                      class="text-body"
+                    >
+                      You have already applied for this job
+                    </div>
+                    <div
+                      v-else
+                      class="text-body"
+                    >Not yet applied for this job</div>
+                  </b-link>
+                </div>
+              </div>
+
+              <!-- dropdown -->
+              <div class="blog-detail-share">
+                <b-link v-if="userData">
+                  <b-button
+                    v-if="interviewOwner"
+                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                    v-b-modal.modal-danger
+                    variant="outline-danger"
+                  >
+                    Cancel Apply
+                  </b-button>
+                  <span v-else>
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      v-b-modal.modal-success
+                      variant="outline-success"
+                    >
+                      Apply Now
+                    </b-button>
+                  </span>
+                </b-link>
+              </div>
+            <!--/ dropdown -->
+            </div>
           </b-card>
         </b-col>
       <!--/ news -->
@@ -360,7 +413,35 @@
           </b-row>
         </b-card>
       </div>
+      <b-modal
+        id="modal-success"
+        ok-only
+        ok-variant="success"
+        ok-title="Accept"
+        modal-class="modal-success"
+        centered
+        title="Apply now"
+        @ok="applyNow"
+      >
+        <b-card-text>
+          Are you sure you want to apply this job?
+        </b-card-text>
+      </b-modal>
 
+      <b-modal
+        id="modal-danger"
+        ok-only
+        ok-variant="danger"
+        ok-title="Accept"
+        modal-class="modal-danger"
+        centered
+        title="Cancel apply"
+        @ok="cancelApply"
+      >
+        <b-card-text>
+          Are you sure you want to delete this job?
+        </b-card-text>
+      </b-modal>
       <!--/ recent posts -->
     </div>
   </content-with-sidebar>
@@ -378,14 +459,16 @@ import {
   BCol,
   BCardText,
   BCardBody,
+  BButton,
+  BModal,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { kFormatter } from '@core/utils/filter'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required, email, password } from '@validations'
 import ContentWithSidebar from '@core/layouts/components/content-with-sidebar/ContentWithSidebar.vue'
 import news from '@/store/api/RNews'
+import interview from '@/store/api/Interview'
 import utils from '@/store/utils'
 
 export default {
@@ -400,9 +483,9 @@ export default {
     BCol,
     BCardText,
     BCardBody,
+    BButton,
+    BModal,
 
-    ValidationProvider,
-    ValidationObserver,
     ToastificationContent,
     ContentWithSidebar,
   },
@@ -418,7 +501,8 @@ export default {
         id: null,
       },
       commentStore: '',
-      userData: {},
+      userData: null,
+      interviewOwner: null,
     }
   },
   created() {
@@ -426,9 +510,11 @@ export default {
     if (id) {
       this.id = id
       this.getData()
+      this.getInterviewOwner()
     } else {
       this.id = null
       this.newsDetail = null
+      this.interviewOwner = null
     }
   },
   methods: {
@@ -455,6 +541,114 @@ export default {
       }).catch(err => {
         console.log(err)
         this.newsDetail = null
+      })
+    },
+    getInterviewOwner() {
+      interview.findByNewsId(this.id).then(resp => {
+        const rs = resp.data
+        this.interviewOwner = rs.data
+        this.userData = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
+      }).catch(err => {
+        console.log(err)
+        this.interviewOwner = null
+      })
+    },
+    applyNow() {
+      interview.store({
+        candidate_id: this.userData.candidate_id,
+        news_id: this.id,
+        company_id: this.newsDetail.company.id,
+      }).then(resp => {
+        const rs = resp.data
+        this.interviewOwner = rs.data
+        this.userData = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
+        this.$toast({
+          component: ToastificationContent,
+          position: 'top-right',
+          props: {
+            title: 'Apply job success',
+            icon: 'CoffeeIcon',
+            variant: 'success',
+          },
+        })
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-success')
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$toast({
+          component: ToastificationContent,
+          position: 'top-right',
+          props: {
+            title: 'Error',
+            icon: 'AlertTriangleIcon',
+            variant: 'danger',
+            text: 'Something error. Please try again!!!',
+          },
+        })
+
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-success')
+        })
+      })
+    },
+    cancelApply() {
+      interview.delete(this.interviewOwner.id).then(resp => {
+        const rs = resp.data
+        this.interviewOwner = null
+        this.userData = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: 'all',
+            // subject: userData.role,
+          },
+        ])
+        this.$toast({
+          component: ToastificationContent,
+          position: 'top-right',
+          props: {
+            title: 'Cancel apply success',
+            icon: 'CoffeeIcon',
+            variant: 'success',
+          },
+        })
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-danger')
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$toast({
+          component: ToastificationContent,
+          position: 'top-right',
+          props: {
+            title: 'Error',
+            icon: 'AlertTriangleIcon',
+            variant: 'danger',
+            text: 'Something error. Please try again!!!',
+          },
+        })
+
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-danger')
+        })
       })
     },
   },

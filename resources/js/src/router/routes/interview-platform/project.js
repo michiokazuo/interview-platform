@@ -110,16 +110,16 @@ export default [
   {
     path: '/company/project/:idProject/news/edit/:id',
     name: 'pages-news-edit',
-    component: () => import('@/views/interview-platform/project/NewsEdit.vue'),
+    component: () => import('@/views/interview-platform/project/NewsDetail.vue'),
     meta: {
-      pageTitle: 'News Edit',
+      pageTitle: 'News Detail',
       breadcrumb: [
         {
           text: 'Project',
           to: { name: 'pages-company-projects' },
         },
         {
-          text: 'News edit',
+          text: 'News Detail',
           active: true,
         },
       ],
@@ -128,7 +128,7 @@ export default [
   {
     path: '/company/project/:idProject/news/create',
     name: 'pages-news-create',
-    component: () => import('@/views/interview-platform/project/NewsEdit.vue'),
+    component: () => import('@/views/interview-platform/project/NewsDetail.vue'),
     meta: {
       pageTitle: 'News Create',
       breadcrumb: [

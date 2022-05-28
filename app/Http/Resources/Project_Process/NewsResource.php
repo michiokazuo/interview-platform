@@ -32,7 +32,7 @@ class NewsResource extends JsonResource
             'gender' => $this->gender,
             'experience' => $this->experience,
             'workplace' => $this->workplace,
-            'number_of_recruits' => $this->number_of_recruits,
+            'number_of_recruits' => $this->number_of_recruits
         ];
     }
 }
