@@ -10,6 +10,8 @@ use App\Services\Comment\CommentService;
 use App\Services\Comment\CommentServiceImpl;
 use App\Services\Company\CompanyService;
 use App\Services\Company\CompanyServiceImpl;
+use App\Services\CrawlData\CrawlService;
+use App\Services\CrawlData\CrawlServiceImpl;
 use App\Services\CV\CVService;
 use App\Services\CV\CVServiceImpl;
 use App\Services\CVDetail\CVDetailService;
@@ -59,5 +61,6 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->bind(NewsService::class, NewsServiceImpl::class);
         $this->app->bind(ProcessService::class, ProcessServiceImpl::class);
         $this->app->bind(InterviewService::class, InterviewServiceImpl::class);
+        $this->app->bind(CrawlService::class, CrawlServiceImpl::class);
     }
 }

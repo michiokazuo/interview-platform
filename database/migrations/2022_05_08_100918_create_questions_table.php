@@ -15,9 +15,10 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('content');
-            $table->string('topics')->nullable();
+            $table->longText('content');
+            $table->string('title')->nullable();
             $table->json('others')->nullable();
+            $table->integer('page_crawled')->default(1);
             $table->timestamps();
         });
     }
