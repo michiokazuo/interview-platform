@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Interview extends Model
 {  
@@ -56,5 +57,10 @@ class Interview extends Model
     public function news(): BelongsTo
     {
         return $this->belongsTo(RecruitmentNews::class);
+    }
+    
+    public function questions(): BelongsToMany
+    {
+        return $this->belongsToMany(Question::class, 'interview_has_questions', 'interview_id', 'question_id');
     }
 }

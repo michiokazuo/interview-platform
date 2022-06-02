@@ -10,8 +10,8 @@ use App\Services\Candidate\CandidateService;
 use App\Services\Company\CompanyService;
 use App\Services\Mail\MailService;
 use Exception;
-use Hash;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Hash;
 
 class UserServiceImpl implements UserService
 {
