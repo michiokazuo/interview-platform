@@ -21,13 +21,14 @@
         "@vue/cli-plugin-vuex": "~4.5.13",
         "@vue/cli-service": "~4.5.13",
         "@vue/eslint-config-airbnb": "^5.3.0",
-        "babel-eslint": "^10.0.3",
         "eslint": "6.8.0",
         "eslint-plugin-import": "^2.23.4",
-        "eslint-plugin-vue": "6.2.2",
         "sass": "~1.32",
         "sass-loader": "^10.1.0",
-        "vue-template-compiler": "^2.6.14"
+        "vue-template-compiler": "^2.6.14",
+        "@vue/compiler-sfc": "^3.0.0",
+        "babel-eslint": "^10.1.0",
+        "eslint-plugin-vue": "^7.0.0"
     },
     "dependencies": {
         "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
@@ -86,6 +87,21 @@
         "vue-tree-halower": "^1.8.3",
         "vue2-leaflet": "^2.7.1",
         "vuedraggable": "^2.24.3",
-        "vuex": "^3.6.2"
+        "vuex": "^3.6.2",
+        "@daily-co/daily-js": "^0.21.0"
+    },
+    "eslintConfig": {
+      "root": true,
+      "env": {
+        "node": true
+      },
+      "extends": [
+        "plugin:vue/vue3-essential",
+        "eslint:recommended"
+      ],
+      "parserOptions": {
+        "parser": "babel-eslint"
+      },
+      "rules": {}
     }
 }

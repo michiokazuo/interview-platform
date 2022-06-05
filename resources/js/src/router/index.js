@@ -21,6 +21,7 @@ import dashboard from './routes/interview-platform/dashboard'
 import pages from './routes/interview-platform/pages'
 import blog from './routes/interview-platform/blog'
 import project from './routes/interview-platform/project'
+import interview from './routes/interview-platform/interview'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,8 @@ const router = new VueRouter({
     ...formsTable,
     ...uiElements,
     ...others,
+
+    ...interview,
     ...auth,
     ...dashboard,
     ...pages,
