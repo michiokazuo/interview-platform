@@ -25,7 +25,7 @@
 
     <validation-observer
       ref="projectForm"
-      #default="{invalid}"
+      v-slot="{invalid}"
     >
       <!-- form -->
       <b-form
@@ -40,7 +40,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Title"
                 vid="title"
                 rules="required"
@@ -101,7 +101,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Description"
                 vid="description"
                 rules="required"

@@ -73,14 +73,16 @@
                 </b-badge>
               </b-link>
             </div>
-            <b-card-text class="blog-content-truncate">
-              {{ blog.content }}
+            <b-card-text class="blog-content-truncate text-truncate">
+              <div
+                v-html="blog.content"
+              />
             </b-card-text>
             <hr>
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center mr-1">
                 <b-link
-                  v-if="userOn && blog.user.id === userOne.id"
+                  v-if="userOn && blog.user.id === userOn.id"
                   :to="{ name: 'pages-blog-edit', params: { id: blog.id } }"
                   class="font-weight-bold mr-1"
                 >
@@ -94,7 +96,7 @@
                   </div>
                 </b-link>
                 <b-link
-                  v-if="userOn && blog.user.id === userOne.id"
+                  v-if="userOn && blog.user.id === userOn.id"
                   @click.prevent="getBlogDelete(blog.id)"
                 >
                   <div class="d-inline-flex align-items-center text-danger">

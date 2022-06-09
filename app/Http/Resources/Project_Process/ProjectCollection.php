@@ -19,7 +19,7 @@ class ProjectCollection extends ResourceCollection
             return [
                 'id' => $data->id,
                 'title' => $data->title,
-                'description' => substr($data->description ?? '', 0, 50) . "...",
+                'description' => $data->description,
                 'start_time' => $data->start_time,
                 'end_time' => $data->end_time,
                 'status' => $data->status,

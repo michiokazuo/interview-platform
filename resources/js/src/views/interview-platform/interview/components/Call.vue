@@ -8,13 +8,13 @@
     </template>
 
     <template v-else>
-      <div class="m-auto vh-100">
+      <div class="m-auto vh-100 text-center">
         <template v-if="error">
-          <p class="text-danger">
+          <p class="text-danger text-center font-weight-bold pt-5 h3">
             {{ error }}
           </p>
           <button
-            class="error-button "
+            class="error-button btn btn-secondary h3"
             @click="leaveAndCleanUp"
           >
             Refresh
@@ -52,6 +52,7 @@
                 :handle-screenshare-click="handleScreenshareClick"
                 :leave-call="leaveAndCleanUp"
                 :disable-screen-share="screen && !screen.local"
+                :interview="interview"
               />
 
               <div
@@ -96,7 +97,7 @@ export default {
     Loading,
     PermissionsErrorMsg,
   },
-  props: ['leaveCall', 'name', 'roomUrl'],
+  props: ['leaveCall', 'name', 'roomUrl', 'interview'],
   data() {
     return {
       callObject: null,
@@ -244,14 +245,4 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap");
-.error-button {
-  color: #fff;
-  background-color: #121a24;
-  border: none;
-  font-size: 12px;
-  border: 1px solid #2b3f56;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
 </style>

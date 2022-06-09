@@ -62,8 +62,10 @@
               <small class="text-muted">{{ new Date(project.start_time).toDateString() }}</small>
             </b-media-body>
           </b-media>
-          <b-card-text class="project-content-truncate mt-2">
-            {{ project.description }}
+          <b-card-text class="blog-content-truncate tex-truncate mt-2">
+            <div
+              v-html="project.description"
+            />
           </b-card-text>
           <hr>
           <div class="d-flex justify-content-between align-items-center">

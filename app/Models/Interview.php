@@ -31,7 +31,8 @@ class Interview extends Model
         'time',
         'candidate_id',
         'company_id',
-        'news_id'
+        'news_id',
+        'room',
     ];
 
     /**
@@ -42,6 +43,16 @@ class Interview extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'result' => 'array',
+        'record' => 'array',
     ];
     
     public function candidate(): BelongsTo

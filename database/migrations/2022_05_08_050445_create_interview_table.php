@@ -15,10 +15,11 @@ class CreateInterviewTable extends Migration
     {
         Schema::create('interview', function (Blueprint $table) {
             $table->id();
-            $table->string('record')->nullable();
+            $table->json('record')->nullable();
             $table->json('result')->nullable();
             $table->string('address')->nullable();
             $table->string('form')->nullable();
+            $table->string('room')->nullable();
             $table->datetime('time')->nullable();
             $table->unsignedBigInteger('candidate_id')->unsigned();
             $table->unsignedBigInteger('company_id')->unsigned()->nullable();

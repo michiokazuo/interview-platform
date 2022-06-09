@@ -60,4 +60,22 @@ interface InterviewService
      * @return mixed
      */
     public function findByNewsId(User $user, int $news_id);
+
+    /**
+     * @param User $user
+     * @param int $interview_id
+     * @param array $data
+     *
+     * @return mixed
+     */
+    public function createTest(User $user, int $interview_id, array $data);
+
+    /**
+     * @param User $user
+     * @param int $interview_id
+     * @param array $data
+     * 
+     * @return mixed
+     */
+    public function saveResultTest(User $user, int $interview_id, array $data);
 }

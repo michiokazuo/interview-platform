@@ -22,6 +22,7 @@ class QuestionAnswer extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'content',
         'question_id',
         'score',

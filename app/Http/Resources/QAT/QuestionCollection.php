@@ -1,25 +1,16 @@
 <?php
 
-namespace App\Http\Resources\Blog_Comment;
+namespace App\Http\Resources\QAT;
 
-use App\Models\InterviewBlog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Collection;
 
-class BlogCollection extends ResourceCollection
+class QuestionCollection extends ResourceCollection
 {
-    /**
-     * The resource that this resource collects.
-     *
-     * @var string
-     */
-    public $collects = InterviewBlog::class;
-
     /**
      * Transform the resource collection into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -28,10 +19,10 @@ class BlogCollection extends ResourceCollection
             return [
                 'id' => $data->id,
                 'title' => $data->title,
-                'topics' => $data->topics,
                 'content' => $data->content,
-                'user' => $data->user,
-                'comments' => $data->comments->count(),
+                'others' => $data->others,
+                'tags' => $data->tags,
+                'answers' => $data->answers,
                 'created_at' => $data->created_at,
                 'updated_at' => $data->updated_at,
             ];

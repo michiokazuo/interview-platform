@@ -53,7 +53,7 @@
               <b-media-body>
                 <small class="text-muted mr-50">by</small>
                 <small>
-                  <b-link class="text-body">{{ blog.user.name }}</b-link>
+                  <span class="text-primary cursor-pointer">{{ blog.user.name }}</span>
                 </small>
                 <span class="text-muted ml-75 mr-50">|</span>
                 <small class="text-muted">{{ new Date(blog.created_at).toDateString() }}</small>
@@ -74,8 +74,10 @@
               </b-badge>
             </b-link>
           </div>
-          <b-card-text class="blog-content-truncate">
-            {{ blog.content }}
+          <b-card-text class="blog-content-truncate text-truncate">
+            <div
+              v-html="blog.content"
+            />
           </b-card-text>
           <hr>
           <div class="d-flex justify-content-between align-items-center">

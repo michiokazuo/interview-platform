@@ -71,7 +71,7 @@
               toggle-class="text-decoration-none"
               no-caret
             >
-              <template v-slot:button-content>
+              <template #button-content>
                 <feather-icon
                   icon="MoreVerticalIcon"
                   size="16"
@@ -88,6 +88,7 @@
                 <span>View</span>
               </b-dropdown-item>
               <b-dropdown-item
+                v-if="!(props.row.result && props.row.result.company)"
                 @click.prevent="setCandidateSchedule(props.row.id)"
               >
                 <feather-icon
@@ -97,6 +98,7 @@
                 <span>Edit schedule</span>
               </b-dropdown-item>
               <b-dropdown-item
+                v-if="!(props.row.result && props.row.result.company)"
                 @click.prevent="setCandidateDelete(props.row.id)"
               >
                 <feather-icon
@@ -104,6 +106,29 @@
                   class="mr-50"
                 />
                 <span>Delete</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="!props.row.result"
+                :to="{ name: 'interview-meeting-create-test', params: { id: props.row.id } }"
+                class="font-weight-bold"
+              >
+                <feather-icon
+                  icon="EyeIcon"
+                  class="mr-50"
+                />
+                <span v-if="!props.row.questions">Create Test</span>
+                <span v-else>Edit Test</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="props.row.questions && props.row.result"
+                :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
+                class="font-weight-bold"
+              >
+                <feather-icon
+                  icon="BookIcon"
+                  class="mr-50"
+                />
+                <span>View Result</span>
               </b-dropdown-item>
             </b-dropdown>
           </span>
@@ -205,12 +230,11 @@
           <b-form-group>
             <label for="address">Address</label>
             <validation-provider
-              #default="{ errors }"
+              v-slot="{ errors }"
               name="address"
               vid="address"
               rules="required"
             >
-
               <b-form-input
                 id="comment-address"
                 v-model="candidateSchedule.address"
@@ -226,7 +250,7 @@
             class="mb-2"
           >
             <validation-provider
-              #default="{ errors }"
+              v-slot="{ errors }"
               name="start_time"
               vid="start_time"
               rules="required"
@@ -248,7 +272,7 @@
             label-for="form"
           >
             <validation-provider
-              #default="{ errors }"
+              v-slot="{ errors }"
               name="form"
               vid="form"
               rules="required"
@@ -264,6 +288,41 @@
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
           </b-form-group>
+
+          <b-form-group v-if="candidateSchedule.form == 'Online' && candidateSchedule.room">
+            <b-link
+              :to="{ name: 'interview-meeting', params:{id: candidateSchedule.id} }"
+              class="font-weight-bold mb-2"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                variant="success"
+                class="mb-2"
+              >
+                Meeting
+              </b-button>
+            </b-link>
+            <b-form-input
+              v-model="candidateSchedule.room"
+              readonly
+            />
+          </b-form-group>
+          <b-form-group v-if="candidateSchedule.form == 'Online' && !candidateSchedule.room">
+            <b-alert
+              variant="warning"
+              show
+            >
+              <h4 class="alert-heading">
+                Note
+              </h4>
+              <div class="alert-body">
+                <p class="p-0 m-0">
+                  Please save to create room for this interview
+                </p>
+                <span>If failed, please try again!!! (Because full of room already)</span>
+              </div>
+            </b-alert>
+          </b-form-group>
         </b-form>
       </validation-observer>
     </b-modal>
@@ -273,7 +332,7 @@
 <script>
 import {
   BCard, BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect,
-  BDropdown, BDropdownItem, BCardText, VBModal, BForm,
+  BDropdown, BDropdownItem, BCardText, VBModal, BForm, BAlert, BLink, BButton,
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -281,6 +340,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, email, password } from '@validations'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import Ripple from 'vue-ripple-directive'
 import store from '@/store/index'
 import interview from '@/store/api/Interview'
 import utils from '@/store/utils'
@@ -288,6 +348,7 @@ import CandidateInfo from './CandidateInfo.vue'
 
 export default {
   components: {
+    BAlert,
     BCard,
     VueGoodTable,
     BAvatar,
@@ -305,9 +366,12 @@ export default {
     ValidationObserver,
     flatPickr,
     vSelect,
+    BLink,
+    BButton,
   },
   directives: {
     'b-modal': VBModal,
+    Ripple,
   },
   props: {
     id: {
@@ -384,6 +448,8 @@ export default {
         Completed: 'light-success',
         'Canceled schedule': 'light-danger',
         Created: 'light-warning',
+        'Have test': 'light-dark',
+        'Done test': 'light-info',
       }
 
       return status => statusColor[status]

@@ -28,10 +28,15 @@ class QuestionTag extends Model
         'page_crawled'
     ];
 
-    public function questions(): BelongsToMany
-    {
-        return $this->belongsToMany(Question::class);
-    }
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * The attributes that should be cast.
@@ -41,4 +46,9 @@ class QuestionTag extends Model
     protected $casts = [
         'others' => 'array'
     ];
+
+    public function questions(): BelongsToMany
+    {
+        return $this->belongsToMany(Question::class, 'question_tags', 'tag_id', 'question_id');
+    }
 }

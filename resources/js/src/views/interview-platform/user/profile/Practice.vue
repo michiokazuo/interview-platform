@@ -6,6 +6,7 @@
       >
         <b-button
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          v-b-modal.modal-practice
           variant="primary"
           class="mb-2"
         >
@@ -20,7 +21,7 @@
       :rtl="direction"
       :pagination-options="{
         enabled: true,
-        perPage:pageLength
+        perPage: pageLength
       }"
     >
       <template
@@ -30,22 +31,51 @@
 
         <!-- Column: Name -->
         <div
-          v-if="props.column.field === 'fullName'"
-          class="text-nowrap"
+          v-if="props.column.field === 'record'"
+          class="text-nowrap text-center"
         >
-          <b-avatar
-            :src="props.row.avatar"
-            class="mx-1"
-          />
-          <span class="text-nowrap">{{ props.row.fullName }}</span>
+          <b-badge
+            v-if="props.row.record"
+            variant="primary"
+          >
+            <b-link
+              :to="props.row.record.candidate"
+              target="_blank"
+            >
+              View record
+            </b-link>
+          </b-badge>
+          <b-badge
+            v-else
+            variant="secondary"
+          >
+            No record
+          </b-badge>
         </div>
 
-        <!-- Column: Status -->
-        <span v-else-if="props.column.field === 'status'">
-          <b-badge :variant="statusVariant(props.row.status)">
-            {{ props.row.status }}
+        <div
+          v-else-if="props.column.field === 'result'"
+          class="text-nowrap text-center"
+        >
+          <b-link
+            v-if="props.row.questions && props.row.result && props.row.result.candidate"
+            :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
+            class="font-weight-bold"
+          >
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="success"
+            >
+              View result
+            </b-button>
+          </b-link>
+          <b-badge
+            v-else
+            variant="secondary"
+          >
+            No result
           </b-badge>
-        </span>
+        </div>
 
         <!-- Column: Common -->
         <span v-else>
@@ -101,32 +131,102 @@
         </div>
       </template>
     </vue-good-table>
+
+    <b-modal
+      id="modal-practice"
+      cancel-variant="outline-secondary"
+      ok-title="Accept"
+      cancel-title="Close"
+      centered
+      title="Create practice"
+      @ok="createPractice"
+    >
+
+      <b-form>
+        <b-form-group>
+          <b-alert
+            variant="warning"
+            :show="!create.meeting && !create.questions"
+          >
+            <h4 class="alert-heading">
+              Note
+            </h4>
+            <div class="alert-body">
+              <span>Please select one or more condition</span>
+            </div>
+          </b-alert>
+        </b-form-group>
+        <b-form-group>
+          <b-form-checkbox
+            v-model="create.meeting"
+          >
+            Have meeting
+          </b-form-checkbox>
+        </b-form-group>
+        <b-form-group>
+          <b-form-checkbox
+            v-model="create.questions"
+          >
+            Have questions
+          </b-form-checkbox>
+        </b-form-group>
+        <b-form-group v-if="create.questions">
+          <v-select
+            v-model="create.tags"
+            multiple
+            label="name"
+            :options="tags"
+            placeholder="Tags"
+          />
+        </b-form-group>
+        <b-form-group v-if="create.questions">
+          <label for="demo-sb">Number of questions</label>
+          <b-form-spinbutton
+            id="demo-sb"
+            v-model="create.number"
+            min="1"
+            max="100"
+            placeholder="Number questions"
+          />
+        </b-form-group>
+      </b-form>
+    </b-modal>
   </b-card>
 </template>
 
 <script>
 import {
-  BCard, BAvatar, BBadge, BPagination, BFormSelect,
-  BDropdown, BDropdownItem, BLink, BButton,
+  BCard, BBadge, BPagination, BFormSelect, BLink, BButton, BModal, BFormGroup,
+  BFormCheckbox, VBModal, BForm, BAlert, BFormSpinbutton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { VueGoodTable } from 'vue-good-table'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import vSelect from 'vue-select'
 import store from '@/store/index'
+import interview from '@/store/api/Interview'
+import qat from '@/store/api/QAT'
+import utils from '@/store/utils'
 
 export default {
   components: {
     BCard,
     VueGoodTable,
-    BAvatar,
     BBadge,
     BPagination,
     BLink,
     BButton,
     BFormSelect,
-    BDropdown,
-    BDropdownItem,
+    BModal,
+    BFormGroup,
+    BFormCheckbox,
+    BForm,
+    BAlert,
+    vSelect,
+    BFormSpinbutton,
   },
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   props: {
@@ -137,6 +237,14 @@ export default {
   },
   data() {
     return {
+      tags: [],
+      userData: JSON.parse(localStorage.getItem('userData')),
+      create: {
+        meeting: false,
+        questions: false,
+        tags: [],
+        number: 20,
+      },
       pageLength: 10,
       dir: false,
       columns: [
@@ -146,14 +254,6 @@ export default {
           filterOptions: {
             enabled: true,
             placeholder: 'Search Start',
-          },
-        },
-        {
-          label: 'End time',
-          field: 'end',
-          filterOptions: {
-            enabled: true,
-            placeholder: 'Search End',
           },
         },
         {
@@ -169,19 +269,6 @@ export default {
     }
   },
   computed: {
-    statusVariant() {
-      const statusColor = {
-        /* eslint-disable key-spacing */
-        Current      : 'light-primary',
-        Professional : 'light-success',
-        Rejected     : 'light-danger',
-        Resigned     : 'light-warning',
-        Applied      : 'light-info',
-        /* eslint-enable key-spacing */
-      }
-
-      return status => statusColor[status]
-    },
     direction() {
       if (store.state.appConfig.isRTL) {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -198,7 +285,67 @@ export default {
       this.rows = [...this.practices]
     },
   },
+  created() {
+    this.getTags()
+  },
   methods: {
+    getTags() {
+      qat.getTags().then(resp => {
+        const rs = resp.data
+        this.tags = rs.data
+        utils.updateUser(rs.user)
+        this.userData = rs.user
+      })
+    },
+    createPractice(bvModalEvent) {
+      bvModalEvent.preventDefault()
+      const { create } = this
+      if (create.meeting || create.questions) {
+        interview.store({
+          time: new Date(),
+          candidate_id: this.userData.candidate_id,
+          form: 'Online',
+          interview_test: create.questions,
+          interview_meeting: create.meeting,
+          interview_questions_tags: create.tags.map(s => s.id),
+          number_of_questions: create.number ?? 20,
+        }).then(resp => {
+          const rs = resp.data
+          utils.updateUser(rs.user)
+          this.userData = rs.user
+          this.rows.push(rs.data)
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Create practice success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-practice')
+          })
+          this.create = {}
+          this.$router.push({ name: 'interview-meeting-practice-test', params: { id: rs.data.id } })
+        }).catch(err => {
+          console.log(err)
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-practice')
+          })
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: 'Something error. Please try again!!!',
+            },
+          })
+        })
+      }
+    },
   },
 }
 </script>

@@ -37,7 +37,7 @@
         :handle-audio-click="handleAudioClick"
         :handle-screenshare-click="handleScreenshareClick"
         :participant="participant"
-        :leave-call="leaveCall"
+        :leave-call="leaveCallCustom"
         :disable-screen-share="disableScreenShare"
         :recording="recordScreenAndAudio"
         :pause-recording="pauseRecording"
@@ -51,6 +51,7 @@
 <script>
 import Controls from './Controls.vue'
 import NoVideoTile from './NoVideoTile.vue'
+import interview from '@/store/api/Interview'
 
 export default {
   name: 'VideoTile',
@@ -67,6 +68,7 @@ export default {
     'disableScreenShare',
     'first',
     'hasScreen',
+    'interview',
   ],
   data() {
     return {
@@ -75,7 +77,19 @@ export default {
       username: 'Guest',
       recorder: null,
       statusRecord: 'paused',
+      blobRecorder: null,
+      chunks: [],
     }
+  },
+  watch: {
+    blobRecorder(val) {
+      if (val) {
+        window.onbeforeunload = () => {
+          this.saveRecording()
+          return 'Are you sure you want to leave?'
+        }
+      }
+    },
   },
   mounted() {
     this.username = this.participant?.user_name
@@ -158,20 +172,19 @@ export default {
       const stream = new MediaStream([...screenStream.getTracks(), ...audioStream.getTracks()])
 
       this.recorder = new MediaRecorder(stream)
-      const chunks = []
 
       this.recorder.ondataavailable = event => {
         if (event.data.size > 0) {
-          chunks.push(event.data)
+          this.chunks.push(event.data)
         }
       }
 
       this.recorder.onpause = () => {
-        const blob = new Blob(chunks, {
+        this.blobRecorder = new Blob(this.chunks, {
           type: 'video/webm',
         })
 
-        const blobUrl = URL.createObjectURL(blob)
+        const blobUrl = URL.createObjectURL(this.blobRecorder)
         console.log('blobUrl', blobUrl)
       }
 
@@ -180,6 +193,33 @@ export default {
       }
 
       this.recorder.start(200)
+    },
+    saveRecording() {
+      if (this.chunks) {
+        this.blobRecorder = new Blob(this.chunks, {
+          type: 'video/webm',
+        })
+        console.log(this.interview)
+        const update = {
+          candidate_id: this.interview.candidate.general.id,
+          record: this.blobRecorder,
+        }
+        const formData = new FormData()
+        /* eslint guard-for-in: "error" */
+        for (const key in update) {
+          formData.append(key, update[key])
+        }
+        interview.update(this.interview.id, formData)
+          .then(rs => {
+            window.onbeforeunload = null
+            console.log(rs)
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    leaveCallCustom() {
+      this.leaveCall()
+      this.saveRecording()
     },
   },
 }

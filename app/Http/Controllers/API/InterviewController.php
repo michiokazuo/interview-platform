@@ -185,4 +185,44 @@ class InterviewController extends Controller
 
         return $this->failedResult('interviews display failed!!!', 500);
     }
+
+    /**
+     * create test interview.
+     *
+     * @param StoreInterviewRequest $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function createTest(StoreInterviewRequest $request, int $id): JsonResponse
+    {
+        $user = $this->user();
+        $interview = $this->interviewService->createTest($user, $id, $request->all());
+
+        if ($interview) {
+            return $this->successfulResult('interviews updated successfully!!!', $user,
+                new InterviewResource($interview));
+        }
+
+        return $this->failedResult('interviews updated failed!!!', 500);
+    }
+
+    /**
+     * save test result.
+     *
+     * @param StoreInterviewRequest $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function saveTestRS(StoreInterviewRequest $request, int $id): JsonResponse
+    {
+        $user = $this->user();
+        $interview = $this->interviewService->saveResultTest($user, $id, $request->all());
+
+        if ($interview) {
+            return $this->successfulResult('interviews updated successfully!!!', $user,
+                new InterviewResource($interview));
+        }
+
+        return $this->failedResult('interviews updated failed!!!', 500);
+    }
 }

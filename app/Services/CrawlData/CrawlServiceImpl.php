@@ -59,7 +59,7 @@ class CrawlServiceImpl implements CrawlService
                         $question = [
                             'id' => $item['question_id'],
                             'title' => $item['title'],
-                            'others' => json_encode([
+                            'others' => ([
                                 'is_answered' => $item['is_answered'],
                                 'score' => $item['score'],
                             ]),

@@ -64,7 +64,7 @@
               toggle-class="text-decoration-none"
               no-caret
             >
-              <template v-slot:button-content>
+              <template #button-content>
                 <feather-icon
                   icon="MoreVerticalIcon"
                   size="16"
@@ -79,9 +79,10 @@
                   icon="EyeIcon"
                   class="mr-50"
                 />
-                <span>View</span>
+                <span>View News</span>
               </b-dropdown-item>
               <b-dropdown-item
+                v-if="!(props.row.result && props.row.result.company)"
                 @click.prevent="setCandidateSchedule(props.row.id)"
               >
                 <feather-icon
@@ -91,6 +92,7 @@
                 <span>View schedule</span>
               </b-dropdown-item>
               <b-dropdown-item
+                v-if="!(props.row.result && props.row.result.company)"
                 @click.prevent="setApplicationDelete(props.row.id)"
               >
                 <feather-icon
@@ -98,6 +100,28 @@
                   class="mr-50"
                 />
                 <span>Delete</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="props.row.questions && props.row.result && props.row.result.candidate"
+                :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
+                class="font-weight-bold"
+              >
+                <feather-icon
+                  icon="BookIcon"
+                  class="mr-50"
+                />
+                <span>View Result Test</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="props.row.questions && ((props.row.result && !props.row.result.candidate) || !props.row.result)"
+                :to="{ name: 'interview-meeting-practice-test', params: { id: props.row.id } }"
+                class="font-weight-bold"
+              >
+                <feather-icon
+                  icon="BookIcon"
+                  class="mr-50"
+                />
+                <span>Test</span>
               </b-dropdown-item>
             </b-dropdown>
           </span>
@@ -190,7 +214,7 @@
           <b-form-group>
             <label for="address">Address</label>
             <validation-provider
-              #default="{ errors }"
+              v-slot="{ errors }"
               name="address"
               vid="address"
               rules="required"
@@ -229,7 +253,7 @@
             label-for="form"
           >
             <validation-provider
-              #default="{ errors }"
+              v-slot="{ errors }"
               name="form"
               vid="form"
               rules=""
@@ -247,6 +271,24 @@
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
           </b-form-group>
+          <b-form-group v-if="candidateSchedule.form == 'Online' && candidateSchedule.room">
+            <b-link
+              :to="{ name: 'interview-meeting', params:{id: candidateSchedule.id} }"
+              class="font-weight-bold mb-2"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                variant="success"
+                class="mb-2"
+              >
+                Meeting
+              </b-button>
+            </b-link>
+            <b-form-input
+              v-model="candidateSchedule.room"
+              readonly
+            />
+          </b-form-group>
         </b-form>
       </validation-observer>
     </b-modal>
@@ -256,7 +298,7 @@
 <script>
 import {
   BCard, BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect,
-  BDropdown, BDropdownItem, BForm, BCardText,
+  BDropdown, BDropdownItem, BForm, BCardText, BLink, BButton,
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -286,6 +328,8 @@ export default {
     ValidationObserver,
     flatPickr,
     vSelect,
+    BLink,
+    BButton,
   },
   props: {
     applications: {
@@ -358,6 +402,8 @@ export default {
         Completed: 'light-success',
         'Canceled schedule': 'light-danger',
         Created: 'light-warning',
+        'Have test': 'light-dark',
+        'Done test': 'light-info',
       }
 
       return status => statusColor[status]

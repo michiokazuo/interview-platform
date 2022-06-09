@@ -2,12 +2,11 @@
 
 namespace App\Http\Resources\Interview;
 
+use App\Http\Resources\QAT\QuestionCollection;
 use App\Http\Resources\User\CandidateResource;
 use App\Http\Resources\User\UserResource;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JsonSerializable;
 
 class InterviewResource extends JsonResource
 {
@@ -19,10 +18,15 @@ class InterviewResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $status = null;
         if ($this->time) {
             $status = 'Scheduled';
-            if ($this->result) {
+            if ($this->questions && $this->questions->count() > 0) {
+                $status = 'Have test';
+                if ($this->result && isset($this->result['candidate'])) {
+                    $status = 'Done test';
+                }
+            }
+            if (($this->result && isset($this->result['company'])) || $this->record) {
                 $status = 'Completed';
             }
         } else if (date('Y-m-d H:i:s', strtotime($this->created_at)) !== date('Y-m-d H:i:s', strtotime($this->updated_at))) {
@@ -30,21 +34,24 @@ class InterviewResource extends JsonResource
         } else {
             $status = 'Created';
         }
+
         return [
             'id' => $this->id,
             'record' => $this->record,
             'result' => $this->result,
             'address' => $this->address,
             'form' => $this->form,
+            'room' => $this->room,
             'time' => $this->time ? date('Y-m-d H:i:s', strtotime($this->time)) : null,
             'candidate' => new CandidateResource($this->candidate),
-            'company' => [
+            'company' => $this->company ? [
                 'id' => $this->company->id,
                 'general' => new UserResource($this->company->user),
-            ],
+            ] : null,
             'news' => $this->news,
             'status' => $status,
             'end' => $this->updated_at ? date('Y-m-d H:i:s', strtotime($this->updated_at)) : null,
+            'questions' => new QuestionCollection($this->questions),
         ];
     }
 }

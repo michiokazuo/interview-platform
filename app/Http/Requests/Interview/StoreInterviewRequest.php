@@ -30,16 +30,21 @@ class StoreInterviewRequest extends FormRequest
         if (request('news_id')) {
             $urlRule = 'required|numeric';
         }
-        
         return [
             'candidate_id' => 'required|numeric',
             'company_id' => $urlRule,
             'news_id' => $urlRule,
-            'record' => 'nullable|string',
+            'record' => 'nullable',
             'result' => 'nullable|array',
             'address' => 'nullable|string',
-            'form' => 'nullable|string',
-            'time' => 'nullable|date'
+            'form' => 'nullable|in:Online,Offline',
+            'time' => 'nullable|date',
+            'room' => 'nullable|string',
+            'interview_meeting' => 'nullable|boolean',
+            'interview_test' => 'nullable|boolean',
+            'interview_questions' => 'nullable|array',
+            'interview_questions_tags' => 'nullable|array',
+            'number_of_questions' => 'nullable|numeric',
         ];
     }
 

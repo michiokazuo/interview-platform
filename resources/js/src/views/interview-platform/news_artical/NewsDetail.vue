@@ -72,8 +72,11 @@
                   />
                   <span class="font-weight-bold">Address</span>
                 </th>
-                <td class="pb-50">
-                  {{ newsDetail.user.address.substr(0, 50) + "..." }}
+                <td
+                  v-b-tooltip.hover.top="newsDetail.user.address"
+                  class="pb-50 text-truncate"
+                >
+                  {{ newsDetail.user.address }}
                 </td>
               </tr>
               <tr>
@@ -172,7 +175,7 @@
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <div
-                  v-if="userData"
+                  v-if="userData && userData.candidate_id"
                   class="d-flex align-items-center mr-1"
                 >
                   <b-link class="mr-50">
@@ -187,7 +190,8 @@
                       v-if="interviewOwner"
                       class="text-body"
                     >
-                      You have already applied for this job
+                      <span v-if="interviewOwner.result && interviewOwner.result.company">You have already done interview this job</span>
+                      <span v-else>You have already applied for this job</span>
                     </div>
                     <div
                       v-else
@@ -199,15 +203,23 @@
 
               <!-- dropdown -->
               <div class="blog-detail-share">
-                <b-link v-if="userData">
+                <b-link v-if="userData && userData.candidate_id">
                   <b-button
-                    v-if="interviewOwner"
+                    v-if="interviewOwner && interviewOwner.result && interviewOwner.result.company"
                     v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                    v-b-modal.modal-danger
-                    variant="outline-danger"
+                    variant="outline-primary"
                   >
-                    Cancel Apply
+                    Done Interview
                   </b-button>
+                  <span v-else-if="interviewOwner">
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      v-b-modal.modal-danger
+                      variant="outline-danger"
+                    >
+                      Cancel Apply
+                    </b-button>
+                  </span>
                   <span v-else>
                     <b-button
                       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -461,6 +473,7 @@ import {
   BCardBody,
   BButton,
   BModal,
+  VBTooltip,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { kFormatter } from '@core/utils/filter'
@@ -486,10 +499,10 @@ export default {
     BButton,
     BModal,
 
-    ToastificationContent,
     ContentWithSidebar,
   },
   directives: {
+    'b-tooltip': VBTooltip,
     Ripple,
   },
   data() {

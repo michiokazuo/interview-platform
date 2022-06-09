@@ -2,7 +2,9 @@
   <div class="wrapper">
     <div class="permissions-card">
       <h2>Camera or mic blocked</h2>
-      <button @click="tryAgain">Try again</button>
+      <button @click="tryAgain">
+        Try again
+      </button>
       <a
         href="https://help.daily.co/en/articles/2528184-unblock-camera-mic-access-on-a-computer"
         rel="noreferrer noopener"
@@ -16,14 +18,14 @@
 
 <script>
 export default {
-  name: "PermissionsErrorMsg",
-  props: ["reset"],
+  name: 'PermissionsErrorMsg',
+  props: ['reset'],
   methods: {
     tryAgain() {
-      this.reset();
+      this.reset()
     },
   },
-};
+}
 </script>
 
 <style scoped>

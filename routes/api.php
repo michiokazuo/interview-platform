@@ -5,6 +5,7 @@ use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
 use App\Http\Controllers\API\InterviewController;
 use App\Http\Controllers\API\ProjectController;
+use App\Http\Controllers\API\QATController;
 use App\Http\Controllers\API\RecruitmentNewsController;
 use App\Http\Controllers\API\RecruitmentProcessController;
 use App\Http\Controllers\AuthController;
@@ -27,7 +28,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => 'api'], function () {
-
+    
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'userProfile']);
@@ -58,10 +59,16 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/news-by-user/{id}', [RecruitmentNewsController::class, 'showAllByUser']);
     Route::get('/news-by-project/{id}', [RecruitmentNewsController::class, 'showAllByProject']);
 
-    Route::apiResource('interview', InterviewController::class)->except(['index']);
+    Route::apiResource('interview', InterviewController::class)->except(['index', 'update']);
+    Route::post('/interview-update/{id}', [InterviewController::class, 'update']);
     Route::get('/interviews-by-user/{id}', [InterviewController::class, 'showAllByUser']);
     Route::get('/interview-find-news/{id}', [InterviewController::class, 'findByNewsId']);
     Route::get('/interviews-by-news/{id}', [InterviewController::class, 'showAllByNews']);
     Route::get('/interview-edit/{id}', [InterviewController::class, 'showToEdit']);
+    Route::post('/create-test/{id}', [InterviewController::class, 'createTest']);
+    Route::post('/save-test/{id}', [InterviewController::class, 'saveTestRS']);
+    
+    Route::get('/qat/tags', [QATController::class, 'showTags']);
+    Route::post('/qat/questions', [QATController::class, 'showQuestions']);
 });
 

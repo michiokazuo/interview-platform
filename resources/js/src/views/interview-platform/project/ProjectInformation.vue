@@ -4,7 +4,7 @@
     <b-col md="6">
       <b-row
         v-if="processList && processList.length"
-        class="blog-list-wrapper"
+        class="blog-list-wrapper match-height"
       >
         <b-col cols="12">
           <b-link
@@ -64,8 +64,10 @@
                   <small class="text-muted">{{ new Date(process.start_time).toDateString() }}</small>
                 </b-media-body>
               </b-media>
-              <b-card-text class="blog-content-truncate mt-2">
-                {{ process.description }}
+              <b-card-text class="blog-content-truncate tex-truncate mt-2">
+                <div
+                  v-html="process.description"
+                />
               </b-card-text>
               <hr>
               <div class="d-flex justify-content-between align-items-center">
@@ -137,7 +139,7 @@
     <b-col md="6">
       <b-row
         v-if="newsList && newsList.length"
-        class="blog-list-wrapper"
+        class="blog-list-wrapper match-height"
       >
         <b-col cols="12">
           <b-link
@@ -208,8 +210,10 @@
                   </b-badge>
                 </b-link>
               </div>
-              <b-card-text class="blog-content-truncate">
-                {{ news.description }}
+              <b-card-text class="blog-content-truncate tex-truncate">
+                <div
+                  v-html="news.description"
+                />
               </b-card-text>
               <hr>
               <div class="d-flex justify-content-between align-items-center">

@@ -39,7 +39,7 @@
               <b-media-body>
                 <small class="text-muted mr-50">by</small>
                 <small>
-                  <b-link class="text-body">{{ news.user.name }}</b-link>
+                  <span class="text-primary cursor-pointer">{{ news.user.name }}</span>
                 </small>
                 <span class="text-muted ml-75 mr-50">|</span>
                 <small class="text-muted">{{ new Date(news.start_time).toDateString() }}</small>
@@ -57,8 +57,10 @@
               </b-badge>
             </b-link>
           </div>
-          <b-card-text class="news-content-truncate">
-            {{ news.description }}
+          <b-card-text class="blog-content-truncate tex-truncate">
+            <div
+              v-html="news.description"
+            />
           </b-card-text>
           <hr>
           <div class="d-flex justify-content-between align-items-center">

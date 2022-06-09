@@ -69,8 +69,11 @@
                 />
                 <span class="font-weight-bold">Address</span>
               </th>
-              <td class="pb-50">
-                {{ userData.address.substr(0, 50) + "..." }}
+              <td
+                v-b-tooltip.hover.top="userData.address"
+                class="pb-50 text-truncate"
+              >
+                {{ userData.address }}
               </td>
             </tr>
             <tr>
@@ -170,8 +173,10 @@
                   </b-badge>
                 </b-link>
               </div>
-              <b-card-text class="news-content-truncate">
-                {{ news.description }}
+              <b-card-text class="blog-content-truncate tex-truncate">
+                <div
+                  v-html="news.description"
+                />
               </b-card-text>
               <hr>
               <div class="d-flex justify-content-between align-items-center">
@@ -270,6 +275,7 @@ import {
   BBadge,
   BPaginationNav,
   BButton,
+  VBTooltip,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
@@ -294,6 +300,7 @@ export default {
     BButton,
   },
   directives: {
+    'b-tooltip': VBTooltip,
     Ripple,
   },
   data() {
