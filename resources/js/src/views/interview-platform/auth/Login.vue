@@ -287,4 +287,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@core/scss/vue/pages/page-auth.scss';
+@import '~@core/scss/vue/libs/vue-sweetalert.scss';
 </style>
