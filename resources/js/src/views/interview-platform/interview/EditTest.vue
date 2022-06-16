@@ -441,14 +441,15 @@ export default {
           this.interview = rs.data
           this.currentPage = 1
           this.rows = Math.ceil(this.interview.questions?.length / this.perPage)
-          this.questions = this.interview.questions
+          this.questions = this.interview.questions ?? []
           this.questionsShow = this.interview.questions?.slice(
             (this.currentPage - 1) * this.perPage,
             this.currentPage * this.perPage,
           )
           this.idQSelected = this.interview.questions?.map(
             item => item.id,
-          )
+          ) ?? []
+          console.log(this.idQSelected)
           this.userOn = rs.user
           utils.updateUser(rs.user)
           this.$ability.update([

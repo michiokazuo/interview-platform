@@ -31,8 +31,20 @@ class InterviewResource extends JsonResource
             }
         } else if (date('Y-m-d H:i:s', strtotime($this->created_at)) !== date('Y-m-d H:i:s', strtotime($this->updated_at))) {
             $status = 'Canceled schedule';
+            if ($this->questions && $this->questions->count() > 0) {
+                $status = 'Have test';
+                if ($this->result && isset($this->result['candidate'])) {
+                    $status = 'Done test';
+                }
+            }
         } else {
             $status = 'Created';
+            if ($this->questions && $this->questions->count() > 0) {
+                $status = 'Have test';
+                if ($this->result && isset($this->result['candidate'])) {
+                    $status = 'Done test';
+                }
+            }
         }
 
         return [
@@ -51,7 +63,7 @@ class InterviewResource extends JsonResource
             'news' => $this->news,
             'status' => $status,
             'end' => $this->updated_at ? date('Y-m-d H:i:s', strtotime($this->updated_at)) : null,
-            'questions' => new QuestionCollection($this->questions),
+            'questions' => $this->questions->count() ? new QuestionCollection($this->questions) : null,
         ];
     }
 }

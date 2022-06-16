@@ -203,7 +203,7 @@
 
               <!-- dropdown -->
               <div class="blog-detail-share">
-                <b-link v-if="userData && userData.candidate_id">
+                <div v-if="userData && userData.candidate_id">
                   <b-button
                     v-if="interviewOwner && interviewOwner.result && interviewOwner.result.company"
                     v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -217,7 +217,7 @@
                       v-b-modal.modal-danger
                       variant="outline-danger"
                     >
-                      Cancel Apply
+                      Cancel Application
                     </b-button>
                   </span>
                   <span v-else>
@@ -229,7 +229,7 @@
                       Apply Now
                     </b-button>
                   </span>
-                </b-link>
+                </div>
               </div>
             <!--/ dropdown -->
             </div>
