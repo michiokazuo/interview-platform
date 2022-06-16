@@ -50,7 +50,7 @@
           <!-- form -->
           <validation-observer
             ref="loginForm"
-            #default="{invalid}"
+            v-slot="{invalid}"
           >
             <b-form
               class="auth-login-form mt-2"
@@ -62,7 +62,7 @@
                 label-for="login-email"
               >
                 <validation-provider
-                  #default="{ errors }"
+                  v-slot="{ errors }"
                   name="Email"
                   vid="email"
                   rules="required|email"
@@ -87,7 +87,7 @@
                   </b-link>
                 </div>
                 <validation-provider
-                  #default="{ errors }"
+                  v-slot="{ errors }"
                   name="Password"
                   vid="password"
                   rules="required|password"
@@ -267,8 +267,15 @@ export default {
             })
           }).catch(error => {
             console.log(error)
-            this.$refs.loginForm.setErrors({
-              email: 'Email or password is incorrect',
+            this.$swal({
+              title: 'Something went wrong!',
+              icon: 'warning',
+              html: `<p>Username or password is incorrect.</p>
+                    Or If you are company user, please contact your company admin for the account activation.`,
+              customClass: {
+                confirmButton: 'btn btn-warning',
+              },
+              buttonsStyling: false,
             })
           })
         }

@@ -2,8 +2,6 @@
 
 namespace App\Services\Candidate;
 
-use App\Models\Candidate;
-
 interface CandidateService
 {
     /**

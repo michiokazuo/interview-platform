@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
@@ -70,5 +71,10 @@ Route::group(['middleware' => 'api'], function () {
     
     Route::get('/qat/tags', [QATController::class, 'showTags']);
     Route::post('/qat/questions', [QATController::class, 'showQuestions']);
+    
+    Route::get('/admin/all-user', [AdminController::class, 'index']);
+    Route::post('/admin/active-company/{id}', [AdminController::class, 'activeCompany']);
+    Route::delete('/admin/delete-user/{id}', [AdminController::class, 'destroy']);
+    Route::post('/admin/crawler', [AdminController::class, 'crawler']);
 });
 

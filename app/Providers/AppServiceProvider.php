@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Admin\AdminService;
+use App\Services\Admin\AdminServiceImpl;
 use App\Services\Blog\BlogService;
 use App\Services\Blog\BlogServiceImpl;
 use App\Services\Candidate\CandidateService;
@@ -30,6 +32,8 @@ use App\Services\RNews\NewsService;
 use App\Services\RNews\NewsServiceImpl;
 use App\Services\RProcess\ProcessService;
 use App\Services\RProcess\ProcessServiceImpl;
+use App\Services\SettingCrawler\SettingCrawlerService;
+use App\Services\SettingCrawler\SettingCrawlerServiceImpl;
 use App\Services\User\UserService;
 use App\Services\User\UserServiceImpl;
 use Illuminate\Support\ServiceProvider;
@@ -68,5 +72,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CrawlService::class, CrawlServiceImpl::class);
         $this->app->bind(DailyCoService::class, DailyCoServiceImpl::class);
         $this->app->bind(QATService::class, QATServiceImpl::class);
+        $this->app->bind(AdminService::class, AdminServiceImpl::class);
+        $this->app->bind(SettingCrawlerService::class, SettingCrawlerServiceImpl::class);
     }
 }

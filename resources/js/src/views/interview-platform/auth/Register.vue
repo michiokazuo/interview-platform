@@ -43,7 +43,7 @@
           <!-- form -->
           <validation-observer
             ref="registerForm"
-            #default="{invalid}"
+            v-slot="{invalid}"
           >
             <b-form
               class="auth-register-form mt-2"
@@ -62,7 +62,7 @@
                     label-for="register-username"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Name"
                       vid="name"
                       rules="required"
@@ -90,7 +90,7 @@
                     label-for="register-email"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Email"
                       vid="email"
                       rules="required|email"
@@ -118,7 +118,7 @@
                     label="Password"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Password"
                       vid="password"
                       rules="required|password"
@@ -159,7 +159,7 @@
                     label-for="register-phone"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="phone"
                       vid="phone"
                       rules="required|phone"
@@ -186,7 +186,7 @@
                     label-for="register-address"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Address"
                       vid="address"
                       rules="required"
@@ -213,7 +213,7 @@
                     label-for="register-role"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Role"
                       vid="role"
                       rules="required"
@@ -241,7 +241,7 @@
                     label-for="register-major"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Major"
                       vid="major"
                       rules="required"
@@ -269,7 +269,7 @@
                     label-for="register-url"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Url"
                       vid="url"
                       rules="|url"
@@ -296,7 +296,7 @@
                     label-for="register-introduction"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Introduction"
                       vid="introduction"
                       rules=""
@@ -324,7 +324,7 @@
                     label-for="register-avatar"
                   >
                     <validation-provider
-                      #default="{ errors }"
+                      v-slot="{ errors }"
                       name="Avatar"
                       vid="avatar"
                       rules="|image|size:5120"
@@ -518,33 +518,9 @@ export default {
 
           auth
             .register(formData)
-            .then(response => {
-              const resp = response.data
-              const userData = resp.user
-
-              useJwt.setToken(resp.data.accessToken)
-              utils.updateUser(userData)
-              this.$ability.update([
-                {
-                  action: 'manage',
-                  subject: 'all',
-                  // subject: userData.role,
-                },
-              ])
-
+            .then(() => {
               // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
-              this.$router.replace(getHomeRouteForLoggedInUser(userData.role)).then(() => {
-                this.$toast({
-                  component: ToastificationContent,
-                  position: 'top-right',
-                  props: {
-                    title: `Welcome ${userData.fullName || userData.username}`,
-                    icon: 'CoffeeIcon',
-                    variant: 'success',
-                    text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
-                  },
-                })
-              })
+              this.$router.push({ name: 'auth-login' })
             })
             .catch(error => {
               console.log(error)

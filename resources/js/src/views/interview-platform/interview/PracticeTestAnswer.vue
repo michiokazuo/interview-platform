@@ -407,7 +407,7 @@
 						this.result = this.interview?.result;
             this.review = this.result?.company?.review;
 						this.rows =
-							this.interview.questions?.length / this.perPage + 1;
+							Math.ceil(this.interview.questions?.length / this.perPage);
 						this.questions = this.interview.questions?.slice(
 							(this.currentPage - 1) * this.perPage,
 							this.currentPage * this.perPage

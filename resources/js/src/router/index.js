@@ -22,6 +22,7 @@ import pages from './routes/interview-platform/pages'
 import blog from './routes/interview-platform/blog'
 import project from './routes/interview-platform/project'
 import interview from './routes/interview-platform/interview'
+import admin from './routes/interview-platform/admin'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,7 @@ const router = new VueRouter({
     ...uiElements,
     ...others,
 
+    ...admin,
     ...interview,
     ...auth,
     ...dashboard,

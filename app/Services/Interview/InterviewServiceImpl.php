@@ -94,7 +94,7 @@ class InterviewServiceImpl implements InterviewService
                     }
                 }
 
-                if ($data['interview_test']) {
+                if (!empty($data['interview_test'])) {
                     $data['time'] = now();
                     $questions = $this->qatService->createRandom($user, $data);
                 }

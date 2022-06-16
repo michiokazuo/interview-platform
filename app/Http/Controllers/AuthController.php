@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\ForgotPasswordRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\LoginRequest;
+use App\Http\Requests\User\ResetPasswordRequest;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\User\UserResource;
@@ -36,10 +38,10 @@ class AuthController extends Controller
     /**
      * Login user and create token
      *
-     * @param ForgotPasswordRequest $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function login(ForgotPasswordRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
         $login = $request->only(['email', 'password']);
         $remember = $request->input('remember');
@@ -66,13 +68,7 @@ class AuthController extends Controller
         $user = $this->userService->register($dataUser);
 
         if ($user) {
-            $token = auth('api')->attempt([
-                'email' => $dataUser['email'],
-                'password' => $dataUser['password']
-            ]);
-            auth()->login(auth('api')->user());
-
-            return $this->successfulResult('Register successfully!!!', $this->user(), ["accessToken" => $token]);
+            return $this->successfulResultWithoutAuth('Register successfully!!!', $user);
         }
         return $this->failedResult('Failed register', 500);
     }
@@ -147,10 +143,10 @@ class AuthController extends Controller
     /**
      * Reset password.
      *
-     * @param ChangePasswordRequest $request
+     * @param ResetPasswordRequest $request
      * @return JsonResponse
      */
-    public function resetPassword(ChangePasswordRequest $request): JsonResponse
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $email = $request->input('email');
         $password = $request->input('password');

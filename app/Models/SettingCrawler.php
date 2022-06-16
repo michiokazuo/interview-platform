@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Company extends Model
+class SettingCrawler extends Model
 {
     use HasFactory;
 
@@ -15,7 +14,7 @@ class Company extends Model
      *
      * @var string
      */
-    protected $table = 'company';
+    protected $table = 'setting_crawler';
 
     /**
      * The attributes that are mass assignable.
@@ -23,8 +22,8 @@ class Company extends Model
      * @var array
      */
     protected $fillable = [
-        'url',
-        'is_active',
+        'key',
+        'value'
     ];
 
     /**
@@ -36,9 +35,4 @@ class Company extends Model
         'created_at',
         'updated_at',
     ];
-    
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'id', 'company_id');
-    }
 }

@@ -1,7 +1,7 @@
 <template>
   <!-- question-test -->
   <b-row
-    v-if="id && interview && !interview.result"
+    v-if="questionsSearch"
     class="blog-list-wrapper match-height"
   >
     <b-row class="w-100 m-0 justify-content-center">
@@ -22,16 +22,15 @@
         class="d-flex flex-md-row flex-column justify-content-between align-items-center"
       >
         <b-link
-          v-if="questions && questions.length"
           class="font-weight-bold"
         >
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            v-b-modal.modal-detail-selected
+            v-b-modal.modal-crawl
             variant="primary"
             class="mb-2"
           >
-            Edit selected questions
+            Crawl Data QAT
           </b-button>
         </b-link>
         <b-button
@@ -57,16 +56,10 @@
         >
           <b-card-body class="d-flex justify-content-between flex-column">
             <b-card-title>
-              <b-form-checkbox
-                class="d-flex align-items-center"
-                :checked="showSelected(question.id)"
-                @change="changeSelected(question.id)"
-              >
-                <div
-                  class="mail-message"
-                  v-html="question.title"
-                />
-              </b-form-checkbox>
+              <div
+                class="mail-message"
+                v-html="question.title"
+              />
               <div class="my-1 ml-2 py-25 h6">
                 <b-link
                   v-for="(tag,index) in question.tags"
@@ -124,33 +117,6 @@
           base-url="#"
         />
       </div>
-    </b-col>
-
-    <b-col
-      cols="12"
-      class="d-flex justify-content-between align-items-center"
-    >
-      <div class="d-flex align-items-center">
-        <b-link>
-          <div class="d-flex align-items-center text-primary mr-2">
-            <feather-icon
-              icon="MessageSquareIcon"
-              class="mr-50"
-            />
-            <span class="font-weight-bold">{{ questions ? questions.length : 0 }} Selected</span>
-          </div>
-        </b-link>
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          size="lg"
-          :disabled="!(questions && questions.length > 0)"
-          @click.prevent="saveTest"
-        >
-          Save test
-        </b-button>
-      </div>
-
     </b-col>
 
     <b-modal
@@ -229,79 +195,39 @@
     </b-modal>
 
     <b-modal
-      id="modal-detail-selected"
+      id="modal-crawl"
       cancel-variant="outline-secondary"
-      ok-title="OK"
+      ok-title="Accept"
       cancel-title="Close"
-      scrollable
-      size="xl"
-      title="Detail Selected"
+      centered
+      title="Crawl data question from StackOverflow"
+      @ok="crawlData"
     >
-      <b-row
-        v-if="id && interview && questions"
-        class="blog-list-wrapper bg-light pt-2 match-height"
-      >
-        <b-col
-          v-for="question in questionsShow"
-          :key="question.id"
-          md="6"
-        >
-          <b-card
-            tag="article"
-            no-body
-          >
-            <b-card-body class="d-flex justify-content-between flex-column">
-              <b-card-title>
-                <b-form-checkbox
-                  :checked="showSelected(question.id)"
-                  @change="changeSelected(question.id)"
-                >
-                  <div
-                    class="mail-message"
-                    v-html="question.title"
-                  />
-                </b-form-checkbox>
-                <div class="my-1 py-25 h6">
-                  <b-link
-                    v-for="(tag,index) in question.tags"
-                    :key="index"
-                  >
-                    <b-badge
-                      pill
-                      class="mr-75"
-                      :variant="tagsColor(tag.name)"
-                    >
-                      {{ tag.name }}
-                    </b-badge>
-                  </b-link>
-                </div>
-              </b-card-title>
 
-              <b-media no-body>
-                <b-media-body>
-                  <div
-                    class="mail-message blog-content-truncate"
-                    v-html="question.content"
-                  />
-                </b-media-body>
-              </b-media>
-              <hr class="w-100">
-            </b-card-body>
-          </b-card>
-        </b-col>
-        <b-col cols="12">
-          <!-- pagination -->
-          <div class="my-2">
-            <b-pagination-nav
-              v-model="currentPage"
-              align="center"
-              :number-of-pages="rows"
-              class="mb-0"
-              base-url="#"
-            />
-          </div>
-        </b-col>
-      </b-row>
+      <b-form>
+        <b-form-group>
+          <v-select
+            v-model="crawler.tags"
+            multiple
+            taggable
+            push-tags
+            label="name"
+            :options="tags"
+            placeholder="Tags"
+          />
+        </b-form-group>
+        <b-form-group>
+          <label for="demo-sb">Number of questions</label>
+          <b-form-spinbutton
+            id="demo-sb"
+            v-model="crawler.numbers"
+            min="50"
+            max="10000"
+            step="50"
+            placeholder="Number questions"
+          />
+        </b-form-group>
+      </b-form>
     </b-modal>
   </b-row>
   <b-row v-else>
@@ -340,15 +266,16 @@ import {
   BBadge,
   VBModal,
   BFormGroup,
-  BFormCheckbox,
   BButton,
+  BFormSpinbutton,
+  BForm,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import vSelect from 'vue-select'
-import interview from '@/store/api/Interview'
 import qat from '@/store/api/QAT'
+import admin from '@/store/api/Admin'
 import utils from '@/store/utils'
 
 export default {
@@ -365,9 +292,10 @@ export default {
     BPaginationNav,
     BBadge,
     vSelect,
-    BFormCheckbox,
     BFormGroup,
     BButton,
+    BFormSpinbutton,
+    BForm,
   },
   directives: {
     'b-modal': VBModal,
@@ -375,47 +303,31 @@ export default {
   },
   data() {
     return {
-      id: null,
-      interview: null,
-      questions: null,
       question: {},
-      currentPage: 1,
-      perPage: 10,
-      rows: 100,
       userOn: {},
       snowOption: {
         theme: 'snow',
       },
       tags: [],
       questionsSearch: null,
-      idQSelected: [],
       currentPageSearch: 1,
       perPageSearch: 10,
       rowsSearch: 100,
       tagSearch: [],
+      crawler: {
+        tags: [],
+        numbers: 50,
+      },
     }
   },
   watch: {
-    currentPage() {
-      this.questionsShow = this.questions?.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage,
-      )
-    },
     currentPageSearch() {
       this.getQuestion()
     },
   },
   created() {
-    const { id } = this.$route.params
-    if (id) {
-      this.id = id - 0
-      this.getData()
-      this.getTags()
-      this.getQuestion()
-    } else {
-      this.id = null
-    }
+    this.getTags()
+    this.getQuestion()
   },
   methods: {
     kFormatter,
@@ -432,38 +344,6 @@ export default {
       ]
       const rd = color[Math.floor(Math.random() * color.length)]
       return `light-${rd}`
-    },
-    getData() {
-      interview
-        .findById(this.id)
-        .then(resp => {
-          const rs = resp.data
-          this.interview = rs.data
-          this.currentPage = 1
-          this.rows = Math.ceil(this.interview.questions?.length / this.perPage)
-          this.questions = this.interview.questions
-          this.questionsShow = this.interview.questions?.slice(
-            (this.currentPage - 1) * this.perPage,
-            this.currentPage * this.perPage,
-          )
-          this.idQSelected = this.interview.questions?.map(
-            item => item.id,
-          )
-          this.userOn = rs.user
-          utils.updateUser(rs.user)
-          this.$ability.update([
-            {
-              action: 'manage',
-              subject: 'all',
-              // subject: userData.role,
-            },
-          ])
-          this.userOn = rs.user
-        })
-        .catch(err => {
-          console.log(err)
-          this.interview = null
-        })
     },
     setQA(question) {
       this.question = question
@@ -504,59 +384,36 @@ export default {
           this.interview = null
         })
     },
-    showSelected(id) {
-      return this.idQSelected?.includes(id)
-    },
-    changeSelected(id) {
-      if (this.idQSelected?.includes(id)) {
-        this.idQSelected = this.idQSelected.filter(
-          item => item !== id,
-        )
-        this.questions = this.questions.filter(item => item.id !== id)
-      } else {
-        this.idQSelected.push(id)
-        this.questions.push(this.questionsSearch.find(item => item.id === id))
-      }
-
-      if (this.idQSelected.length === 0) {
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-detail-selected')
+    crawlData() {
+      const { crawler } = this
+      if (crawler.numbers) {
+        admin.crawlData({
+          tags: crawler.tags.map(s => s.name),
+          numbers: crawler.numbers,
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Crawl data is running',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+        }).catch(err => {
+          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: 'Something error or crawler is running. Please try again!!!',
+            },
+          })
         })
       }
-      this.questionsShow = this.questions?.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage,
-      )
-      this.rows = Math.ceil(this.idQSelected.length / this.perPage)
-    },
-    saveTest() {
-      interview.createTest(this.id, {
-        candidate_id: this.interview.candidate.general.id,
-        interview_questions: this.idQSelected,
-      }).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Create test success',
-            icon: 'CoffeeIcon',
-            variant: 'success',
-          },
-        })
-        this.$router.push({ name: 'pages-news-edit', params: { idProject: this.interview.news.project_id, id: this.interview.news.id } })
-      }).catch(err => {
-        console.log(err)
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Error',
-            icon: 'AlertTriangleIcon',
-            variant: 'danger',
-            text: 'Something error. Please try again!!!',
-          },
-        })
-      })
     },
   },
 }

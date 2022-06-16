@@ -7,6 +7,7 @@ use App\Models\QuestionAnswer;
 use App\Models\QuestionTag;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
@@ -37,7 +38,7 @@ class CrawlServiceImpl implements CrawlService
             do {
                 $header['params']['page'] = $header['params']['page'] + 1;
                 $response = Http::get(env('API_STACK_EXCHANGE'), $header['params']);
-                $data = $response->json()['items'];
+                $data = $response->json()['items'] ?? [];
 
                 if (count($data) > 0) {
                     $count -= count($data);
@@ -82,7 +83,6 @@ class CrawlServiceImpl implements CrawlService
             logger()->error($e);
             echo "Something error. Please try again!!! \n";
         }
-
     }
 
     private function createHeader($count, $rollback, $tag, $tag_rollback): array
@@ -94,6 +94,7 @@ class CrawlServiceImpl implements CrawlService
                 'order' => 'desc',
                 'site' => 'stackoverflow',
                 'page' => 0,
+                'key' => env('API_STACK_EXCHANGE_KEY'),
             ],
         ];
 
@@ -106,6 +107,7 @@ class CrawlServiceImpl implements CrawlService
 
             if ($tag_rollback) {
                 $header['params']['page'] = 0;
+                $header['count'] = DB::table('question_tags')->count();
             }
 
             $header['params']['tagged'] = $tag;
@@ -114,6 +116,7 @@ class CrawlServiceImpl implements CrawlService
             
             if ($rollback) {
                 $header['params']['page'] = 0;
+                $header['count'] = $this->questionRepo->count();
             }
         }
 
@@ -147,7 +150,7 @@ class CrawlServiceImpl implements CrawlService
                     'id' => $node->attr('data-answerid'),
                     'question_id' => $question['id'],
                     'content' => $node->filter('.post-layout .answercell.post-layout--right .s-prose.js-post-body')->html(),
-                    'score' => $node->filter('.post-layout .votecell.post-layout--left .js-voting-container .js-vote-count')->attr('value') ?? 0,
+                    'score' => $node->filter('.post-layout .votecell.post-layout--left .js-voting-container .js-vote-count')->attr('data-value') ?? 0,
                     'answered' => !str_contains($node->filter('.post-layout .votecell.post-layout--left .js-voting-container .js-accepted-answer-indicator')->attr('class'), 'd-none')
                 ];
 

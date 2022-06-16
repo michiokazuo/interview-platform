@@ -207,7 +207,7 @@ export default {
         const rs = resp.data
         this.interview = rs.data
         this.currentPage = 1
-        this.rows = this.interview.questions?.length / this.perPage + 1
+        this.rows = Math.ceil(this.interview.questions?.length / this.perPage)
         this.questions = this.interview.questions?.slice(
           (this.currentPage - 1) * this.perPage,
           this.currentPage * this.perPage,

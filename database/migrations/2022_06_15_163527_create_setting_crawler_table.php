@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompanyTable extends Migration
+class CreateSettingCrawlerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateCompanyTable extends Migration
      */
     public function up()
     {
-        Schema::create('company', function (Blueprint $table) {
+        Schema::create('setting_crawler', function (Blueprint $table) {
             $table->id();
-            $table->string('url')->nullable();
-            $table->boolean('is_active')->default(false);
+            $table->string('key');
+            $table->text('value')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateCompanyTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('company');
+        Schema::dropIfExists('setting_crawler');
     }
 }

@@ -12,13 +12,13 @@ class CandidateResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request): array
     {
         return [
-           'general' => new UserResource($this->user),   
+            'general' => new UserResource($this->user),
             'cv' => new CvResource($this->cv),
         ];
     }

@@ -44,6 +44,13 @@ class UserServiceImpl implements UserService
                 return false;
             }
 
+            $user = auth('api')->user();
+            if ($user->company && !$user->company->is_active) {
+                auth()->logout();
+                auth('api')->logout();
+                return false;
+            }
+
             $this->passwordService->where('email', $login['email'])->delete();
             return $token;
         } catch (Exception $e) {
@@ -71,7 +78,7 @@ class UserServiceImpl implements UserService
                 $time = strtotime("now");
                 $path = "images/local/$time";
                 $inputUser['avatar']->move(public_path($path), $inputUser['avatar']->getClientOriginalName());
-                $inputUser['avatar'] = '/' .  $path . '/' . $inputUser['avatar']->getClientOriginalName();
+                $inputUser['avatar'] = '/' . $path . '/' . $inputUser['avatar']->getClientOriginalName();
             } else {
                 $inputUser['avatar'] = '/images/local/avatar-user.png';
             }

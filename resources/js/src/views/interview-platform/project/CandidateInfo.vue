@@ -27,7 +27,7 @@
     </b-tab>
     <!--/ general tab -->
 
-    <b-tab>
+    <b-tab v-if="info && info.general && Object.entries(info.general).length && info.general.role.name === 'ROLE_CANDIDATE'">
       <!-- title -->
       <template #title>
         <feather-icon
