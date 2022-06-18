@@ -616,7 +616,6 @@ export default {
                 {
                   action: 'manage',
                   resource: 'all',
-                // subject: userData.role,
                 },
               ]
               useJwt.setToken(resp.data.accessToken)
@@ -625,7 +624,6 @@ export default {
                 {
                   action: 'manage',
                   subject: 'all',
-                // subject: userData.role,
                 },
               ])
 

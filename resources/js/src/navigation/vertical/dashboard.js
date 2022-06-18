@@ -1,18 +1,20 @@
 export default [
   {
-    title: 'Dashboards',
+    title: 'Home Candidate',
     icon: 'HomeIcon',
-    tag: '2',
-    tagVariant: 'light-warning',
-    children: [
-      {
-        title: 'eCommerce',
-        route: 'dashboard-ecommerce',
-      },
-      {
-        title: 'Analytics',
-        route: 'dashboard-analytics',
-      },
-    ],
+    route: 'candidate-home',
+    resource: 'ROLE_CANDIDATE',
+  },
+  {
+    title: 'Home Company',
+    icon: 'HomeIcon',
+    route: 'company-home',
+    resource: 'ROLE_COMPANY',
+  },
+  {
+    title: 'Dashboard Admin',
+    icon: 'HomeIcon',
+    route: 'admin-home',
+    resource: 'ROLE_ADMIN',
   },
 ]

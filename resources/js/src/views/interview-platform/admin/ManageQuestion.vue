@@ -80,7 +80,7 @@
               <b-media-body>
                 <div
                   class="mail-message blog-content-truncate"
-                  v-html="question.content"
+                  v-html="limitContent(question.content)"
                 />
               </b-media-body>
             </b-media>
@@ -328,6 +328,7 @@ export default {
   created() {
     this.getTags()
     this.getQuestion()
+    this.limitContent = utils.limitContent
   },
   methods: {
     kFormatter,
@@ -373,11 +374,9 @@ export default {
           this.$ability.update([
             {
               action: 'manage',
-              subject: 'all',
-              // subject: userData.role,
+              subject: rs.user.role,
             },
           ])
-          this.userOn = rs.user
         })
         .catch(err => {
           console.log(err)

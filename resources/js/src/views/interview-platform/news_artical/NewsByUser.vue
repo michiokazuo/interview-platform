@@ -118,11 +118,12 @@
             v-html="userData.introduction"
           />
         </b-col>
-      </b-row></b-card>
+      </b-row>
+    </b-card>
     <template>
       <b-row
         v-if="newsList && newsList.length"
-        class="news-list-wrapper"
+        class="news-list-wrapper match-height"
       >
         <b-col
           v-for="news in newsList"
@@ -133,7 +134,7 @@
             tag="article"
             no-body
           >
-            <b-card-body>
+            <b-card-body class="d-flex flex-column justify-content-between">
               <b-card-title>
                 <b-link
                   :to="{ name: 'pages-news-detail', params: { id: news.id } }"
@@ -175,11 +176,11 @@
               </div>
               <b-card-text class="blog-content-truncate tex-truncate">
                 <div
-                  v-html="news.description"
+                  v-html="limitContent(news.description)"
                 />
               </b-card-text>
-              <hr>
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <hr class="w-100">
                 <div class="d-flex align-items-center mr-1" />
                 <b-link
                   :to="{ name: 'pages-news-detail', params: { id: news.id } }"
@@ -326,6 +327,7 @@ export default {
     } else {
       this.id = null
     }
+    this.limitContent = utils.limitContent
   },
   methods: {
     kFormatter,
@@ -349,8 +351,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
       }).catch(err => {

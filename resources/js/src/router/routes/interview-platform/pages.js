@@ -11,6 +11,7 @@ export default [
           active: true,
         },
       ],
+      resource: 'ROLE_USER',
     },
   },
   {
@@ -25,6 +26,7 @@ export default [
           active: true,
         },
       ],
+      resource: 'ROLE_USER',
     },
   },
 ]

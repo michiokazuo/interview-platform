@@ -4,18 +4,24 @@ export default [
     name: 'admin-home',
     component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
     meta: {
-      // resource: 'ROLE_ADMIN',
+      resource: 'ROLE_ADMIN',
     },
   },
   {
     path: '/candidate-home',
     name: 'candidate-home',
     component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+    meta: {
+      resource: 'ROLE_CANDIDATE',
+    },
   },
   {
     path: '/company-home',
     name: 'company-home',
     component: () => import('@/views/dashboard/ecommerce/Ecommerce.vue'),
+    meta: {
+      resource: 'ROLE_COMPANY',
+    },
   },
   {
     path: '/faq',

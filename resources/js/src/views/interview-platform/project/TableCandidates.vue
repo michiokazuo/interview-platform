@@ -473,8 +473,7 @@ export default {
       this.$ability.update([
         {
           action: 'manage',
-          subject: 'all',
-          // subject: userData.role,
+          subject: rs.user.role,
         },
       ])
     }).catch(err => {
@@ -558,8 +557,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
         this.$toast({

@@ -247,8 +247,7 @@ export default {
             this.$ability.update([
               {
                 action: 'manage',
-                subject: 'all',
-                // subject: userData.role,
+                subject: userData.role,
               },
             ])
 

@@ -73,7 +73,7 @@ router.beforeEach(async (to, _, next) => {
     store.commit('appConfig/UPDATE_NAVBAR_CONFIG', { type: 'hidden' })
   }
 
-  if (!canNavigate(to)) {
+  if (!canNavigate(to, isLoggedIn)) {
     // Redirect to log in if not logged in
     if (!isLoggedIn) return next({ name: 'auth-login' })
 

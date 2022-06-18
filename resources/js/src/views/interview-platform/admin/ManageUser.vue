@@ -351,8 +351,7 @@ export default {
       this.$ability.update([
         {
           action: 'manage',
-          subject: 'all',
-          // subject: userData.role,
+          subject: rs.user.role,
         },
       ])
       if (rs.data.inactive) {
@@ -443,8 +442,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
         this.$toast({

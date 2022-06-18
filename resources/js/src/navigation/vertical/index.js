@@ -31,11 +31,18 @@ tagVariant
 
 */
 import dashboard from './dashboard'
-import appsAndPages from './apps-and-pages'
-import others from './others'
-import chartsAndMaps from './charts-and-maps'
-import uiElements from './ui-elements'
-import formAndTable from './forms-and-table'
+import account from './account'
+import blog from './blog'
+import news from './news'
+import manage from './manage'
+import project from './project'
 
 // Array of sections
-export default [...dashboard, ...appsAndPages, ...uiElements, ...formAndTable, ...chartsAndMaps, ...others]
+export default [
+  ...dashboard,
+  ...account,
+  ...manage,
+  ...project,
+  ...news,
+  ...blog,
+]

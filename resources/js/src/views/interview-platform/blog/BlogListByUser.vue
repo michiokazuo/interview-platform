@@ -5,7 +5,7 @@
     <!-- blogs -->
     <b-row
       v-if="blogList && blogList.length"
-      class="blog-list-wrapper"
+      class="blog-list-wrapper match-height"
     >
       <b-col cols="12">
         <b-link
@@ -30,7 +30,7 @@
           tag="article"
           no-body
         >
-          <b-card-body>
+          <b-card-body class="d-flex flex-column justify-content-between">
             <b-card-title>
               <b-link
                 :to="{ name: 'pages-blog-detail', params: { id: blog.id } }"
@@ -75,11 +75,11 @@
             </div>
             <b-card-text class="blog-content-truncate text-truncate">
               <div
-                v-html="blog.content"
+                v-html="limitContent(blog.content)"
               />
             </b-card-text>
-            <hr>
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+              <hr class="w-100">
               <div class="d-flex align-items-center mr-1">
                 <b-link
                   v-if="userOn && blog.user.id === userOn.id"
@@ -175,26 +175,46 @@
         <h6 class="section-label mb-75">
           Recent Comment on Posts
         </h6>
-        <b-media
-          v-for="(recentpost,index) in blogSidebar"
+        <b-card
+          v-for="(recentpost) in blogSidebar"
           :key="recentpost.id"
-          no-body
-          :class="index? 'mt-2':''"
         >
-          <b-media-body v-if="blogSidebar && blogSidebar.length">
-            <h6 class="blog-recent-post-title">
-              <b-link
-                :to="{ name: 'pages-blog-detail', params:{ id :recentpost.blog.id } }"
-                class="text-body-heading"
-              >
+          <b-link
+            :to="{ name: 'pages-blog-detail', params:{ id :recentpost.blog.id } }"
+            class="text-body-heading"
+          >
+            <b-card-title class="m-0">
+              <span>
                 {{ recentpost.blog.title }}
-              </b-link>
-            </h6>
-            <span class="text-muted mb-0">
-              {{ new Date(recentpost.created_at).toDateString() }}
-            </span>
-          </b-media-body>
-          <b-media-body v-else>
+              </span>
+            </b-card-title>
+            <b-media
+              no-body
+              class="flex-wrap"
+            >
+              <b-media-aside
+                vertical-align="center"
+                class="mr-50"
+              >
+                <b-avatar
+                  href="javascript:void(0)"
+                  size="24"
+                  :src="recentpost.user.avatar"
+                />
+              </b-media-aside>
+              <b-media-body>
+                <small class="text-muted mr-50">by</small>
+                <small>
+                  <b-link class="text-body">{{ recentpost.user.name }}</b-link>
+                </small>
+                <br>
+                <small class="text-muted">{{ new Date(recentpost.created_at).toDateString() }}</small>
+              </b-media-body>
+            </b-media>
+          </b-link>
+        </b-card>
+        <b-media v-if="!blogSidebar || !blogSidebar.length">
+          <b-media-body>
             <span class="text-muted mb-0 text-center">
               Nothing to show here
             </span>
@@ -289,6 +309,7 @@ export default {
     this.userOn = JSON.parse(localStorage.getItem('userData'))
     this.getData()
     this.getDataComment()
+    this.limitContent = utils.limitContent
   },
   methods: {
     kFormatter,
@@ -312,8 +333,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
       }).catch(err => {
@@ -330,8 +350,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
       }).catch(err => {
@@ -360,8 +379,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
 

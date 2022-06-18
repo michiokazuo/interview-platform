@@ -55,7 +55,7 @@
 							<b-media-body>
 								<div
 									class="mail-message blog-content-truncate"
-									v-html="question.content"
+									v-html="limitContent(question.content)"
 								/>
 							</b-media-body>
 						</b-media>
@@ -374,6 +374,7 @@
 		},
 		created() {
 			const { id } = this.$route.params;
+      this.limitContent = utils.limitContent
 			if (id) {
 				this.id = id - 0;
 				this.getData();
@@ -417,8 +418,7 @@
 						this.$ability.update([
 							{
 								action: "manage",
-								subject: "all",
-								// subject: userData.role,
+								subject: rs.user.role,
 							},
 						]);
 						this.userOn = rs.user;
@@ -453,8 +453,7 @@
 								this.$ability.update([
 									{
 										action: "manage",
-										subject: "all",
-										// subject: userData.role,
+										subject: rs.user.role,
 									},
 								]);
 								this.$toast({

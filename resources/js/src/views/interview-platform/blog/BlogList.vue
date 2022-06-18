@@ -2,7 +2,7 @@
   <!-- blogs -->
   <b-row
     v-if="blogList && blogList.length"
-    class="blog-list-wrapper"
+    class="blog-list-wrapper match-height"
   >
     <b-col cols="12">
       <b-link
@@ -27,7 +27,7 @@
         tag="article"
         no-body
       >
-        <b-card-body>
+        <b-card-body class="d-flex flex-column justify-content-between">
           <b-card-title>
             <b-link
               :to="{ name: 'pages-blog-detail', params: { id: blog.id } }"
@@ -76,12 +76,12 @@
           </div>
           <b-card-text class="blog-content-truncate text-truncate">
             <div
-              v-html="blog.content"
+              v-html="limitContent(blog.content)"
             />
           </b-card-text>
-          <hr>
-          <div class="d-flex justify-content-between align-items-center">
-            <b-link :to="{ path: `/pages/blog/${blog.id}#blogComment`}">
+          <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <hr class="w-100">
+            <b-link :to="{ path: `/user/blog/${blog.id}#blogComment`}">
               <div class="d-flex align-items-center text-body">
                 <feather-icon
                   icon="MessageSquareIcon"
@@ -206,6 +206,7 @@ export default {
   },
   created() {
     this.getData()
+    this.limitContent = utils.limitContent
   },
   methods: {
     kFormatter,
@@ -225,8 +226,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
         this.blogList = rs.data.data

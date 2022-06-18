@@ -2,7 +2,7 @@
   <!-- projects -->
   <b-row
     v-if="projects && projects.length"
-    class="blog-list-wrapper"
+    class="blog-list-wrapper match-height"
   >
     <b-col cols="12">
       <b-link
@@ -27,7 +27,7 @@
         tag="article"
         no-body
       >
-        <b-card-body>
+        <b-card-body class="d-flex flex-column justify-content-between">
           <b-card-title>
             <b-link
               :to="{ name: 'pages-project-detail', params: { id: project.id } }"
@@ -64,11 +64,11 @@
           </b-media>
           <b-card-text class="blog-content-truncate tex-truncate mt-2">
             <div
-              v-html="project.description"
+              v-html="limitContent(project.description)"
             />
           </b-card-text>
-          <hr>
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <hr class="w-100">
             <b-link
               v-if="userOn && project.company.id === userOn.company_id"
               @click.prevent="getProjectDelete(project.id)"
@@ -217,6 +217,7 @@ export default {
   },
   created() {
     this.getData()
+    this.limitContent = utils.limitContent
   },
   methods: {
     kFormatter,
@@ -234,8 +235,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
         this.userOn = rs.user
@@ -265,8 +265,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
 

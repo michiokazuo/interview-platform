@@ -15,7 +15,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -88,7 +87,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -107,7 +105,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -126,7 +123,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -145,7 +141,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -164,7 +159,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
   {
@@ -183,7 +177,6 @@ export default [
           active: true,
         },
       ],
-      resource: 'ROLE_COMPANY',
     },
   },
 ]

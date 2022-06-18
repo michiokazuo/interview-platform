@@ -118,7 +118,7 @@
             tag="article"
             no-body
           >
-            <b-card-body>
+            <b-card-body class="d-flex flex-column justify-content-between">
               <b-card-title>
                 <b-link
                   :to="{ name: 'pages-blog-detail', params: { id: blog.id } }"
@@ -163,11 +163,11 @@
               </div>
               <b-card-text class="blog-content-truncate text-truncate">
                 <div
-                  v-html="blog.content"
+                  v-html="limitContent(blog.content)"
                 />
               </b-card-text>
-              <hr>
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <hr class="w-100">
                 <div class="d-flex align-items-center mr-1" />
                 <b-link
                   :to="{ name: 'pages-blog-detail', params: { id: blog.id } }"
@@ -308,6 +308,7 @@ export default {
   },
   created() {
     const { id } = this.$route.params
+    this.limitContent = utils.limitContent
     if (id) {
       this.id = id
       this.getData()
@@ -337,8 +338,7 @@ export default {
         this.$ability.update([
           {
             action: 'manage',
-            subject: 'all',
-            // subject: userData.role,
+            subject: rs.user.role,
           },
         ])
       }).catch(err => {

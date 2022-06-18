@@ -1,6 +1,6 @@
 import ability from './ability'
 
-export const canNavigate = to => to.matched.some(route => {
+export const canNavigate = (to, isLoggedIn) => to.matched.some(route => {
   const pathname = to.path
   const { rules } = ability
   const routeOption = {
@@ -8,12 +8,7 @@ export const canNavigate = to => to.matched.some(route => {
     subject: route.meta.resource,
   }
 
-  console.log(pathname)
-  console.log(rules)
-  console.log(routeOption)
-
-  // temporary
-  if (rules[0].subject === 'all') {
+  if (isLoggedIn && routeOption.subject === 'ROLE_USER') {
     return true
   }
 
