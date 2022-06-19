@@ -49,6 +49,8 @@
         v-for="question in questionsSearch"
         :key="question.id"
         md="6"
+        lg="4"
+        xl="3"
       >
         <b-card
           tag="article"
@@ -57,17 +59,17 @@
           <b-card-body class="d-flex justify-content-between flex-column">
             <b-card-title>
               <div
-                class="mail-message"
+                class="mail-message blog-content-truncate"
                 v-html="question.title"
               />
-              <div class="my-1 ml-2 py-25 h6">
+              <div class="mt-1 ml-2 h6 blog-content-truncate">
                 <b-link
                   v-for="(tag,index) in question.tags"
                   :key="index"
                 >
                   <b-badge
                     pill
-                    class="mr-75"
+                    class="mr-75 mb-50"
                     :variant="tagsColor(tag.name)"
                   >
                     {{ tag.name }}
@@ -110,6 +112,7 @@
       <!-- pagination -->
       <div class="my-2">
         <b-pagination-nav
+          v-if="rowsSearch && rowsSearch.length > 0"
           v-model="currentPageSearch"
           align="center"
           :number-of-pages="rowsSearch"
@@ -311,7 +314,7 @@ export default {
       tags: [],
       questionsSearch: null,
       currentPageSearch: 1,
-      perPageSearch: 10,
+      perPageSearch: 20,
       rowsSearch: 100,
       tagSearch: [],
       crawler: {
@@ -421,4 +424,7 @@ export default {
 <style lang="scss" scoped>
 @import "~@core/scss/vue/libs/quill.scss";
 @import "~@core/scss/vue/pages/page-blog.scss";
+</style>
+<style lang="css" scoped>
+@import "~@core/css/stack.css";
 </style>

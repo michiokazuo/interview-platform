@@ -102,7 +102,7 @@
                 <span>Delete</span>
               </b-dropdown-item>
               <b-dropdown-item
-                v-if="props.row.questions && props.row.result && props.row.result.candidate"
+                v-if="props.row.result"
                 :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
                 class="font-weight-bold"
               >
@@ -110,7 +110,8 @@
                   icon="BookIcon"
                   class="mr-50"
                 />
-                <span>View Result Test</span>
+                <span v-if="props.row.result.company">View Result Test</span>
+                <span v-else-if="props.row.questions && props.row.result.candidate">View Result Test</span>
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="props.row.questions && ((props.row.result && !props.row.result.candidate) || !props.row.result)"

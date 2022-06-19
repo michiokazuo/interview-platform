@@ -120,7 +120,7 @@
                 <span v-else>Edit Test</span>
               </b-dropdown-item>
               <b-dropdown-item
-                v-if="props.row.questions && props.row.result"
+                v-if="props.row.result"
                 :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
                 class="font-weight-bold"
               >

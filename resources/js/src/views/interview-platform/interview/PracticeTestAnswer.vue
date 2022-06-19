@@ -25,6 +25,8 @@
 				v-for="question in questions"
 				:key="question.id"
 				md="6"
+				lg="4"
+				xl="3"
 			>
 				<b-card
 					tag="article"
@@ -33,23 +35,23 @@
 					<b-card-body class="d-flex justify-content-between flex-column">
 						<b-card-title>
 							<div
-								class="mail-message"
+								class="mail-message blog-content-truncate"
 								v-html="question.title"
 							/>
-              <div class="my-1 py-25 h6">
-							<b-link
-								v-for="(tag,index) in question.tags"
-								:key="index"
-							>
-								<b-badge
-									pill
-									class="mr-75"
-									:variant="tagsColor(tag.name)"
+							<div class="mt-1 ml-2 h6 blog-content-truncate">
+								<b-link
+									v-for="(tag,index) in question.tags"
+									:key="index"
 								>
-									{{ tag.name }}
-								</b-badge>
-							</b-link>
-						</div>
+									<b-badge
+										pill
+										class="mr-75 mb-50"
+										:variant="tagsColor(tag.name)"
+									>
+										{{ tag.name }}
+									</b-badge>
+								</b-link>
+							</div>
 						</b-card-title>
 						<b-media no-body>
 							<b-media-body>
@@ -59,9 +61,9 @@
 								/>
 							</b-media-body>
 						</b-media>
-						
+
 						<div class="d-flex flex-wrap justify-content-between align-items-center">
-              <hr class="w-100">
+							<hr class="w-100">
 							<b-link>
 								<div class="d-flex align-items-center text-body">
 									<feather-icon
@@ -84,16 +86,35 @@
 				<!-- pagination -->
 				<div class="my-2">
 					<b-pagination-nav
+						v-if="rows && rows.length > 0"
 						v-model="currentPage"
 						align="center"
 						:number-of-pages="rows"
 						class="mb-0"
 						base-url="#"
 					/>
+					<b-card
+						v-else
+						no-body
+						class="faq-search pt-5 pb-5"
+						:style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
+					>
+						<b-card-body class="text-center">
+							<h2 class="text-primary">
+								Not have test
+							</h2>
+							<b-card-text class="mb-2">
+								Or the questions are deleted!!!
+							</b-card-text>
+						</b-card-body>
+					</b-card>
 				</div>
 			</b-col>
 		</template>
-    <b-col cols="12" v-else>
+		<b-col
+			cols="12"
+			v-else
+		>
 			<b-card
 				no-body
 				class="faq-search pt-5 pb-5"
@@ -127,7 +148,10 @@
 						>No review</div>
 					</b-card-text>
 				</b-card-body>
-				<b-card-body v-if="userOn && userOn.company_id" class="pt-0">
+				<b-card-body
+					v-if="userOn && userOn.company_id"
+					class="pt-0"
+				>
 					<b-card-text>
 						<validation-observer
 							ref="reviewForm"
@@ -310,9 +334,9 @@
 		BPaginationNav,
 		BBadge,
 		VBModal,
-    BForm,
-    BFormGroup,
-    BButton
+		BForm,
+		BFormGroup,
+		BButton,
 	} from "bootstrap-vue";
 	import { ValidationProvider, ValidationObserver } from "vee-validate";
 	import { kFormatter } from "@core/utils/filter";
@@ -320,7 +344,7 @@
 	import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 	import { quillEditor } from "vue-quill-editor";
 	import interview from "@/store/api/Interview";
-  import { required, email, password } from '@validations'
+	import { required, email, password } from "@validations";
 	import utils from "@/store/utils";
 
 	export default {
@@ -339,9 +363,9 @@
 			quillEditor,
 			ValidationProvider,
 			ValidationObserver,
-      BForm,
-      BFormGroup,
-      BButton,
+			BForm,
+			BFormGroup,
+			BButton,
 		},
 		directives: {
 			"b-modal": VBModal,
@@ -355,7 +379,7 @@
 				question: {},
 				result: null,
 				currentPage: 1,
-				perPage: 6,
+				perPage: 20,
 				rows: 100,
 				review: null,
 				userOn: {},
@@ -374,7 +398,7 @@
 		},
 		created() {
 			const { id } = this.$route.params;
-      this.limitContent = utils.limitContent
+			this.limitContent = utils.limitContent;
 			if (id) {
 				this.id = id - 0;
 				this.getData();
@@ -406,9 +430,10 @@
 						this.interview = rs.data;
 						this.currentPage = 1;
 						this.result = this.interview?.result;
-            this.review = this.result?.company?.review;
-						this.rows =
-							Math.ceil(this.interview.questions?.length / this.perPage);
+						this.review = this.result?.company?.review;
+						this.rows = Math.ceil(
+							this.interview.questions?.length / this.perPage
+						);
 						this.questions = this.interview.questions?.slice(
 							(this.currentPage - 1) * this.perPage,
 							this.currentPage * this.perPage
@@ -440,10 +465,10 @@
 					if (success) {
 						interview
 							.update(this.id, {
-                candidate_id: this.interview.candidate.general.id,
+								candidate_id: this.interview.candidate.general.id,
 								result: {
-                  review: this.review,
-                }
+									review: this.review,
+								},
 							})
 							.then((resp) => {
 								const rs = resp.data;
@@ -465,7 +490,13 @@
 										variant: "success",
 									},
 								});
-								this.$router.push({ name: 'pages-news-edit', params: { idProject: this.interview.news.project_id, id: this.interview.news.id } })
+								this.$router.push({
+									name: "pages-news-edit",
+									params: {
+										idProject: this.interview.news.project_id,
+										id: this.interview.news.id,
+									},
+								});
 							})
 							.catch((err) => {
 								console.log(err);
@@ -490,4 +521,7 @@
 <style lang="scss" scoped>
 @import "~@core/scss/vue/libs/quill.scss";
 @import "~@core/scss/vue/pages/page-blog.scss";
+</style>
+<style lang="css" scoped>
+@import "~@core/css/stack.css";
 </style>

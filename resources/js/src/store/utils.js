@@ -18,6 +18,12 @@ export default {
     doc.body.querySelectorAll('pre').forEach(pre => {
       pre.remove()
     })
+    doc.body.querySelectorAll('aside').forEach(aside => {
+      aside.remove()
+    })
+    doc.body.querySelectorAll('blockquote').forEach(blockquote => {
+      blockquote.remove()
+    })
 
     return doc.body.innerHTML
   },

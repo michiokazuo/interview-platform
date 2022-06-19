@@ -50,6 +50,8 @@
         v-for="question in questionsSearch"
         :key="question.id"
         md="6"
+        lg="4"
+        xl="3"
       >
         <b-card
           tag="article"
@@ -63,18 +65,18 @@
                 @change="changeSelected(question.id)"
               >
                 <div
-                  class="mail-message"
+                  class="mail-message blog-content-truncate"
                   v-html="question.title"
                 />
               </b-form-checkbox>
-              <div class="my-1 ml-2 py-25 h6">
+              <div class="mt-1 ml-2 h6 blog-content-truncate">
                 <b-link
                   v-for="(tag,index) in question.tags"
                   :key="index"
                 >
                   <b-badge
                     pill
-                    class="mr-75"
+                    class="mr-75 mb-50"
                     :variant="tagsColor(tag.name)"
                   >
                     {{ tag.name }}
@@ -117,6 +119,7 @@
       <!-- pagination -->
       <div class="my-2">
         <b-pagination-nav
+          v-if="rowsSearch && rowsSearch.length > 0"
           v-model="currentPageSearch"
           align="center"
           :number-of-pages="rowsSearch"
@@ -245,6 +248,7 @@
           v-for="question in questionsShow"
           :key="question.id"
           md="6"
+          lg="4"
         >
           <b-card
             tag="article"
@@ -257,18 +261,18 @@
                   @change="changeSelected(question.id)"
                 >
                   <div
-                    class="mail-message"
+                    class="mail-message blog-content-truncate"
                     v-html="question.title"
                   />
                 </b-form-checkbox>
-                <div class="my-1 py-25 h6">
+                <div class="mt-1 ml-2 h6 blog-content-truncate">
                   <b-link
                     v-for="(tag,index) in question.tags"
                     :key="index"
                   >
                     <b-badge
                       pill
-                      class="mr-75"
+                      class="mr-75 mb-50"
                       :variant="tagsColor(tag.name)"
                     >
                       {{ tag.name }}
@@ -281,7 +285,7 @@
                 <b-media-body>
                   <div
                     class="mail-message blog-content-truncate"
-                    v-html="question.content"
+                    v-html="limitContent(question.content)"
                   />
                 </b-media-body>
               </b-media>
@@ -293,6 +297,7 @@
           <!-- pagination -->
           <div class="my-2">
             <b-pagination-nav
+              v-if="rows && rows.length > 0"
               v-model="currentPage"
               align="center"
               :number-of-pages="rows"
@@ -390,7 +395,7 @@ export default {
       questionsSearch: null,
       idQSelected: [],
       currentPageSearch: 1,
-      perPageSearch: 10,
+      perPageSearch: 20,
       rowsSearch: 100,
       tagSearch: [],
     }
@@ -565,4 +570,7 @@ export default {
 <style lang="scss" scoped>
 @import "~@core/scss/vue/libs/quill.scss";
 @import "~@core/scss/vue/pages/page-blog.scss";
+</style>
+<style lang="css" scoped>
+@import "~@core/css/stack.css";
 </style>
