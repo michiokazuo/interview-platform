@@ -29,23 +29,28 @@
           <div
             class="row m-0"
           >
-            <template v-if="screen">
-              <screenshare-tile :participant="screen" />
+            <template v-if="screen || practice">
+              <screenshare-tile
+                :participant="screen"
+                :interview="interview.id"
+                :practice="practice"
+                :save-practice="savePractice"
+              />
             </template>
 
             <div
               v-if="participants"
               :class="{
                 'pt-1 w-100 h-100': true,
-                'row m-0': !screen,
-                'col-md-3 col-12': screen
+                'row m-0': !(screen || practice),
+                'col-md-3 col-12': screen || practice
               }"
             >
               <video-tile
                 v-for="(p, i) in participants"
                 :key="p.session_id"
-                :first="!screen && !i"
-                :has-screen="screen"
+                :first="!(screen || practice) && !i"
+                :has-screen="screen || practice"
                 :participant="p"
                 :handle-video-click="handleVideoClick"
                 :handle-audio-click="handleAudioClick"
@@ -53,13 +58,14 @@
                 :leave-call="leaveAndCleanUp"
                 :disable-screen-share="screen && !screen.local"
                 :interview="interview"
+                :practice="practice"
               />
 
               <div
                 v-if="count === 1"
                 :class="{
                   'mt-2': true,
-                  'col-md-3': !screen
+                  'col-md-3': !(screen || practice)
                 }"
               >
                 <waiting-card :url="roomUrl" />
@@ -108,9 +114,14 @@ export default {
       loading: true,
       showPermissionsError: false,
       screen: null,
+      practice: false,
+      savePractice: false,
     }
   },
   mounted() {
+    if (this.interview && !this.interview.news && this.interview.questions) {
+      this.practice = true
+    }
     const option = {
       url: this.roomUrl,
     }
@@ -234,6 +245,7 @@ export default {
       this.callObject.leave().then(() => {
         this.callObject.destroy()
 
+        this.savePractice = true
         this.participantWithScreenshare = null
         this.screen = null
         this.leaveCall()

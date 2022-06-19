@@ -4,8 +4,7 @@
       COPYRIGHT  © {{ new Date().getFullYear() }}
       <b-link
         class="ml-25"
-        href="https://1.envato.market/pixinvent_portfolio"
-        target="_blank"
+        href="#"
       >PhongDX</b-link>
       <span class="d-none d-sm-inline-block">, All rights Reserved</span>
     </span>

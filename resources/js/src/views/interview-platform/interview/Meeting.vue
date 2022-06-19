@@ -1,5 +1,4 @@
 <template>
-  <!-- <div> -->
   <home
     v-if="appState === 'idle'"
     :join-call="joinCall"
@@ -29,7 +28,6 @@
       </b-card>
     </b-col>
   </b-row>
-  <!-- </div> -->
 </template>
 
 <script>
@@ -57,6 +55,7 @@ export default {
       roomUrl: null,
       userOn: {},
       interview: null,
+      savePractice: false,
     }
   },
   created() {
@@ -79,7 +78,8 @@ export default {
     },
     // Reset app state to return to the home screen after leaving call
     leaveCall() {
-      this.appState = 'idle'
+      // this.savePractice = true
+      // this.appState = 'idle'
     },
     getData() {
       interview.findById(this.id).then(resp => {

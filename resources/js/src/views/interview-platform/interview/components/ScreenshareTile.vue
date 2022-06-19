@@ -1,18 +1,31 @@
 <template>
-  <div class="col-md-9 col-12">
+  <div class="col-md-9 col-12 vh-100 overflow-auto text-justify">
     <video
+      v-if="!practice"
       autoPlay
       muted
       playsInline
       :srcObject.prop="videoSource"
     />
+    <practice-test
+      v-else
+      :is-meeting="true"
+      :id-interview="interview"
+      :save-practice="savePractice"
+    />
   </div>
 </template>
 
 <script>
+
+import PracticeTest from '../PracticeTest.vue'
+
 export default {
   name: 'ScreenshareTile',
-  props: ['participant'],
+  components: {
+    PracticeTest,
+  },
+  props: ['participant', 'interview', 'practice', 'savePractice'],
   data() {
     return {
       videoSource: null,

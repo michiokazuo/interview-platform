@@ -43,6 +43,7 @@
         :pause-recording="pauseRecording"
         :recorder="recorder"
         :status-record="statusRecord"
+        :practice="practice"
       />
     </template>
   </div>
@@ -69,6 +70,7 @@ export default {
     'first',
     'hasScreen',
     'interview',
+    'practice',
   ],
   data() {
     return {
@@ -82,11 +84,12 @@ export default {
     }
   },
   watch: {
-    blobRecorder(val) {
-      if (val) {
-        window.onbeforeunload = () => {
-          this.saveRecording()
-          return 'Are you sure you want to leave?'
+    chunks(val) {
+      if (val && val.length) {
+        window.onbeforeunload = e => {
+          e.preventDefault()
+          this.leaveCallCustom()
+          return 'Something went wrong! Are you sure you want to leave?'
         }
       }
     },
@@ -199,7 +202,6 @@ export default {
         this.blobRecorder = new Blob(this.chunks, {
           type: 'video/webm',
         })
-        console.log(this.interview)
         const update = {
           candidate_id: this.interview.candidate.general.id,
           record: this.blobRecorder,

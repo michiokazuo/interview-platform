@@ -2,11 +2,15 @@
   <!-- question-test -->
   <b-row
     v-if="id && interview && !interview.result"
-    class="blog-list-wrapper col-md-10 m-auto"
+    :class="{
+      'blog-list-wrapper col-12 m-auto': true,
+      'col-md-10': !isMeeting,
+      'col-md-11': isMeeting,
+    }"
   >
     <b-col cols="12">
       <b-link
-        v-if="interview.questions && interview.room && !interview.news"
+        v-if="visibleMeeting && interview.questions && interview.room && !interview.news"
         :to="{ name: 'interview-meeting', params: { id: interview.id } }"
         class="font-weight-bold mb-2"
         target="_blank"
@@ -74,7 +78,7 @@
       <!-- pagination -->
       <div class="my-2">
         <b-pagination-nav
-          v-if="rows && rows.length > 0"
+          v-if="rows"
           v-model="currentPage"
           align="center"
           :number-of-pages="rows"
@@ -89,6 +93,7 @@
       class="d-flex justify-content-center"
     >
       <b-button
+        v-if="visibleMeeting"
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
         class="mb-2"
@@ -163,6 +168,20 @@ export default {
   directives: {
     Ripple,
   },
+  props: {
+    isMeeting: {
+      type: Boolean,
+      default: false,
+    },
+    idInterview: {
+      type: Number,
+      default: null,
+    },
+    savePractice: {
+      type: Boolean,
+      default: null,
+    },
+  },
   data() {
     return {
       id: null,
@@ -176,6 +195,7 @@ export default {
       snowOption: {
         theme: 'snow',
       },
+      visibleMeeting: false,
     }
   },
   watch: {
@@ -185,9 +205,15 @@ export default {
         this.currentPage * this.perPage,
       )
     },
+    savePractice() {
+      if (this.savePractice) {
+        this.saveRS()
+      }
+    },
   },
   created() {
-    const { id } = this.$route.params
+    const { id } = this.$route.params ?? this.idInterview
+    this.visibleMeeting = !this.$route.path.startsWith('/meeting')
     if (id) {
       this.id = id - 0
       this.getData()
@@ -207,6 +233,14 @@ export default {
       interview.findById(this.id).then(resp => {
         const rs = resp.data
         this.interview = rs.data
+        if (rs.data.room && this.visibleMeeting) {
+          this.$router.push({
+            name: 'interview-meeting',
+            params: {
+              id: rs.data.id,
+            },
+          })
+        }
         this.currentPage = 1
         this.rows = Math.ceil(this.interview.questions?.length / this.perPage)
         this.questions = this.interview.questions?.slice(
@@ -216,7 +250,7 @@ export default {
         if (!this.interview.result) {
           window.onbeforeunload = () => {
             this.saveRS()
-            return 'Are you sure you want to leave?'
+            return 'Something went wrong! Are you sure you want to leave?'
           }
         }
         this.userOn = rs.user

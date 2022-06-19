@@ -5,20 +5,22 @@
 		class="blog-list-wrapper match-height"
 	>
 		<b-col cols="12">
-			<b-link
-				v-if="interview.record && userOn && (interview.record.candidate || interview.record.company)"
-				:to="interview.record.company ? interview.record.company : interview.record.candidate"
-				class="font-weight-bold mb-2"
-				target="_blank"
-			>
-				<b-button
-					v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-					variant="primary"
-					class="mb-2"
-				>
-					View record
-				</b-button>
-			</b-link>
+      <div>
+        <b-link
+          v-if="interview.record && userOn && (interview.record.candidate || interview.record.company)"
+          :to="interview.record.company ? interview.record.company : interview.record.candidate"
+          class="font-weight-bold mb-2"
+          target="_blank"
+        >
+          <b-button
+            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+            variant="primary"
+            class="mb-2"
+          >
+            View record
+          </b-button>
+        </b-link>
+      </div>
 		</b-col>
 		<template v-if="interview.result && interview.result.candidate">
 			<b-col
@@ -70,6 +72,7 @@
 										icon="MessageSquareIcon"
 										class="mr-50"
 									/>
+                  <span v-if="result && result.candidate[`question-${question.id}`]"> 1 </span>
 								</div>
 							</b-link>
 							<b-link
@@ -86,7 +89,7 @@
 				<!-- pagination -->
 				<div class="my-2">
 					<b-pagination-nav
-						v-if="rows && rows.length > 0"
+						v-if="rows"
 						v-model="currentPage"
 						align="center"
 						:number-of-pages="rows"

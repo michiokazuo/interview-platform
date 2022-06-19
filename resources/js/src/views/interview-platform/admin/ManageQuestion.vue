@@ -112,7 +112,7 @@
       <!-- pagination -->
       <div class="my-2">
         <b-pagination-nav
-          v-if="rowsSearch && rowsSearch.length > 0"
+          v-if="rowsSearch"
           v-model="currentPageSearch"
           align="center"
           :number-of-pages="rowsSearch"

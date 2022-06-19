@@ -6,6 +6,9 @@
     <b-card-text class="text-white">
       {{ url }}
     </b-card-text>
+    <b-card-text class="text-white">
+      If has questions, please close this meeting to save this.
+    </b-card-text>
   </b-card>
 </template>
 

@@ -119,7 +119,7 @@
       <!-- pagination -->
       <div class="my-2">
         <b-pagination-nav
-          v-if="rowsSearch && rowsSearch.length > 0"
+          v-if="rowsSearch"
           v-model="currentPageSearch"
           align="center"
           :number-of-pages="rowsSearch"
@@ -297,7 +297,7 @@
           <!-- pagination -->
           <div class="my-2">
             <b-pagination-nav
-              v-if="rows && rows.length > 0"
+              v-if="rows"
               v-model="currentPage"
               align="center"
               :number-of-pages="rows"

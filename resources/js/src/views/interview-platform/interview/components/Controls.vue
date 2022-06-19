@@ -35,7 +35,7 @@
         </template>
       </button>
 
-      <template v-if="supportsScreenshare">
+      <template v-if="supportsScreenshare && !practice">
         <button
           :disabled="disableScreenShare"
           @click="handleScreenshareClick"
@@ -109,6 +109,7 @@ export default {
     'pauseRecording',
     'recorder',
     'statusRecord',
+    'practice',
   ],
   data() {
     return {

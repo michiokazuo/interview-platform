@@ -327,7 +327,11 @@ export default {
             this.$bvModal.hide('modal-practice')
           })
           this.create = {}
-          this.$router.push({ name: 'interview-meeting-practice-test', params: { id: rs.data.id } })
+          if (rs.data.room) {
+            this.$router.push({ name: 'interview-meeting', params: { id: rs.data.id } })
+          } else {
+            this.$router.push({ name: 'interview-meeting-practice-test', params: { id: rs.data.id } })
+          }
         }).catch(err => {
           console.log(err)
           this.$nextTick(() => {
