@@ -1,11 +1,7 @@
 <template>
   <b-card
-    title="Welcome for others!"
-    sub-title="Invite someone by sharing this link:"
+    title="Welcome for meeting!"
   >
-    <b-card-text class="text-white">
-      {{ url }}
-    </b-card-text>
     <b-card-text class="text-white">
       If has questions, please close this meeting to save this.
     </b-card-text>
