@@ -28,6 +28,7 @@ class CVDetail extends Model
         'candidate_id',
         'key',
         'value',
+        'type',
     ];
 
     public function cv(): BelongsTo

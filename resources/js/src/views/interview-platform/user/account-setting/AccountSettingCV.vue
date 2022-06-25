@@ -1,7 +1,7 @@
 <template>
   <validation-observer
     ref="formCV"
-    #default="{invalid}"
+    v-slot="{invalid}"
   >
     <b-form @submit.prevent="storeCV">
       <b-card>
@@ -15,7 +15,7 @@
               label="Link"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Link"
                 rules="|url"
               >
@@ -34,7 +34,10 @@
 
       </b-card>
 
-      <b-card>
+      <b-card
+        v-for="(field, f_index) in items_fields"
+        :key="f_index"
+      >
         <b-row>
           <b-col cols="12">
             <div class="d-flex align-items-center mb-2">
@@ -42,15 +45,15 @@
                 icon="InfoIcon"
                 size="18"
               />
-              <h4 class="mb-0 ml-75">
-                CV Information
+              <h4 class="mb-0 ml-75 text-capitalize">
+                CV Information - {{ field }}
               </h4>
             </div>
           </b-col>
           <b-col cols="12">
             <div>
               <b-form
-                ref="form"
+                :ref="`${field}_form`"
                 :style="{height: trHeight}"
                 class="repeater-form"
                 @submit.prevent="repeatAgain"
@@ -58,10 +61,10 @@
 
                 <!-- Row Loop -->
                 <b-row
-                  v-for="(item, index) in items"
+                  v-for="(item, index) in items[`${field}`]"
                   :id="item.id"
                   :key="item.id"
-                  ref="row"
+                  :ref="`${field}_row`"
                   class="justify-content-end align-items-center"
                 >
 
@@ -76,7 +79,7 @@
                       label-for="item-key"
                     >
                       <validation-provider
-                        #default="{ errors }"
+                        v-slot="{ errors }"
                         name="Key"
                         rules="required"
                       >
@@ -103,7 +106,7 @@
                       label-for="item-value"
                     >
                       <validation-provider
-                        #default="{ errors }"
+                        v-slot="{ errors }"
                         name="Value"
                         rules="required"
                       >
@@ -131,7 +134,7 @@
                       v-ripple.400="'rgba(234, 84, 85, 0.15)'"
                       variant="outline-danger"
                       class="mt-0 mt-md-2"
-                      @click="removeItem(item.id, index)"
+                      @click="removeItem(item.id, index, field)"
                     >
                       <feather-icon
                         icon="XIcon"
@@ -150,7 +153,7 @@
             <b-button
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               variant="primary"
-              @click="repeatAgain"
+              @click="repeatAgain(field)"
             >
               <feather-icon
                 icon="PlusIcon"
@@ -197,7 +200,6 @@ import {
   BCard,
   BFormTextarea,
 } from 'bootstrap-vue'
-import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
@@ -233,10 +235,18 @@ export default {
   data() {
     return {
       cv: {
-        detail: {},
+        detail: {
+        },
       },
-      items: [],
-      nextTodoId: 2,
+      items_fields: ['profile', 'education', 'experience', 'skills', 'others'],
+      items: {
+        experience: [],
+        education: [],
+        skills: [],
+        others: [],
+        profile: [],
+      },
+      nextTodoId: 1,
     }
   },
   watch: {
@@ -255,22 +265,32 @@ export default {
   },
   methods: {
     resetForm() {
-      this.convertData(this.cvInfo)
+      this.initTrHeight()
+      this.items = {
+        experience: [],
+        education: [],
+        skills: [],
+        others: [],
+        profile: [],
+      }
+      this.nextTodoId = 1
+      this.cv.detail = {}
+      this.convertDataToShow(this.cvInfo)
     },
-    repeatAgain() {
-      this.items.push({
-        id: this.nextTodoId += this.nextTodoId,
+    repeatAgain(type) {
+      this.items[`${type}`].push({
+        id: `${type}_${this.nextTodoId += this.nextTodoId}`,
       })
 
       this.$nextTick(() => {
-        this.trAddHeight(this.$refs.row[0].offsetHeight)
+        this.trAddHeight(this.$refs[`${type}_row`][0].offsetHeight)
       })
     },
-    removeItem(id, index) {
+    removeItem(id, index, field) {
       delete this.cv.detail[`key-${id}`]
       delete this.cv.detail[`value-${id}`]
-      this.items.splice(index, 1)
-      this.trTrimHeight(this.$refs.row[0].offsetHeight)
+      this.items[`${field}`].splice(index, 1)
+      this.trTrimHeight(this.$refs[`${field}_row`][0].offsetHeight)
     },
     initTrHeight() {
       this.trSetHeight(null)
@@ -283,8 +303,8 @@ export default {
       const cvDetail = data.detail ?? []
       // eslint-disable-next-line no-restricted-syntax
       for (const item of cvDetail) {
-        this.repeatAgain()
-        const { id } = this.items.slice(-1)[0]
+        this.repeatAgain(item.type)
+        const { id } = this.items[`${item.type}`].slice(-1)[0]
         this.cv.detail[`key-${id}`] = item.key
         this.cv.detail[`value-${id}`] = item.value
       }
@@ -295,13 +315,16 @@ export default {
         detail: [],
       }
       rs.link = this.cv.link
-      const cvDetail = this.cv.detail ?? []
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of this.items) {
-        rs.detail.push({
-          key: cvDetail[`key-${item.id}`],
-          value: cvDetail[`value-${item.id}`],
-        })
+      const cvDetail = this.cv.detail ?? {}
+
+      for (const item in this.items) {
+        for (const val of this.items[item]) {
+          rs.detail.push({
+            key: cvDetail[`key-${val.id}`],
+            value: cvDetail[`value-${val.id}`],
+            type: item,
+          })
+        }
       }
 
       return rs
@@ -310,6 +333,7 @@ export default {
       this.$refs.formCV.validate().then(success => {
         if (success) {
           const data = this.convertDataToSave(this.cv)
+          console.log(data)
           cv.storeCV(data)
             .then(response => {
               const resp = response.data

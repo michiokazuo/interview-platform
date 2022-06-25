@@ -33,7 +33,7 @@
               label-for="account-name"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Name"
                 vid="name"
                 rules="required"
@@ -61,7 +61,7 @@
               label-for="account-e-mail"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Email"
                 vid="email"
                 rules="required|email"
@@ -90,7 +90,7 @@
               label-for="register-phone"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="phone"
                 vid="phone"
                 rules="required|phone"
@@ -119,7 +119,7 @@
               label-for="register-address"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Address"
                 vid="address"
                 rules="required"
@@ -148,7 +148,7 @@
               label-for="register-role"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Role"
                 vid="role"
                 rules="required"
@@ -177,7 +177,7 @@
               label-for="register-major"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Major"
                 vid="major"
                 rules="required"
@@ -207,7 +207,7 @@
               label-for="register-url"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Url"
                 vid="url"
                 rules="|url"
@@ -267,7 +267,7 @@
               label="Twitter"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Twitter"
                 vid="twitter"
                 rules="|url"
@@ -297,7 +297,7 @@
               label="Facebook"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Facebook"
                 vid="facebook"
                 rules="|url"
@@ -327,7 +327,7 @@
               label="LinkedIn"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Linkedin"
                 vid="linkedin"
                 rules="|url"
@@ -397,14 +397,25 @@ export default {
         { value: { id: 3, name: 'ROLE_COMPANY' }, text: 'Company' },
         { value: { id: 2, name: 'ROLE_CANDIDATE' }, text: 'Candidate' },
       ],
-      user: { ...this.userInfo },
+      user: {
+        ...this.userInfo,
+        social_network: {
+          ...this.userInfo.social_network,
+        },
+        role: {
+          ...this.userInfo.role,
+        },
+      },
     }
   },
   watch: {
     userInfo(newVal) {
-      this.user = { ...newVal }
-      this.user.social_network = { ...newVal.social_network ?? {} }
-      this.user.role = { ...newVal.role }
+      this.user = {
+        ...newVal,
+        social_network: { ...newVal.social_network ?? {} },
+        role: { ...newVal.role },
+      }
+      console.log(this.user)
     },
   },
 }

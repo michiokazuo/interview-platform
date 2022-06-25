@@ -31,6 +31,7 @@ class StoreCVRequest extends FormRequest
             'detail' => 'nullable|array',
             'detail.*.key' => 'string',
             'detail.*.value' => 'string',
+            'detail.*.type' => 'string|in:profile,experience,education,skills,others',
         ];
     }
 

@@ -38,6 +38,7 @@ class CVDetailServiceImpl implements CVDetailService
                 $dataDetail[] = [
                     'key' => $item['key'],
                     'value' => $item['value'],
+                    'type' => $item['type'],
                     'candidate_id' => $candidate_id,
                     'cv_id' => $cvId,
                     'created_at' => $time,

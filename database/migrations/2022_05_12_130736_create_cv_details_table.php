@@ -18,6 +18,7 @@ class CreateCvDetailsTable extends Migration
             $table->unsignedBigInteger('candidate_id');
             $table->string('key');
             $table->string('value');
+            $table->string('type');
             $table->timestamps();
             
             $table->foreign('cv_id')

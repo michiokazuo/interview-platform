@@ -33,7 +33,6 @@ class CVServiceImpl implements CVService
                 $cv->update([
                     'link' => $data['link'],
                 ]);
-                $cv = $cv[0];
             }
             else {
                 $cv = $this->_repository->create([
@@ -64,9 +63,9 @@ class CVServiceImpl implements CVService
     {
         try {
             $cv = $user->candidate->cv;
-            
+
             if ($cv) {
-                return $cv[0];
+                return $cv;
             }
 
             return false;
