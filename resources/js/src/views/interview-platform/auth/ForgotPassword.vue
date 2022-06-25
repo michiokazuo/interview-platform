@@ -56,7 +56,7 @@
                 label-for="forgot-password-email"
               >
                 <validation-provider
-                  #default="{ errors }"
+                  v-slot="{ errors }"
                   name="Email"
                   rules="required|email"
                 >
@@ -75,8 +75,17 @@
                 type="submit"
                 variant="primary"
                 block
+                :disabled="sending"
               >
-                Send reset link
+                <b-spinner
+                  v-if="sending"
+                  small
+                />
+                <span
+                  v-if="sending"
+                  class="sr-only"
+                >Sending...</span>
+                <span>Send reset link</span>
               </b-button>
             </b-form>
           </validation-observer>
@@ -98,7 +107,7 @@
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
-  BRow, BCol, BLink, BCardTitle, BCardText, BImg, BForm, BFormGroup, BFormInput, BButton,
+  BRow, BCol, BLink, BCardTitle, BCardText, BImg, BForm, BFormGroup, BFormInput, BButton, BSpinner,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -120,6 +129,7 @@ export default {
     BCardText,
     ValidationProvider,
     ValidationObserver,
+    BSpinner,
   },
   data() {
     return {
@@ -128,6 +138,7 @@ export default {
       // validation
       required,
       email,
+      sending: false,
     }
   },
   computed: {
@@ -144,6 +155,7 @@ export default {
     validationForm() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
+          this.sending = true
           auth.forgotPassword({ email: this.userEmail }).then(response => {
             console.log(response)
             this.$toast({
@@ -154,9 +166,11 @@ export default {
                 variant: 'success',
               },
             })
+            this.sending = false
             this.$router.push({ name: 'auth-login' })
           }).catch(error => {
             console.log(error)
+            this.sending = false
             this.$toast({
               component: ToastificationContent,
               position: 'top-right',

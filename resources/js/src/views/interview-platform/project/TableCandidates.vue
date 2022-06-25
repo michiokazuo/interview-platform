@@ -221,6 +221,8 @@
       cancel-title="Close"
       centered
       title="Edit Schedule"
+      :ok-title-html="creating ? `<span aria-hidden='true' class='spinner-border spinner-border-sm'></span> Creating...` : `Accept`"
+      :ok-disabled="creating"
       @ok="saveSchedule"
     >
       <validation-observer
@@ -439,6 +441,7 @@ export default {
       candidateSchedule: {},
       candidateDelete: null,
       optionsForm: ['Online', 'Offline'],
+      creating: false,
     }
   },
   computed: {
@@ -494,6 +497,7 @@ export default {
       bvModalEvent.preventDefault()
       this.$refs.scheduleForm.validate().then(success => {
         if (success) {
+          this.creating = true
           interview.update(this.candidateSchedule.id, {
             time: this.candidateSchedule.time,
             news_id: this.candidateSchedule.news.id,
@@ -520,12 +524,14 @@ export default {
                 variant: 'success',
               },
             })
+            this.creating = false
             this.$nextTick(() => {
               this.$bvModal.hide('modal-detail')
             })
             this.candidateSchedule = {}
           }).catch(err => {
             console.log(err)
+            this.creating = false
             this.$nextTick(() => {
               this.$bvModal.hide('modal-detail')
             })

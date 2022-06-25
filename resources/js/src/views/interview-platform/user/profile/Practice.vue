@@ -138,6 +138,8 @@
       ok-title="Accept"
       cancel-title="Close"
       centered
+      :ok-title-html="creating ? `<span aria-hidden='true' class='spinner-border spinner-border-sm'></span> Creating...` : `Accept`"
+      :ok-disabled="creating"
       title="Create practice"
       @ok="createPractice"
     >
@@ -266,6 +268,7 @@ export default {
         },
       ],
       rows: [...this.practices],
+      creating: false,
     }
   },
   computed: {
@@ -301,6 +304,7 @@ export default {
       bvModalEvent.preventDefault()
       const { create } = this
       if (create.meeting || create.questions) {
+        this.creating = true
         interview.store({
           time: new Date(),
           candidate_id: this.userData.candidate_id,
@@ -323,6 +327,7 @@ export default {
               variant: 'success',
             },
           })
+          this.creating = false
           this.$nextTick(() => {
             this.$bvModal.hide('modal-practice')
           })
@@ -334,6 +339,7 @@ export default {
           }
         }).catch(err => {
           console.log(err)
+          this.creating = false
           this.$nextTick(() => {
             this.$bvModal.hide('modal-practice')
           })

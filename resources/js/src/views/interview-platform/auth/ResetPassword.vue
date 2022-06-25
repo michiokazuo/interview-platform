@@ -23,7 +23,7 @@
         <!-- form -->
         <validation-observer
           ref="simpleRules"
-          #default="{invalid}"
+          v-slot="{invalid}"
         >
           <b-form
             method="POST"
@@ -35,7 +35,7 @@
               label-for="forgot-password-email"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Email"
                 rules="required|email"
               >
@@ -55,7 +55,7 @@
               label-for="reset-password-new"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Password"
                 vid="Password"
                 rules="required|password"
@@ -91,7 +91,7 @@
               label="Confirm Password"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Confirm Password"
                 rules="required|password|confirmed:Password"
               >

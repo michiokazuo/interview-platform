@@ -181,7 +181,7 @@ class UserServiceImpl implements UserService
                     'name' => $user->name,
                     'body' => 'This is mail to reset password. Follow on that link to reset your password.',
                     'note' => 'Note: Please do not public this link to anyone!!!',
-                    'actionUrl' => env("APP_URL") . "reset-password?token=" . $token,
+                    'actionUrl' => env("APP_URL") . "/reset-password?token=" . $token,
                     'actionText' => 'Reset Password',
                 ]);
 

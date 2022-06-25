@@ -16,7 +16,7 @@ export default [
     },
   },
   {
-    path: '/meeting/:id/practice-test',
+    path: '/interview/:id/practice-test',
     name: 'interview-meeting-practice-test',
     component: () => import('@/views/interview-platform/interview/PracticeTest.vue'),
     meta: {
@@ -24,7 +24,7 @@ export default [
     },
   },
   {
-    path: '/meeting/:id/result',
+    path: '/interview/:id/result',
     name: 'interview-meeting-result',
     component: () => import('@/views/interview-platform/interview/PracticeTestAnswer.vue'),
     meta: {
@@ -32,7 +32,7 @@ export default [
     },
   },
   {
-    path: '/meeting/:id/create-test',
+    path: '/interview/:id/create-test',
     name: 'interview-meeting-create-test',
     component: () => import('@/views/interview-platform/interview/EditTest.vue'),
     meta: {
