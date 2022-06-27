@@ -379,4 +379,25 @@ class InterviewServiceImpl implements InterviewService
             return false;
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function showAllByCompany(User $user)
+    {
+        try {
+            if ($user->company) {
+                return $this->_repository->where([
+                    ['company_id', $user->company_id]
+                ])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
 }

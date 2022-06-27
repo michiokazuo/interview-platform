@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Interview\StoreInterviewRequest;
+use App\Http\Resources\Interview\InterviewCalenderCollection;
 use App\Http\Resources\Interview\InterviewCollection;
 use App\Http\Resources\Interview\InterviewResource;
 use App\Services\Interview\InterviewService;
@@ -224,5 +225,23 @@ class InterviewController extends Controller
         }
 
         return $this->failedResult('interviews updated failed!!!', 500);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return JsonResponse
+     */
+    public function showAllByCompany(): JsonResponse
+    {
+        $user = $this->user();
+        $interviews = $this->interviewService->showAllByCompany($user);
+
+        if ($interviews) {
+            return $this->successfulResult('interviews display successfully!!!', $user, 
+                new InterviewCollection($interviews));
+        }
+
+        return $this->failedResult('interviews display failed!!!', 500);
     }
 }

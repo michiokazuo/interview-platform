@@ -78,4 +78,11 @@ interface InterviewService
      * @return mixed
      */
     public function saveResultTest(User $user, int $interview_id, array $data);
+
+    /**
+     * @param User $user
+     *
+     * @return mixed
+     */
+    public function showAllByCompany(User $user);
 }

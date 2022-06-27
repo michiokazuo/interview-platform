@@ -217,116 +217,15 @@
     <b-modal
       id="modal-detail"
       cancel-variant="outline-secondary"
-      ok-title="Accept"
       cancel-title="Close"
-      centered
+      size="xl"
+      scrollable
       title="Edit Schedule"
-      :ok-title-html="creating ? `<span aria-hidden='true' class='spinner-border spinner-border-sm'></span> Creating...` : `Accept`"
-      :ok-disabled="creating"
-      @ok="saveSchedule"
+      @hidden="resetData"
     >
-      <validation-observer
-        ref="scheduleForm"
-      >
-        <b-form>
-          <b-form-group>
-            <label for="address">Address</label>
-            <validation-provider
-              v-slot="{ errors }"
-              name="address"
-              vid="address"
-              rules="required"
-            >
-              <b-form-input
-                id="comment-address"
-                v-model="candidateSchedule.address"
-                placeholder="Address"
-                :state="errors.length > 0 ? false:null"
-              />
-              <small class="text-danger">{{ errors[0] }}</small>
-            </validation-provider>
-          </b-form-group>
-          <b-form-group
-            label="Start time"
-            label-for="start-time"
-            class="mb-2"
-          >
-            <validation-provider
-              v-slot="{ errors }"
-              name="start_time"
-              vid="start_time"
-              rules="required"
-            >
-              <flat-pickr
-                id="start-time"
-                v-model="candidateSchedule.time"
-                name="start_time"
-                placeholder="start time"
-                :state="errors.length > 0 ? false:null"
-                class="form-control"
-                :config="{ enableTime: true,dateFormat: 'Y-m-d H:i'}"
-              />
-              <small class="text-danger">{{ errors[0] }}</small>
-            </validation-provider>
-          </b-form-group>
-          <b-form-group
-            label="Form"
-            label-for="form"
-          >
-            <validation-provider
-              v-slot="{ errors }"
-              name="form"
-              vid="form"
-              rules="required"
-            >
-              <v-select
-                id="register-form"
-                v-model="candidateSchedule.form"
-                name="register-form"
-                :state="errors.length > 0 ? false:null"
-                placeholder="Form"
-                :options="optionsForm"
-              />
-              <small class="text-danger">{{ errors[0] }}</small>
-            </validation-provider>
-          </b-form-group>
-
-          <b-form-group v-if="candidateSchedule.form == 'Online' && candidateSchedule.room">
-            <b-link
-              :to="{ name: 'interview-meeting', params:{id: candidateSchedule.id} }"
-              class="font-weight-bold mb-2"
-            >
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                variant="success"
-                class="mb-2"
-              >
-                Meeting
-              </b-button>
-            </b-link>
-            <b-form-input
-              v-model="candidateSchedule.room"
-              readonly
-            />
-          </b-form-group>
-          <b-form-group v-if="candidateSchedule.form == 'Online' && !candidateSchedule.room">
-            <b-alert
-              variant="warning"
-              show
-            >
-              <h4 class="alert-heading">
-                Note
-              </h4>
-              <div class="alert-body">
-                <p class="p-0 m-0">
-                  Please save to create room for this interview
-                </p>
-                <span>If failed, please try again!!! (Because full of room already)</span>
-              </div>
-            </b-alert>
-          </b-form-group>
-        </b-form>
-      </validation-observer>
+      <calendar
+        :interview="candidateSchedule"
+      />
     </b-modal>
   </b-card>
 </template>
@@ -338,25 +237,20 @@ import {
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, password } from '@validations'
-import flatPickr from 'vue-flatpickr-component'
-import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
 import store from '@/store/index'
 import interview from '@/store/api/Interview'
 import utils from '@/store/utils'
 import CandidateInfo from './CandidateInfo.vue'
+import Calendar from './calendar/Calendar.vue'
 
 export default {
   components: {
-    BAlert,
     BCard,
     VueGoodTable,
     BAvatar,
     BBadge,
     BPagination,
-    BForm,
     BFormGroup,
     BFormInput,
     BFormSelect,
@@ -364,12 +258,7 @@ export default {
     BCardText,
     BDropdownItem,
     CandidateInfo,
-    ValidationProvider,
-    ValidationObserver,
-    flatPickr,
-    vSelect,
-    BLink,
-    BButton,
+    Calendar,
   },
   directives: {
     'b-modal': VBModal,
@@ -442,6 +331,7 @@ export default {
       candidateDelete: null,
       optionsForm: ['Online', 'Offline'],
       creating: false,
+      doneInterview: false,
     }
   },
   computed: {
@@ -469,28 +359,32 @@ export default {
     },
   },
   created() {
-    interview.showByNews(this.id).then(resp => {
-      const rs = resp.data
-      this.rows = rs.data.data
-      utils.updateUser(rs.user)
-      this.$ability.update([
-        {
-          action: 'manage',
-          subject: rs.user.role,
-        },
-      ])
-    }).catch(err => {
-      console.log(err)
-      this.rows = []
-    })
+    this.getData()
   },
   methods: {
+    getData() {
+      interview.showByNews(this.id).then(resp => {
+        const rs = resp.data
+        this.rows = rs.data.data
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: rs.user.role,
+          },
+        ])
+      }).catch(err => {
+        console.log(err)
+        this.rows = []
+      })
+    },
     viewCandidate(id) {
       this.candidateView = this.rows.find(item => item.id === id).candidate
       this.$bvModal.show('modal-candidate')
     },
     setCandidateSchedule(id) {
       this.candidateSchedule = this.rows.find(item => item.id === id)
+      this.doneInterview = !!((this.candidateSchedule.result && this.candidateSchedule.result.company) || (this.candidateSchedule.record && this.candidateSchedule.record.company))
       this.$bvModal.show('modal-detail')
     },
     saveSchedule(bvModalEvent) {
@@ -596,6 +490,12 @@ export default {
           this.$bvModal.hide('modal-delete')
         })
       })
+    },
+    resetData() {
+      if (localStorage.getItem('calendar')) {
+        this.getData()
+        localStorage.removeItem('calendar')
+      }
     },
   },
 }

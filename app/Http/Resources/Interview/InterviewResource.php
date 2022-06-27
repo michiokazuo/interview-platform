@@ -62,8 +62,13 @@ class InterviewResource extends JsonResource
             ] : null,
             'news' => $this->news,
             'status' => $status,
-            'end' => $this->updated_at ? date('Y-m-d H:i:s', strtotime($this->updated_at)) : null,
             'questions' => $this->questions->count() ? new QuestionCollection($this->questions) : null,
+            'url' => '',
+            'title' => $this->candidate->user->name . ' - ' . $this->id,
+            'start' => $this->time ? date('Y-m-d H:i:s', strtotime($this->time)) : null,
+            'end' => $this->time ? date('Y-m-d H:i', strtotime('+1 hour', strtotime($this->time))) : null,
+            'allDay' => false,
+            'calendar' => $status
         ];
     }
 }

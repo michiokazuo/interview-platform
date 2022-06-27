@@ -42,3 +42,15 @@ export const validatorPhone = val => {
   /* eslint-enable no-useless-escape */
   return re.test(phone)
 }
+
+export const validatorTimeBegin = val => {
+  if (val === undefined || val === null || val.length === 0) {
+    return true
+  }
+
+  try {
+    return new Date(val) >= new Date()
+  } catch (e) {
+    return false
+  }
+}

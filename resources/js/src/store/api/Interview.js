@@ -8,6 +8,7 @@ const apiEdit = '/api/interview-edit/'
 const apiFindNews = '/api/interview-find-news/'
 const createTest = '/api/create-test/'
 const apiSaveTest = '/api/save-test/'
+const apiByCompany = '/api/interviews-by-company'
 
 export default {
   store(data) {
@@ -39,5 +40,8 @@ export default {
   },
   saveRSTest(id, data) {
     return axios.post(`${apiSaveTest}${id}`, data)
+  },
+  showAllByCompany() {
+    return axios.get(`${apiByCompany}`)
   },
 }

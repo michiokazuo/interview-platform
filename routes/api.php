@@ -62,6 +62,7 @@ Route::group(['middleware' => 'api'], function () {
 
     Route::apiResource('interview', InterviewController::class)->except(['index', 'update']);
     Route::post('/interview-update/{id}', [InterviewController::class, 'update']);
+    Route::get('/interviews-by-company', [InterviewController::class, 'showAllByCompany']);
     Route::get('/interviews-by-user/{id}', [InterviewController::class, 'showAllByUser']);
     Route::get('/interview-find-news/{id}', [InterviewController::class, 'findByNewsId']);
     Route::get('/interviews-by-news/{id}', [InterviewController::class, 'showAllByNews']);

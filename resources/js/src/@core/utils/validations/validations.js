@@ -20,7 +20,7 @@ import en from 'vee-validate/dist/locale/en.json'
 
 // eslint-disable-next-line object-curly-newline
 import { validatorPositive, validatorUrlValidator, validatorPassword,
-  validatorCreditCard, validatorPhone,
+  validatorCreditCard, validatorPhone, validatorTimeBegin,
 } from './validators'
 
 // ////////////////////////////////////////////////////////
@@ -78,6 +78,11 @@ export const url = extend('url', {
 export const phone = extend('phone', {
   validate: validatorPhone,
   message: 'Phone number is invalid',
+})
+
+export const timeBegin = extend('time-begin', {
+  validate: validatorTimeBegin,
+  message: 'Time must be greater than current time!',
 })
 
 // Install English and Arabic localizations.
