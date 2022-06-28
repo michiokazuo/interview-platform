@@ -8,11 +8,24 @@ interface GroupQuestionService
 {
     /**
      * @param User $user
+     * @return mixed
+     */
+    public function getAll(User $user);
+    
+    /**
+     * @param User $user
      * @param array $data
      * @param $group_id
      * @return mixed
      */
     public function store(User $user, array $data, $group_id);
+
+    /**
+     * @param User $user
+     * @param int $group_id
+     * @return mixed
+     */
+    public function findById(User $user, int $group_id);
     
     /**
      * @param User $user
@@ -24,8 +37,8 @@ interface GroupQuestionService
     
     /**
      * @param User $user
-     * @param array $data
+     * @param int $group_id
      * @return mixed
      */
-    public function delete(User $user, array $data);
+    public function delete(User $user, int $group_id);
 }

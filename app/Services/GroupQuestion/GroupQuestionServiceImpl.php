@@ -3,13 +3,10 @@
 namespace App\Services\GroupQuestion;
 
 use App\Models\GroupQuestion;
-use App\Models\Question;
-use App\Models\QuestionTag;
 use App\Models\User;
 use App\Services\QuestionAnswerTag\QATService;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class GroupQuestionServiceImpl implements GroupQuestionService
@@ -28,6 +25,27 @@ class GroupQuestionServiceImpl implements GroupQuestionService
     /**
      * @inheritDoc
      */
+    public function getAll(User $user)
+    {
+        try {
+            if ($user->company) {
+                $company_id = $user->company_id;
+                $groups = $this->_repository->where('company_id', $company_id)
+                    ->orderBy('created_at', 'desc')->get();
+
+                return $groups;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function store(User $user, array $data, $group_id)
     {
         try {
@@ -38,6 +56,7 @@ class GroupQuestionServiceImpl implements GroupQuestionService
                     'company_id' => $user->company_id,
                     'title' => $data['title'] ?? "$user->name interview " . Str::random(5),
                     'topics' => $data['topics'] ?? '',
+                    'is_interview' => $data['is_interview'] ?? false,
                 ]);
             } else {
                 $group->update([
@@ -108,8 +127,40 @@ class GroupQuestionServiceImpl implements GroupQuestionService
     /**
      * @inheritDoc
      */
-    public function delete(User $user, array $data)
+    public function delete(User $user, int $group_id)
     {
-        // TODO: Implement delete() method.
+        try {
+            $group = $this->_repository->find($group_id);
+
+            if ($group && $group->company_id == $user->company_id) {
+                $group->delete();
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findById(User $user, int $group_id)
+    {
+        try {
+            $group = $this->_repository->find($group_id);
+
+            if ($group && $group->company_id == $user->company_id) {
+                return $group;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
     }
 }

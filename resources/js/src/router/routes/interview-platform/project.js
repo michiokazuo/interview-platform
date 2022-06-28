@@ -186,4 +186,61 @@ export default [
       resource: 'ROLE_COMPANY',
     },
   },
+  {
+    path: '/company/manage-interview-question',
+    name: 'pages-manage-interview-question',
+    component: () => import('@/views/interview-platform/project/ManageInterviewQuestion.vue'),
+    meta: {
+      pageTitle: 'Interview Questions',
+      breadcrumb: [
+        {
+          text: 'Interview Questions',
+          to: { name: 'pages-manage-interview-question' },
+        },
+        {
+          text: 'List',
+          active: true,
+        },
+      ],
+      resource: 'ROLE_COMPANY',
+    },
+  },
+  {
+    path: '/company/interview-question/create',
+    name: 'manage-interview-question-create',
+    component: () => import('@/views/interview-platform/project/EditGroupQuestion.vue'),
+    meta: {
+      pageTitle: 'Interview Questions',
+      breadcrumb: [
+        {
+          text: 'Interview Questions',
+          to: { name: 'pages-manage-interview-question' },
+        },
+        {
+          text: 'Create',
+          active: true,
+        },
+      ],
+      resource: 'ROLE_COMPANY',
+    },
+  },
+  {
+    path: '/company/interview-question/edit/:id',
+    name: 'manage-interview-question-edit',
+    component: () => import('@/views/interview-platform/project/EditGroupQuestion.vue'),
+    meta: {
+      pageTitle: 'Interview Questions',
+      breadcrumb: [
+        {
+          text: 'Interview Questions',
+          to: { name: 'pages-manage-interview-question' },
+        },
+        {
+          text: 'Edit',
+          active: true,
+        },
+      ],
+      resource: 'ROLE_COMPANY',
+    },
+  },
 ]

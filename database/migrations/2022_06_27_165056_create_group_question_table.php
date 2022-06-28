@@ -18,6 +18,7 @@ class CreateGroupQuestionTable extends Migration
             $table->string('title');
             $table->string('topics')->nullable();
             $table->unsignedBigInteger('company_id')->unsigned()->nullable();
+            $table->boolean('is_interview')->default(false);
             $table->timestamps();
 
             $table->foreign('company_id')

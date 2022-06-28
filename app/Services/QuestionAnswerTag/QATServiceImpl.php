@@ -112,23 +112,44 @@ class QATServiceImpl implements QATService
             if (isset($data['question'])) {
                 $questionData = $data['question'];
                 $rootQs = $this->questionRepo->find($questionData['root_question_id'] ?? null);
-                
-                $question = $this->questionRepo->create([
-                    'company_id' => $user->company_id,
-                    'title' => $data['title'] ?? $rootQs->title ?? '',
-                    'root_question_id' => $rootQs ? $rootQs->id : null,
-                    'content' => $questionData['content'],
-                ]);
+
+                if (isset($questionData['id'])) {
+                    $question = $this->questionRepo->find($questionData['id']);
+                }
+
+                if ($question) {
+                    $question->update([
+                        'company_id' => $user->company_id,
+                        'title' => $data['title'] ?? $rootQs->title ?? '',
+                        'root_question_id' => $rootQs ? $rootQs->id : null,
+                        'content' => $questionData['content'],
+                    ]);
+                } else {
+                    $question = $this->questionRepo->create([
+                        'company_id' => $user->company_id,
+                        'title' => $data['title'] ?? $rootQs->title ?? '',
+                        'root_question_id' => $rootQs ? $rootQs->id : null,
+                        'content' => $questionData['content'],
+                    ]);
+                }
             }
 
             if ($question && isset($data['answer'])) {
                 $answerData = $data['answer'];
-                $this->answerRepo->create([
-                    'question_id' => $question->id,
-                    'content' => $answerData['content'],
-                    'score' => 0,
-                    'answered' => false,
-                ]);
+                $answers = $question->answers;
+                if ($answers->count() > 0) {
+                    $answers[0]->update([
+                        'content' => $answerData['content'],
+                    ]);
+                    
+                } else {
+                    $this->answerRepo->create([
+                        'question_id' => $question->id,
+                        'content' => $answerData['content'],
+                        'score' => 0,
+                        'answered' => false,
+                    ]);
+                }
             }
 
             if ($question) {

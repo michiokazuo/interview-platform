@@ -27,6 +27,7 @@ class GroupQuestion extends Model
         'title',
         'topics',
         'company_id',
+        'is_interview',
     ];
 
     /**
@@ -57,6 +58,11 @@ class GroupQuestion extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function interview(): BelongsTo
+    {
+        return $this->belongsTo(Interview::class, 'id', 'gq_test_id');
     }
     
 }

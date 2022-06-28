@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\CVController;
+use App\Http\Controllers\API\GroupQuestionController;
 use App\Http\Controllers\API\InterviewController;
 use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\QATController;
@@ -77,5 +78,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::post('/admin/active-company/{id}', [AdminController::class, 'activeCompany']);
     Route::delete('/admin/delete-user/{id}', [AdminController::class, 'destroy']);
     Route::post('/admin/crawler', [AdminController::class, 'crawler']);
+
+    Route::apiResource('group-question', GroupQuestionController::class);
 });
 

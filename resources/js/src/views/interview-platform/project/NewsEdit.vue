@@ -497,6 +497,7 @@ export default {
         numeral: true,
         numeralThousandsGroupStyle: 'thousand',
       },
+      required, email, password,
     }
   },
   created() {
@@ -525,7 +526,6 @@ export default {
       }).catch(err => {
         console.log(err)
         this.newsEdit = null
-        console.log(this.newsEdit)
       })
     },
     saveNews() {
