@@ -350,7 +350,7 @@ export default {
     },
     convertDataToShow(data) {
       this.group.title = data.title
-      this.group.topics = data.topics?.split(',')
+      this.group.topics = data.topics ? data.topics.split(',') : []
       const detailGroup = data.questions ?? []
       // eslint-disable-next-line no-restricted-syntax
       for (const item of detailGroup) {

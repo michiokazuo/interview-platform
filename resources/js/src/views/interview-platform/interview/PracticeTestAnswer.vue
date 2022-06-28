@@ -5,24 +5,139 @@
 		class="blog-list-wrapper match-height"
 	>
 		<b-col cols="12">
-      <div>
-        <b-link
-          v-if="interview.record && userOn && (interview.record.candidate || interview.record.company)"
-          :to="interview.record.company ? interview.record.company : interview.record.candidate"
-          class="font-weight-bold mb-2"
-          target="_blank"
-        >
-          <b-button
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            variant="primary"
-            class="mb-2"
-          >
-            View record
-          </b-button>
-        </b-link>
-      </div>
+			<div>
+				<b-link
+					v-if="interview.record && userOn && (interview.record.candidate || interview.record.company)"
+					:to="interview.record.company ? interview.record.company : interview.record.candidate"
+					class="font-weight-bold mb-2"
+					target="_blank"
+				>
+					<b-button
+						v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+						variant="primary"
+						class="mb-2"
+					>
+						View record
+					</b-button>
+				</b-link>
+			</div>
 		</b-col>
 		<template v-if="interview.result && interview.result.candidate">
+			<b-col cols="12">
+				<b-card :title="interview.news ? 'General' : 'General for you practices'">
+					<b-row
+						v-if="interview.group_question"
+						class="mb-1"
+					>
+						<b-col
+							md="4"
+							cols="6"
+						>
+							<h5 class="text-capitalize ">
+								Title
+							</h5>
+							<b-card-text>
+								{{ interview.group_question.title }}
+							</b-card-text>
+						</b-col>
+						<b-col
+							md="4"
+							cols="6"
+						>
+							<h5 class="text-capitalize ">
+								Tags
+							</h5>
+							<b-card-text>
+								<div v-if="interview.group_question.topics">
+									<b-link
+										v-for="(tag,index) in  interview.group_question.topics.split(',')"
+										:key="index"
+									>
+										<b-badge
+											pill
+											class="mr-75"
+											:variant="tagsColor(tag)"
+										>
+											{{ tag }}
+										</b-badge>
+									</b-link>
+								</div>
+								<div
+									class="my-1 py-25"
+									v-else
+								>
+									<b-link>
+										<b-badge
+											pill
+											class="mr-75"
+											variant="dark"
+										>
+											Not set
+										</b-badge>
+									</b-link>
+								</div>
+							</b-card-text>
+						</b-col>
+						<b-col
+							md="4"
+							cols="6"
+              v-if="!interview.news"
+						>
+							<h5 class="text-capitalize ">
+								Date Creator
+							</h5>
+							<b-card-text>
+								{{ interview.time }}
+							</b-card-text>
+						</b-col>
+					</b-row>
+					<b-row>
+						<b-col
+							v-if="interview.company"
+							md="4"
+							class="mb-75"
+							cols="6"
+						>
+							<h5 class="text-capitalize">
+								Creator
+							</h5>
+							<b-card-text>
+								<b-link :to="{ name: 'pages-company-news-list', params: { id: interview.company.id } }">
+									{{ interview.company.general.name }}
+								</b-link>
+							</b-card-text>
+						</b-col>
+						<b-col
+							v-if="interview.news"
+							md="4"
+							class="mb-75"
+							cols="6"
+						>
+							<h5 class="text-capitalize ">
+								Recruitment news
+							</h5>
+							<b-card-text>
+								<b-link :to="{ name: 'pages-news-detail', params: { id: interview.news.id } }">
+									{{ interview.news.title }}
+								</b-link>
+							</b-card-text>
+						</b-col>
+						<b-col
+							v-if="interview.news"
+							md="4"
+							class="mb-75"
+							cols="6"
+						>
+							<h5 class="text-capitalize ">
+								For candidate
+							</h5>
+							<b-card-text>
+								{{ interview.candidate.general.name }}
+							</b-card-text>
+						</b-col>
+					</b-row>
+				</b-card>
+			</b-col>
 			<b-col
 				v-for="question in questions"
 				:key="question.id"
@@ -72,7 +187,7 @@
 										icon="MessageSquareIcon"
 										class="mr-50"
 									/>
-                  <span v-if="result && result.candidate[`question-${question.id}`]"> 1 </span>
+									<span v-if="result && result.candidate[`question-${question.id}`]"> 1 </span>
 								</div>
 							</b-link>
 							<b-link
@@ -412,7 +527,6 @@
 		methods: {
 			kFormatter,
 			tagsColor(tag) {
-				;
 				const color = [
 					"primary",
 					"secondary",

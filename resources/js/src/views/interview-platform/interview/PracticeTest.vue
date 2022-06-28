@@ -27,6 +27,120 @@
     <b-col
       v-if="interview.questions"
     >
+
+      <b-card :title="interview.news ? 'General' : 'General for you practices'">
+        <b-row
+          v-if="interview.group_question"
+          class="mb-1"
+        >
+          <b-col
+            md="4"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Title
+            </h5>
+            <b-card-text>
+              {{ interview.group_question.title }}
+            </b-card-text>
+          </b-col>
+          <b-col
+            md="4"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Tags
+            </h5>
+            <b-card-text>
+              <div v-if="interview.group_question.topics">
+                <b-link
+                  v-for="(tag,index) in interview.group_question.topics.split(',')"
+                  :key="index"
+                >
+                  <b-badge
+                    pill
+                    class="mr-75"
+                    :variant="tagsColor(tag)"
+                  >
+                    {{ tag }}
+                  </b-badge>
+                </b-link>
+              </div>
+              <div
+                v-else
+                class="my-1 py-25"
+              >
+                <b-link>
+                  <b-badge
+                    pill
+                    class="mr-75"
+                    variant="dark"
+                  >
+                    Not set
+                  </b-badge>
+                </b-link>
+              </div>
+            </b-card-text>
+          </b-col>
+          <b-col
+            md="4"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Date Creator
+            </h5>
+            <b-card-text>
+              {{ new Date().toLocaleDateString() }}
+            </b-card-text>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col
+            v-if="interview.company"
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize">
+              Creator
+            </h5>
+            <b-card-text>
+              <b-link :to="{ name: 'pages-company-news-list', params: { id: interview.company.id } }">
+                {{ interview.company.general.name }}
+              </b-link>
+            </b-card-text>
+          </b-col>
+          <b-col
+            v-if="interview.news"
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Recruitment news
+            </h5>
+            <b-card-text>
+              <b-link :to="{ name: 'pages-news-detail', params: { id: interview.news.id } }">
+                {{ interview.news.title }}
+              </b-link>
+            </b-card-text>
+          </b-col>
+          <b-col
+            v-if="interview.news"
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              For candidate
+            </h5>
+            <b-card-text>
+              {{ interview.candidate.general.name }}
+            </b-card-text>
+          </b-col>
+        </b-row>
+      </b-card>
+
       <b-card
         v-for="question in questions"
         :key="question.id"
@@ -224,7 +338,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[tag.length % color.length]
       return `light-${rd}`
