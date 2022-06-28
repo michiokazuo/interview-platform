@@ -5,26 +5,25 @@ namespace App\Services\Interview;
 use App\Models\Interview;
 use App\Models\User;
 use App\Services\DailyCo\DailyCoService;
-use App\Services\QuestionAnswerTag\QATService;
+use App\Services\GroupQuestion\GroupQuestionService;
 use App\Services\RNews\NewsService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Http\Request;
 
 class InterviewServiceImpl implements InterviewService
 {
-    protected $_repository, $newsService, $dailyCoService, $qatService;
+    protected $_repository, $newsService, $dailyCoService, $gqService;
 
     /**
      * @throws BindingResolutionException
      */
-    public function __construct(NewsService $newsService, DailyCoService $dailyCoService, QATService $qatService)
+    public function __construct(NewsService $newsService, DailyCoService $dailyCoService, GroupQuestionService $gqService)
     {
         $this->_repository = app()->make(Interview::class);
         $this->newsService = $newsService;
         $this->dailyCoService = $dailyCoService;
-        $this->qatService = $qatService;
+        $this->gqService = $gqService;
     }
 
     /**
@@ -96,15 +95,15 @@ class InterviewServiceImpl implements InterviewService
 
                 if (!empty($data['interview_test'])) {
                     $data['time'] = now();
-                    $questions = $this->qatService->createRandom($user, $data);
+                    $group = $this->gqService->createRandom($user, $data, null);
+                    if ($group) {
+                        $data = array_merge($data, ['gq_test_id' => $group->id]);
+                    }
                 }
 
                 $interview = $this->_repository->create($data);
 
                 if ($interview) {
-                    if (!empty($data['interview_test'])) {
-                        $interview->questions()->sync($questions ?? []);
-                    }
                     return $interview;
                 }
             }
@@ -197,7 +196,7 @@ class InterviewServiceImpl implements InterviewService
     {
         try {
             $interview = $this->_repository->find($interview_id);
-            
+
             if ($interview && ($interview->company_id === $user->company_id
                     || $interview->candidate_id === $user->candidate_id)) {
                 $data['candidate_id'] = $interview->candidate_id;
@@ -330,13 +329,17 @@ class InterviewServiceImpl implements InterviewService
                 $data['news_id'] = $interview->news_id;
 
                 if (!empty($data['interview_questions'])) {
-                    $interview->questions()->sync($data['interview_questions']);
+                    $group = $this->gqService->store($user, $data, $interview->gq_test_id);
                 } else {
-                    $questions = $this->qatService->createRandom($user, $data);
-                    $interview->questions()->sync($questions);
+                    $group = $this->gqService->createRandom($user, $data, $interview->gq_test_id);
                 }
 
-                return $this->findById($user, $interview_id);
+                if ($group) {
+                    $interview->update([
+                        'gq_test_id' => $group->id,
+                    ]);
+                    return $this->findById($user, $interview_id);
+                }
             }
 
             return false;

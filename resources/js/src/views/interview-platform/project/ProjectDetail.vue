@@ -6,7 +6,7 @@
     >
 
       <!-- Tab: Account -->
-      <b-tab>
+      <b-tab :active="hash === '#general'">
         <template #title>
           <feather-icon
             icon="UserIcon"
@@ -19,7 +19,7 @@
       </b-tab>
 
       <!-- Tab: Information -->
-      <b-tab active>
+      <b-tab :active="hash !== '#general'">
         <template #title>
           <feather-icon
             icon="InfoIcon"
@@ -57,7 +57,11 @@ export default {
   data() {
     return {
       id: null,
+      hash: null,
     }
+  },
+  mounted() {
+    this.hash = this.$route.hash
   },
   created() {
     const { id } = this.$route.params

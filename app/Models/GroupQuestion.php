@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Question extends Model
+class GroupQuestion extends Model
 {
     use HasFactory;
 
@@ -17,7 +16,7 @@ class Question extends Model
      *
      * @var string
      */
-    protected $table = 'questions';
+    protected $table = 'group_questions';
 
     /**
      * The attributes that are mass assignable.
@@ -25,32 +24,34 @@ class Question extends Model
      * @var array
      */
     protected $fillable = [
-        'stack_id',
-        'content',
         'title',
-        'others',
-        'page_crawled',
+        'topics',
         'company_id',
-        'root_question_id'
     ];
 
     /**
-     * The attributes that should be cast.
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = [
-        'others' => 'array'
+        'result' => 'array',
+        'record' => 'array',
     ];
 
-    public function tags(): BelongsToMany
+    public function questions(): BelongsToMany
     {
-        return $this->belongsToMany(QuestionTag::class, 'question_tags', 'question_id', 'tag_id');
-    }
-    
-    public function answers(): HasMany
-    {
-        return $this->hasMany(QuestionAnswer::class, 'question_id');
+        return $this->belongsToMany(Question::class, 'group_has_questions', 'group_id', 'question_id');
     }
     
     public function company(): BelongsTo
@@ -58,8 +59,4 @@ class Question extends Model
         return $this->belongsTo(Company::class);
     }
     
-    public function rootQuestion(): BelongsTo
-    {
-        return $this->belongsTo(Question::class, 'root_question_id');
-    }
 }

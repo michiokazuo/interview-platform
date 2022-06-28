@@ -5,6 +5,7 @@ namespace App\Http\Resources\Interview;
 use App\Http\Resources\QAT\QuestionCollection;
 use App\Http\Resources\User\CandidateResource;
 use App\Http\Resources\User\UserResource;
+use App\Models\GroupQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,9 +19,10 @@ class InterviewResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $groupQuestionTest = $this->gqTest ?? new GroupQuestion();
         if ($this->time) {
             $status = 'Scheduled';
-            if ($this->questions && $this->questions->count() > 0) {
+            if ($groupQuestionTest->questions && $groupQuestionTest->questions->count() > 0) {
                 $status = 'Have test';
                 if ($this->result && isset($this->result['candidate'])) {
                     $status = 'Done test';
@@ -31,7 +33,7 @@ class InterviewResource extends JsonResource
             }
         } else if (date('Y-m-d H:i:s', strtotime($this->created_at)) !== date('Y-m-d H:i:s', strtotime($this->updated_at))) {
             $status = 'Canceled schedule';
-            if ($this->questions && $this->questions->count() > 0) {
+            if ($groupQuestionTest->questions && $groupQuestionTest->questions->count() > 0) {
                 $status = 'Have test';
                 if ($this->result && isset($this->result['candidate'])) {
                     $status = 'Done test';
@@ -39,7 +41,7 @@ class InterviewResource extends JsonResource
             }
         } else {
             $status = 'Created';
-            if ($this->questions && $this->questions->count() > 0) {
+            if ($groupQuestionTest->questions && $groupQuestionTest->questions->count() > 0) {
                 $status = 'Have test';
                 if ($this->result && isset($this->result['candidate'])) {
                     $status = 'Done test';
@@ -62,7 +64,8 @@ class InterviewResource extends JsonResource
             ] : null,
             'news' => $this->news,
             'status' => $status,
-            'questions' => $this->questions->count() ? new QuestionCollection($this->questions) : null,
+            'group_question' => $this->gqTest,
+            'questions' => $groupQuestionTest->questions->count() ? new QuestionCollection($groupQuestionTest->questions) : null,
             'url' => '',
             'title' => $this->candidate->user->name . ' - ' . $this->id,
             'start' => $this->time ? date('Y-m-d H:i:s', strtotime($this->time)) : null,

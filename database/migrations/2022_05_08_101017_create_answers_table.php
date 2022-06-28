@@ -19,6 +19,7 @@ class CreateAnswersTable extends Migration
             $table->longText('content');
             $table->integer('score');
             $table->boolean('answered');
+            $table->unsignedBigInteger('stack_id')->nullable();
             $table->json('others')->nullable();
             $table->timestamps();
 

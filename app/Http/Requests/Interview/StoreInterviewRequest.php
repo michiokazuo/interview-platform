@@ -42,9 +42,14 @@ class StoreInterviewRequest extends FormRequest
             'room' => 'nullable|string',
             'interview_meeting' => 'nullable|boolean',
             'interview_test' => 'nullable|boolean',
+            
+            // for create test
             'interview_questions' => 'nullable|array',
             'interview_questions_tags' => 'nullable|array',
             'number_of_questions' => 'nullable|numeric',
+            'title' => 'nullable|string',
+            'topics' => 'nullable|string',
+            'edit_questions' => 'nullable|array',
         ];
     }
 

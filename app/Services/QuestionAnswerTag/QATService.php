@@ -26,4 +26,18 @@ interface QATService
      * @return mixed
      */
     public function createRandom(User $user, array $data);
+
+    /**
+     * @param User $user
+     * @param array $data
+     * @return mixed
+     */
+    public function createQA(User $user, array $data);
+    
+    /**
+     * @param User $user
+     * @param array $data
+     * @return mixed
+     */
+    public function delete(User $user, array $data);
 }

@@ -25,7 +25,7 @@
 
     <validation-observer
       ref="blogForm"
-      #default="{invalid}"
+      v-slot="{invalid}"
     >
       <!-- form -->
       <b-form
@@ -40,7 +40,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Title"
                 vid="title"
                 rules="required"
@@ -63,7 +63,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Topics"
                 vid="topics"
                 rules="required"
@@ -89,7 +89,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Content"
                 vid="content"
                 rules="required"
@@ -200,7 +200,7 @@ import { quillEditor } from 'vue-quill-editor'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, password } from '@validations'
+import { required } from '@validations'
 import vSelect from 'vue-select'
 import blog from '@/store/api/Blog'
 import utils from '@/store/utils'
@@ -238,6 +238,7 @@ export default {
       snowOption: {
         theme: 'snow',
       },
+      required,
     }
   },
   created() {

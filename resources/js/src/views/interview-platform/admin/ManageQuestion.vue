@@ -336,7 +336,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      console.log(tag)
       const color = [
         'primary',
         'secondary',
@@ -346,7 +345,7 @@ export default {
         'info',
         'dark',
       ]
-      const rd = color[Math.floor(Math.random() * color.length)]
+      const rd = color[tag.length % color.length]
       return `light-${rd}`
     },
     setQA(question) {

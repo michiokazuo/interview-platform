@@ -20,6 +20,8 @@ use App\Services\CVDetail\CVDetailService;
 use App\Services\CVDetail\CVDetailServiceImpl;
 use App\Services\DailyCo\DailyCoService;
 use App\Services\DailyCo\DailyCoServiceImpl;
+use App\Services\GroupQuestion\GroupQuestionService;
+use App\Services\GroupQuestion\GroupQuestionServiceImpl;
 use App\Services\Interview\InterviewService;
 use App\Services\Interview\InterviewServiceImpl;
 use App\Services\Mail\MailService;
@@ -74,5 +76,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(QATService::class, QATServiceImpl::class);
         $this->app->bind(AdminService::class, AdminServiceImpl::class);
         $this->app->bind(SettingCrawlerService::class, SettingCrawlerServiceImpl::class);
+        $this->app->bind(GroupQuestionService::class, GroupQuestionServiceImpl::class);
     }
 }

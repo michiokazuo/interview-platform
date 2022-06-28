@@ -4,155 +4,297 @@
     v-if="id && interview && !interview.result"
     class="blog-list-wrapper match-height"
   >
-    <b-row class="w-100 m-0 justify-content-center">
-      <b-col md="10">
-        <b-form-group>
-          <v-select
-            v-model="tagSearch"
-            multiple
-            label="name"
-            :options="tags"
-            placeholder="Tags"
-            class="bg-white"
-          />
-        </b-form-group>
-      </b-col>
-      <b-col
-        md="10"
-        class="d-flex flex-md-row flex-column justify-content-between align-items-center"
-      >
-        <b-link
-          v-if="questions && questions.length"
-          class="font-weight-bold"
-        >
-          <b-button
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            v-b-modal.modal-detail-selected
-            variant="primary"
-            class="mb-2"
-          >
-            Edit selected questions
-          </b-button>
-        </b-link>
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          class="mb-2"
-          @click.prevent="getQuestion()"
-        >
-          Search
-        </b-button>
-      </b-col>
-    </b-row>
-
-    <template v-if="questionsSearch">
-      <b-col
-        v-for="question in questionsSearch"
-        :key="question.id"
-        md="6"
-        lg="4"
-        xl="3"
-      >
-        <b-card
-          tag="article"
-          no-body
-        >
-          <b-card-body class="d-flex justify-content-between flex-column">
-            <b-card-title>
-              <b-form-checkbox
-                class="d-flex align-items-center"
-                :checked="showSelected(question.id)"
-                @change="changeSelected(question.id)"
-              >
-                <div
-                  class="mail-message blog-content-truncate"
-                  v-html="question.title"
-                />
-              </b-form-checkbox>
-              <div class="mt-1 ml-2 h6 blog-content-truncate">
-                <b-link
-                  v-for="(tag,index) in question.tags"
-                  :key="index"
-                >
-                  <b-badge
-                    pill
-                    class="mr-75 mb-50"
-                    :variant="tagsColor(tag.name)"
-                  >
-                    {{ tag.name }}
-                  </b-badge>
-                </b-link>
-              </div>
-            </b-card-title>
-
-            <b-media no-body>
-              <b-media-body>
-                <div
-                  class="mail-message blog-content-truncate"
-                  v-html="limitContent(question.content)"
-                />
-              </b-media-body>
-            </b-media>
-            <div class="d-flex flex-wrap justify-content-between align-items-center">
-              <hr class="w-100">
-              <b-link>
-                <div class="d-flex align-items-center text-body">
-                  <feather-icon
-                    icon="MessageSquareIcon"
-                    class="mr-50"
-                  />
-                  <span v-if="question.answers"> {{ question.answers.length }} </span>
-                </div>
-              </b-link>
-              <b-link
-                class="font-weight-bold"
-                @click.prevent="setQA(question)"
-              >
-                Details
-              </b-link>
-            </div>
-          </b-card-body>
-        </b-card>
-      </b-col>
-    </template>
-    <b-col cols="12">
-      <!-- pagination -->
-      <div class="my-2">
-        <b-pagination-nav
-          v-if="rowsSearch"
-          v-model="currentPageSearch"
-          align="center"
-          :number-of-pages="rowsSearch"
-          class="mb-0"
-          base-url="#"
-        />
-      </div>
-    </b-col>
-
     <b-col
       cols="12"
-      class="d-flex justify-content-between align-items-center"
     >
-      <div class="d-flex align-items-center">
-        <b-link>
-          <div class="d-flex align-items-center text-primary mr-2">
-            <feather-icon
-              icon="MessageSquareIcon"
-              class="mr-50"
-            />
-            <span class="font-weight-bold">{{ questions ? questions.length : 0 }} Selected</span>
-          </div>
-        </b-link>
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          size="lg"
-          :disabled="!(questions && questions.length > 0)"
-          @click.prevent="saveTest"
+      <validation-observer
+        ref="formTest"
+        v-slot="{invalid}"
+      >
+        <!-- form -->
+        <b-form
+          class="mt-2"
+          @submit.prevent="saveTest"
         >
-          Save test
-        </b-button>
-      </div>
+          <b-card
+            title="General"
+          >
+            <b-row>
+              <b-col md="6">
+                <b-form-group
+                  label="Title"
+                  label-for="blog-edit-title"
+                  class="mb-2"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Title"
+                    vid="title"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="blog-edit-title"
+                      v-model="groupTest.title"
+                      :state="errors.length > 0 ? false:null"
+                      name="title"
+                      placeholder="Title"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="6">
+                <b-form-group
+                  label="Topics"
+                  label-for="blog-edit-topic"
+                  class="mb-2"
+                >
+                  <validation-provider
+                    name="Topics"
+                    vid="topics"
+                  >
+                    <v-select
+                      id="blog-edit-topic"
+                      v-model="groupTest.topics"
+                      multiple
+                      taggable
+                      push-tags
+                      name="topics"
+                      placeholder="Topics"
+                    />
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                md="3"
+                class="mb-75"
+                sm="4"
+                cols="6"
+              >
+                <h5 class="text-capitalize ">
+                  Date Edit
+                </h5>
+                <b-card-text>
+                  {{ new Date().toLocaleDateString() }}
+                </b-card-text>
+              </b-col>
+              <b-col
+                v-if="interview.company"
+                md="3"
+                class="mb-75"
+                sm="4"
+                cols="6"
+              >
+                <h5 class="text-capitalize">
+                  Creator
+                </h5>
+                <b-card-text>
+                  <b-link
+                    :to="{ name: 'pages-company-news-list', params: { id: interview.company.id } }"
+                  >
+                    {{ interview.company.general.name }}
+                  </b-link>
+                </b-card-text>
+              </b-col>
+              <b-col
+                v-if="interview.news"
+                md="3"
+                class="mb-75"
+                sm="4"
+                cols="6"
+              >
+                <h5 class="text-capitalize ">
+                  Recruitment news
+                </h5>
+                <b-card-text>
+                  <b-link
+                    :to="{ name: 'pages-news-detail', params: { id: interview.news.id } }"
+                  >
+                    {{ interview.news.title }}
+                  </b-link>
+                </b-card-text>
+              </b-col>
+              <b-col
+                v-if="interview.news"
+                md="3"
+                class="mb-75"
+                sm="4"
+                cols="6"
+              >
+                <h5 class="text-capitalize ">
+                  For candidate
+                </h5>
+                <b-card-text>
+                  {{ interview.candidate.general.name }}
+                </b-card-text>
+              </b-col>
+            </b-row>
+          </b-card>
+          <b-row class="w-100 m-0 justify-content-center">
+            <b-col md="10">
+              <b-form-group>
+                <v-select
+                  v-model="tagSearch"
+                  multiple
+                  label="name"
+                  :options="tags"
+                  placeholder="Tags"
+                  class="bg-white"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col
+              md="10"
+              class="d-flex flex-md-row flex-column justify-content-between align-items-center"
+            >
+              <b-link
+                v-if="questions && questions.length"
+                class="font-weight-bold"
+              >
+                <b-button
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  v-b-modal.modal-detail-selected
+                  variant="primary"
+                  class="mb-2"
+                >
+                  Edit selected questions
+                </b-button>
+              </b-link>
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                variant="primary"
+                class="mb-2"
+                @click.prevent="getQuestion()"
+              >
+                Search
+              </b-button>
+            </b-col>
+          </b-row>
+
+          <b-row class="blog-list-wrapper match-height">
+            <template v-if="questionsSearch">
+              <b-col
+                v-for="question in questionsSearch"
+                :key="question.id"
+                md="6"
+                lg="4"
+                xl="3"
+              >
+                <b-card
+                  tag="article"
+                  no-body
+                >
+                  <b-card-body class="d-flex justify-content-between flex-column">
+                    <b-card-title>
+                      <b-form-checkbox
+                        class="d-flex align-items-center"
+                        :checked="showSelected(question.id)"
+                        @change="changeSelected(question.id)"
+                      >
+                        <div
+                          class="mail-message blog-content-truncate"
+                          v-html="question.title"
+                        />
+                      </b-form-checkbox>
+                      <div class="mt-1 ml-2 h6 blog-content-truncate">
+                        <b-link
+                          v-for="(tag,index) in question.tags"
+                          :key="index"
+                        >
+                          <b-badge
+                            pill
+                            class="mr-75 mb-50"
+                            :variant="tagsColor(tag.name)"
+                          >
+                            {{ tag.name }}
+                          </b-badge>
+                        </b-link>
+                      </div>
+                    </b-card-title>
+
+                    <b-media no-body>
+                      <b-media-body>
+                        <div
+                          class="mail-message blog-content-truncate"
+                          v-html="limitContent(question.content)"
+                        />
+                      </b-media-body>
+                    </b-media>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                      <hr class="w-100">
+                      <b-link>
+                        <div class="d-flex align-items-center text-body">
+                          <feather-icon
+                            icon="MessageSquareIcon"
+                            class="mr-50"
+                          />
+                          <span v-if="question.answers"> {{ question.answers.length }} </span>
+                          <feather-icon
+                            v-if="question.root_question"
+                            icon="ExternalLinkIcon"
+                            class="ml-50 text-warning"
+                            @click.prevent="setQA(question.root_question, false)"
+                          />
+
+                        </div>
+                      </b-link>
+                      <b-link
+                        class="font-weight-bold"
+                        @click.prevent="setQA(question, false)"
+                      >
+                        Details
+                      </b-link>
+                    </div>
+                  </b-card-body>
+                </b-card>
+              </b-col>
+            </template>
+            <b-col cols="12">
+              <!-- pagination -->
+              <div class="my-2">
+                <b-pagination-nav
+                  v-if="rowsSearch"
+                  v-model="currentPageSearch"
+                  align="center"
+                  :number-of-pages="rowsSearch"
+                  class="mb-0"
+                  base-url="#"
+                />
+              </div>
+            </b-col>
+
+            <b-col
+              cols="12"
+              class="d-flex justify-content-between align-items-center"
+            >
+              <div class="d-flex align-items-center">
+                <b-link>
+                  <div class="d-flex align-items-center text-primary mr-2">
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                      class="mr-50"
+                    />
+                    <span class="font-weight-bold">{{ questions ? questions.length : 0 }} Selected</span>
+                  </div>
+                </b-link>
+                <b-button
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  variant="primary"
+                  size="lg"
+                  :disabled="invalid && !(questions && questions.length > 0)"
+                  type="submit"
+                >
+                  Save test
+                </b-button>
+              </div>
+
+            </b-col>
+          </b-row>
+        </b-form>
+        <!--/ form -->
+      </validation-observer>
 
     </b-col>
 
@@ -194,6 +336,91 @@
             />
           </b-media-body>
         </b-media>
+        <hr>
+        <b-card
+          v-if="isEditQuestionSelected"
+          class="bg-light"
+          title="Edit question"
+        >
+          <b-card>
+            <validation-observer
+              ref="formEdit"
+              v-slot="{invalid}"
+            >
+              <b-form
+                class="mt-2"
+                @submit.prevent="createEdit(question)"
+              >
+                <b-row>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="Question"
+                      label-for="blog-content"
+                      class="mb-2"
+                    >
+                      <validation-provider
+                        v-slot="{ errors }"
+                        name="Question"
+                        vid="question"
+                        rules="required"
+                      >
+                        <quill-editor
+                          id="blog-content"
+                          v-model="editQuestion.question"
+                          name="question"
+                          :options="snowOption"
+                          aria-placeholder="Question"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="Answer"
+                      class="mb-2"
+                    >
+                      <quill-editor
+                        id="blog-answer"
+                        v-model="editQuestion.answer"
+                        name="answer"
+                        :options="snowOption"
+                        aria-placeholder="Answer"
+                      />
+
+                    </b-form-group>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="mt-50 d-flex justify-content-between"
+                  >
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      variant="primary"
+                      class="mr-1"
+                      type="submit"
+                      :disabled="invalid"
+                    >
+                      Save Edit
+                    </b-button>
+                    <b-button
+                      v-if="editQuestionSelected[question.id]"
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      class="mr-1"
+                      variant="outline-danger"
+                      @click.prevent="deleteEdit(question.id)"
+                    >
+                      Delete
+                    </b-button>
+                  </b-col>
+                </b-row>
+              </b-form>
+
+            </validation-observer>
+          </b-card>
+        </b-card>
+
         <hr>
         <b-card
           class="bg-light"
@@ -245,8 +472,8 @@
         class="blog-list-wrapper bg-light pt-2 match-height"
       >
         <b-col
-          v-for="question in questionsShow"
-          :key="question.id"
+          v-for="question_d in questionsShow"
+          :key="question_d.id"
           md="6"
           lg="4"
         >
@@ -257,39 +484,53 @@
             <b-card-body class="d-flex justify-content-between flex-column">
               <b-card-title>
                 <b-form-checkbox
-                  :checked="showSelected(question.id)"
-                  @change="changeSelected(question.id)"
+                  :checked="showSelected(question_d.id)"
+                  @change="changeSelected(question_d.id)"
                 >
                   <div
                     class="mail-message blog-content-truncate"
-                    v-html="question.title"
+                    v-html="question_d.title"
                   />
                 </b-form-checkbox>
-                <div class="mt-1 ml-2 h6 blog-content-truncate">
-                  <b-link
-                    v-for="(tag,index) in question.tags"
-                    :key="index"
-                  >
-                    <b-badge
-                      pill
-                      class="mr-75 mb-50"
-                      :variant="tagsColor(tag.name)"
-                    >
-                      {{ tag.name }}
-                    </b-badge>
-                  </b-link>
-                </div>
               </b-card-title>
 
               <b-media no-body>
                 <b-media-body>
                   <div
                     class="mail-message blog-content-truncate"
-                    v-html="limitContent(question.content)"
+                    v-html="limitContent(question_d.content)"
                   />
                 </b-media-body>
               </b-media>
-              <hr class="w-100">
+              <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <hr class="w-100">
+                <b-link>
+                  <div class="d-flex align-items-center text-body">
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                      class="mr-50"
+                    />
+                    <span v-if="question_d.answers"> {{ question_d.answers.length }} </span>
+                    <feather-icon
+                      v-if="editQuestionSelected[question_d.id]"
+                      icon="EditIcon"
+                      class="ml-50 text-success"
+                    />
+                    <feather-icon
+                      v-if="question_d.root_question"
+                      icon="ExternalLinkIcon"
+                      class="ml-50 text-warning"
+                      @click.prevent="setQA(question_d.root_question, false)"
+                    />
+                  </div>
+                </b-link>
+                <b-link
+                  class="font-weight-bold"
+                  @click.prevent="setQA(question_d, true)"
+                >
+                  Detail & Edit
+                </b-link>
+              </div>
             </b-card-body>
           </b-card>
         </b-col>
@@ -347,11 +588,16 @@ import {
   BFormGroup,
   BFormCheckbox,
   BButton,
+  BForm,
+  BFormInput,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import vSelect from 'vue-select'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { required } from '@validations'
+import { quillEditor } from 'vue-quill-editor'
 import interview from '@/store/api/Interview'
 import qat from '@/store/api/QAT'
 import utils from '@/store/utils'
@@ -373,6 +619,11 @@ export default {
     BFormCheckbox,
     BFormGroup,
     BButton,
+    ValidationProvider,
+    ValidationObserver,
+    BForm,
+    BFormInput,
+    quillEditor,
   },
   directives: {
     'b-modal': VBModal,
@@ -385,7 +636,7 @@ export default {
       questions: null,
       question: {},
       currentPage: 1,
-      perPage: 10,
+      perPage: 12,
       rows: 100,
       userOn: {},
       snowOption: {
@@ -398,6 +649,16 @@ export default {
       perPageSearch: 20,
       rowsSearch: 100,
       tagSearch: [],
+      groupTest: {
+        topics: [],
+      },
+      required,
+      editQuestionSelected: {},
+      editQuestion: {
+        question: '',
+        answer: '',
+      },
+      isEditQuestionSelected: false,
     }
   },
   watch: {
@@ -426,7 +687,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      console.log(tag)
       const color = [
         'primary',
         'secondary',
@@ -436,7 +696,7 @@ export default {
         'info',
         'dark',
       ]
-      const rd = color[Math.floor(Math.random() * color.length)]
+      const rd = color[tag.length % color.length]
       return `light-${rd}`
     },
     getData() {
@@ -455,7 +715,8 @@ export default {
           this.idQSelected = this.interview.questions?.map(
             item => item.id,
           ) ?? []
-          console.log(this.idQSelected)
+          this.groupTest = this.interview?.group_question ?? {}
+          this.groupTest.topics = this.groupTest.topics ? this.groupTest.topics.split(',') : []
           this.userOn = rs.user
           utils.updateUser(rs.user)
           this.$ability.update([
@@ -471,8 +732,13 @@ export default {
           this.interview = null
         })
     },
-    setQA(question) {
+    setQA(question, isEdit) {
       this.question = question
+      this.isEditQuestionSelected = isEdit
+      this.editQuestion = this.editQuestionSelected[question.id] ?? {
+        question: '',
+        answer: '',
+      }
       this.$bvModal.show('modal-detail-answer')
     },
     getTags() {
@@ -518,6 +784,11 @@ export default {
           item => item !== id,
         )
         this.questions = this.questions.filter(item => item.id !== id)
+        delete this.editQuestionSelected[id]
+        this.editQuestion = {
+          question: '',
+          answer: '',
+        }
       } else {
         this.idQSelected.push(id)
         this.questions.push(this.questionsSearch.find(item => item.id === id))
@@ -535,32 +806,120 @@ export default {
       this.rows = Math.ceil(this.idQSelected.length / this.perPage)
     },
     saveTest() {
-      interview.createTest(this.id, {
-        candidate_id: this.interview.candidate.general.id,
-        interview_questions: this.idQSelected,
-      }).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Create test success',
-            icon: 'CoffeeIcon',
-            variant: 'success',
-          },
-        })
-        this.$router.push({ name: 'pages-news-edit', params: { idProject: this.interview.news.project_id, id: this.interview.news.id } })
-      }).catch(err => {
-        console.log(err)
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Error',
-            icon: 'AlertTriangleIcon',
-            variant: 'danger',
-            text: 'Something error. Please try again!!!',
-          },
-        })
+      this.$refs.formTest.validate().then(success => {
+        if (success && this.idQSelected.length) {
+          const editQuestions = []
+          const idRootQs = []
+          // eslint-disable-next-line no-restricted-syntax
+          for (const key in this.editQuestionSelected) {
+            if (Object.prototype.hasOwnProperty.call(this.editQuestionSelected, key)) {
+              editQuestions.push({
+                question: {
+                  root_question_id: key,
+                  content: this.editQuestionSelected[key].question,
+                  title: this.editQuestionSelected[key].title,
+                },
+                answer: this.editQuestionSelected[key].answer ? {
+                  content: this.editQuestionSelected[key].answer,
+                  score: 1,
+                  answered: false,
+                } : null,
+              })
+
+              idRootQs.push(key - 0)
+            }
+          }
+
+          interview.createTest(this.id, {
+            candidate_id: this.interview.candidate.general.id,
+            interview_questions: this.idQSelected.filter(item => !idRootQs.includes(item)),
+            title: this.groupTest.title,
+            topics: this.groupTest.topics?.join(','),
+            edit_questions: editQuestions,
+          }).then(() => {
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Create test success',
+                icon: 'CoffeeIcon',
+                variant: 'success',
+              },
+            })
+            this.$router.push({ name: 'pages-news-edit', params: { idProject: this.interview.news.project_id, id: this.interview.news.id } })
+          }).catch(err => {
+            console.log(err)
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Error',
+                icon: 'AlertTriangleIcon',
+                variant: 'danger',
+                text: 'Something error. Please try again!!!',
+              },
+            })
+          })
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'warning',
+              text: 'Something not filled in the input. Please check again!!!',
+            },
+          })
+        }
+      })
+    },
+    createEdit(question) {
+      this.editQuestionSelected[question.id] = {
+        ...this.editQuestion,
+        title: question.title,
+      }
+      this.question = {
+        ...this.question,
+        edit: true,
+      }
+      this.$toast({
+        component: ToastificationContent,
+        position: 'top-right',
+        props: {
+          title: 'Notification',
+          icon: 'CoffeeIcon',
+          variant: 'success',
+          text: 'It will be saved when you save this test!!!',
+        },
+      })
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-detail-answer')
+      })
+    },
+    deleteEdit(id) {
+      delete this.editQuestionSelected[id]
+      this.editQuestion = {
+        question: '',
+        answer: '',
+      }
+      this.question = {
+        ...this.question,
+        edit: false,
+      }
+
+      this.$toast({
+        component: ToastificationContent,
+        position: 'top-right',
+        props: {
+          title: 'Notification',
+          icon: 'CoffeeIcon',
+          variant: 'success',
+          text: 'It will be saved when you save this test!!!',
+        },
+      })
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-detail-answer')
       })
     },
   },

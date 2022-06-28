@@ -18,8 +18,18 @@ class CreateQuestionsTable extends Migration
             $table->longText('content');
             $table->string('title')->nullable();
             $table->json('others')->nullable();
+            $table->unsignedBigInteger('stack_id')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('root_question_id')->nullable();
             $table->integer('page_crawled')->default(1);
             $table->timestamps();
+
+            $table->foreign('company_id')
+                ->references('id')->on('company')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('root_question_id')
+                ->references('id')->on('questions')
+                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

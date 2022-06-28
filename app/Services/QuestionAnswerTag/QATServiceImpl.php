@@ -50,7 +50,14 @@ class QATServiceImpl implements QATService
 
                 $data = $this->questionRepo->whereIn('id', $questions->pluck('question_id'))->get();
             } else {
-                $questions = $this->questionRepo->paginate($per_page);
+                if ($user->role_id == 1) {
+                    $questions = $this->questionRepo->paginate($per_page);
+                } else {
+                    $questions = $this->questionRepo->where('company_id', null)
+                        ->orWhere('company_id', $user->company_id)
+                        ->paginate($per_page);
+                }
+
                 $data = $questions->items();
             }
 
@@ -93,5 +100,53 @@ class QATServiceImpl implements QATService
             logger()->error($e);
             return false;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createQA(User $user, array $data)
+    {
+        try {
+            $question = null;
+            if (isset($data['question'])) {
+                $questionData = $data['question'];
+                $rootQs = $this->questionRepo->find($questionData['root_question_id'] ?? null);
+                
+                $question = $this->questionRepo->create([
+                    'company_id' => $user->company_id,
+                    'title' => $data['title'] ?? $rootQs->title ?? '',
+                    'root_question_id' => $rootQs ? $rootQs->id : null,
+                    'content' => $questionData['content'],
+                ]);
+            }
+
+            if ($question && isset($data['answer'])) {
+                $answerData = $data['answer'];
+                $this->answerRepo->create([
+                    'question_id' => $question->id,
+                    'content' => $answerData['content'],
+                    'score' => 0,
+                    'answered' => false,
+                ]);
+            }
+
+            if ($question) {
+                return $question;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(User $user, array $data)
+    {
+        // TODO: Implement delete() method.
     }
 }

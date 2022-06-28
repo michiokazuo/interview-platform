@@ -58,7 +58,7 @@ class CrawlServiceImpl implements CrawlService
                         }
 
                         $question = [
-                            'id' => $item['question_id'],
+                            'stack_id' => $item['question_id'],
                             'title' => $item['title'],
                             'others' => ([
                                 'is_answered' => $item['is_answered'],
@@ -133,13 +133,14 @@ class CrawlServiceImpl implements CrawlService
                 $content = $node->filter('.post-layout .postcell.post-layout--right .s-prose.js-post-body');
                 $question['content'] = $content->html();
 
-                $questionDB = $this->questionRepo->find($question['id']);
+                $questionDB = $this->questionRepo->where('stack_id', $question['stack_id'])->first();
                 if (!$questionDB) {
                     $questionDB = $this->questionRepo->create($question);
                 } else {
                     $questionDB->update($question);
                 }
-                
+
+                $question = array_merge($question, ['id' => $questionDB->id]);
                 $questionDB->tags()->sync($tags_id);
             }
         );
@@ -147,14 +148,14 @@ class CrawlServiceImpl implements CrawlService
         $crawler->filter('#mainbar #answers [data-answerid]')->slice(0, 5)->each(
             function (Crawler $node) use ($question) {
                 $answer = [
-                    'id' => $node->attr('data-answerid'),
+                    'stack_id' => $node->attr('data-answerid'),
                     'question_id' => $question['id'],
                     'content' => $node->filter('.post-layout .answercell.post-layout--right .s-prose.js-post-body')->html(),
                     'score' => $node->filter('.post-layout .votecell.post-layout--left .js-voting-container .js-vote-count')->attr('data-value') ?? 0,
                     'answered' => !str_contains($node->filter('.post-layout .votecell.post-layout--left .js-voting-container .js-accepted-answer-indicator')->attr('class'), 'd-none')
                 ];
 
-                $answerDB = $this->answerRepo->find($answer['id']);
+                $answerDB = $this->answerRepo->where('stack_id', $answer['stack_id'])->first();
                 if (!$answerDB) {
                     $this->answerRepo->create($answer);
                 } else {

@@ -382,9 +382,9 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      console.log(tag)
+      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
-      const rd = color[Math.floor(Math.random() * color.length)]
+      const rd = color[tag.length % color.length]
       return `light-${rd}`
     },
     getDataProcess() {

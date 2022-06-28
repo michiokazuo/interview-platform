@@ -23,6 +23,7 @@ class QuestionCollection extends ResourceCollection
                 'others' => $data->others,
                 'tags' => $data->tags,
                 'answers' => $data->answers,
+                'root_question' => new QuestionResource($data->rootQuestion),
                 'created_at' => $data->created_at,
                 'updated_at' => $data->updated_at,
             ];

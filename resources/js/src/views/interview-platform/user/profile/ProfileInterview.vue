@@ -60,14 +60,14 @@
         class="mt-1 mt-md-0"
         nav-class="mb-0"
       >
-        <b-tab active>
+        <b-tab :active="hash !== '#practice'">
           <template #title>
             <span class="d-none d-sm-inline">Application</span>
           </template>
           <application :applications="interview.applications" />
         </b-tab>
 
-        <b-tab>
+        <b-tab :active="hash === '#practice'">
           <template #title>
             <span class="d-none d-sm-inline">Practice</span>
           </template>
@@ -110,7 +110,11 @@ export default {
         applications: [],
       },
       coverImg: require('@/assets/images/profile/user-uploads/timeline.jpg'),
+      hash: '',
     }
+  },
+  mounted() {
+    this.hash = this.$route.hash
   },
   created() {
     this.headerData = JSON.parse(localStorage.getItem('userData'))

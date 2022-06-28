@@ -61,6 +61,7 @@
             v-if="props.row.questions && props.row.result && props.row.result.candidate"
             :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
             class="font-weight-bold"
+            target="_blank"
           >
             <b-button
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"

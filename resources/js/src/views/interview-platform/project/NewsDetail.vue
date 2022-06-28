@@ -6,7 +6,7 @@
     >
 
       <!-- Tab: Information -->
-      <b-tab active>
+      <b-tab :active="hash !== '#candidate'">
         <template #title>
           <feather-icon
             icon="InfoIcon"
@@ -23,7 +23,10 @@
       </b-tab>
 
       <!-- Tab: Candidates -->
-      <b-tab v-if="id && idProject">
+      <b-tab
+        v-if="id && idProject"
+        :active="hash === '#candidate'"
+      >
         <template #title>
           <feather-icon
             icon="UserIcon"
@@ -62,7 +65,11 @@ export default {
     return {
       id: null,
       idProject: null,
+      hash: null,
     }
+  },
+  mounted() {
+    this.hash = this.$route.hash
   },
   created() {
     const { id } = this.$route.params

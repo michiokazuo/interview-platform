@@ -173,7 +173,10 @@
             <hr class="my-2">
 
             <div class="d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center">
+              <div
+                v-if="!newsDetail.end_time"
+                class="d-flex align-items-center"
+              >
                 <div
                   v-if="userData && userData.candidate_id"
                   class="d-flex align-items-center mr-1"
@@ -200,9 +203,35 @@
                   </b-link>
                 </div>
               </div>
+              <div
+                v-else
+                class="d-flex align-items-center"
+              >
+                <div
+                  class="d-flex align-items-center mr-1"
+                >
+                  <b-link class="mr-50">
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                      size="21"
+                      class="text-body"
+                    />
+                  </b-link>
+                  <b-link>
+                    <div
+                      class="text-body"
+                    >
+                      <span>This news have been stopped !!!</span>
+                    </div>
+                  </b-link>
+                </div>
+              </div>
 
               <!-- dropdown -->
-              <div class="blog-detail-share">
+              <div
+                v-if="!newsDetail.end_time"
+                class="blog-detail-share"
+              >
                 <div v-if="userData && userData.candidate_id">
                   <b-button
                     v-if="interviewOwner && interviewOwner.result && interviewOwner.result.company"
@@ -533,9 +562,9 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      console.log(tag)
+      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
-      const rd = color[Math.floor(Math.random() * color.length)]
+      const rd = color[tag.length % color.length]
       return `light-${rd}`
     },
     getData() {

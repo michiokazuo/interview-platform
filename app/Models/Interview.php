@@ -33,6 +33,8 @@ class Interview extends Model
         'company_id',
         'news_id',
         'room',
+        'gq_test_id',
+        'gq_interview_id'
     ];
 
     /**
@@ -70,8 +72,13 @@ class Interview extends Model
         return $this->belongsTo(RecruitmentNews::class);
     }
     
-    public function questions(): BelongsToMany
+    public function gqTest(): BelongsTo
     {
-        return $this->belongsToMany(Question::class, 'interview_has_questions', 'interview_id', 'question_id');
+        return $this->belongsTo(GroupQuestion::class, 'gq_test_id');
+    }
+    
+    public function gqInterview(): BelongsTo
+    {
+        return $this->belongsTo(GroupQuestion::class, 'gq_interview_id');
     }
 }

@@ -105,6 +105,7 @@
                 v-if="props.row.result"
                 :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
                 class="font-weight-bold"
+                target="_blank"
               >
                 <feather-icon
                   icon="BookIcon"
