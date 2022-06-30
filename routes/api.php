@@ -66,7 +66,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/interviews-by-company', [InterviewController::class, 'showAllByCompany']);
     Route::get('/interviews-by-user/{id}', [InterviewController::class, 'showAllByUser']);
     Route::get('/interview-find-news/{id}', [InterviewController::class, 'findByNewsId']);
-    Route::get('/interviews-by-news/{id}', [InterviewController::class, 'showAllByNews']);
+    Route::get('/interviews-by-news-process', [InterviewController::class, 'showAllByNews']);
     Route::get('/interview-edit/{id}', [InterviewController::class, 'showToEdit']);
     Route::post('/create-test/{id}', [InterviewController::class, 'createTest']);
     Route::post('/save-test/{id}', [InterviewController::class, 'saveTestRS']);
@@ -80,5 +80,6 @@ Route::group(['middleware' => 'api'], function () {
     Route::post('/admin/crawler', [AdminController::class, 'crawler']);
 
     Route::apiResource('group-question', GroupQuestionController::class);
+    Route::get('/group-interview', [GroupQuestionController::class, 'getGroupInterview']);
 });
 

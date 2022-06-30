@@ -121,4 +121,22 @@ class GroupQuestionController extends Controller
 
         return $this->failedResult('GroupQuestion deleted failed!!!', 500);
     }
+
+    /**
+     * Display a listing of the resource for company.
+     *
+     * @return JsonResponse
+     */
+    public function getGroupInterview(): JsonResponse
+    {
+        $user = $this->user();
+        $groups = $this->gqService->getGroupInterview($user);
+
+        if ($groups) {
+            return $this->successfulResult('GroupQuestion display successfully!!!', $user,
+                new GroupQuestionCollection($groups));
+        }
+
+        return $this->failedResult('GroupQuestion display failed!!!', 500);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Interview;
 
+use App\Http\Resources\Project_Process\ProjectResource;
 use App\Http\Resources\QAT\QuestionCollection;
 use App\Http\Resources\User\CandidateResource;
 use App\Http\Resources\User\UserResource;
@@ -48,6 +49,10 @@ class InterviewResource extends JsonResource
                 }
             }
         }
+        
+        if(!is_null($this->is_success)) {
+            $status = $this->is_success ? 'Passed' : 'Failed';
+        }
 
         return [
             'id' => $this->id,
@@ -56,6 +61,7 @@ class InterviewResource extends JsonResource
             'address' => $this->address,
             'form' => $this->form,
             'room' => $this->room,
+            'is_success' => $this->is_success,
             'time' => $this->time ? date('Y-m-d H:i:s', strtotime($this->time)) : null,
             'candidate' => new CandidateResource($this->candidate),
             'company' => $this->company ? [
@@ -63,8 +69,14 @@ class InterviewResource extends JsonResource
                 'general' => new UserResource($this->company->user),
             ] : null,
             'news' => $this->news,
+            'project' => $this->news ? new ProjectResource($this->news->project) : null,
+            'process' => $this->process,
             'status' => $status,
             'group_question' => $this->gqTest,
+            'interview_question' => $this->gqInterview ? [
+                'id' => $this->gqInterview->id,
+                'title' => $this->gqInterview->title,
+            ] : null,
             'questions' => $groupQuestionTest->questions->count() ? new QuestionCollection($groupQuestionTest->questions) : null,
             'url' => '',
             'title' => $this->candidate->user->name . ' - ' . $this->id,

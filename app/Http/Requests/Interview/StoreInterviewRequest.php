@@ -40,6 +40,8 @@ class StoreInterviewRequest extends FormRequest
             'form' => 'nullable|in:Online,Offline',
             'time' => 'nullable|date',
             'room' => 'nullable|string',
+            'gq_interview_id' => 'nullable|numeric',
+            'is_success' => 'nullable|boolean',
             'interview_meeting' => 'nullable|boolean',
             'interview_test' => 'nullable|boolean',
             

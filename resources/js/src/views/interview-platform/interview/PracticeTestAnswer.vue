@@ -81,7 +81,7 @@
 						<b-col
 							md="4"
 							cols="6"
-              v-if="!interview.news"
+							v-if="!interview.news"
 						>
 							<h5 class="text-capitalize ">
 								Date Creator
@@ -281,6 +281,32 @@
 								@submit.prevent="saveReview"
 							>
 								<b-row>
+									<b-col
+										md="4"
+										cols="6"
+									>
+										<b-form-checkbox
+											class="d-flex align-items-center custom-control-success"
+											:checked="showSelected('success')"
+											@change="changeSelected('success')"
+											value="success"
+										>
+											Success
+										</b-form-checkbox>
+									</b-col>
+									<b-col
+										md="4"
+										cols="6"
+									>
+										<b-form-checkbox
+											class="d-flex align-items-center custom-control-danger"
+											:checked="showSelected('failure')"
+											@change="changeSelected('failure')"
+											value="failure"
+										>
+											Failure
+										</b-form-checkbox>
+									</b-col>
 									<b-col>
 										<b-form-group
 											label-for="news-edit-title"
@@ -455,6 +481,7 @@
 		BForm,
 		BFormGroup,
 		BButton,
+		BFormCheckbox,
 	} from "bootstrap-vue";
 	import { ValidationProvider, ValidationObserver } from "vee-validate";
 	import { kFormatter } from "@core/utils/filter";
@@ -484,6 +511,7 @@
 			BForm,
 			BFormGroup,
 			BButton,
+			BFormCheckbox,
 		},
 		directives: {
 			"b-modal": VBModal,
@@ -500,6 +528,7 @@
 				perPage: 20,
 				rows: 100,
 				review: null,
+				is_success: null,
 				userOn: {},
 				snowOption: {
 					theme: "snow",
@@ -577,6 +606,16 @@
 					this.result?.candidate[`question-${question.id}`];
 				this.$bvModal.show("modal-detail-answer");
 			},
+			showSelected(val) {
+				return this.is_success === val;
+			},
+			changeSelected(val) {
+				if (this.is_success === val) {
+					this.is_success = null;
+				} else {
+					this.is_success = val;
+				}
+			},
 			saveReview() {
 				this.$refs.reviewForm.validate().then((success) => {
 					if (success) {
@@ -586,6 +625,7 @@
 								result: {
 									review: this.review,
 								},
+								is_success: this.is_success,
 							})
 							.then((resp) => {
 								const rs = resp.data;

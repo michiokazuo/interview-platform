@@ -26,6 +26,7 @@
         :event="event"
         :clear-event-data="clearEventData"
         :interview="interview"
+        :interview-questions="interviewQuestions"
         @remove-event="removeEvent"
         @add-event="addEvent"
         @update-event="updateEvent"
@@ -55,7 +56,11 @@ export default {
     interview: {
       type: Object,
       default: () => ({}),
-    }
+    },
+    interviewQuestions: {
+      type: Array,
+      default: () => ([]),
+    },
   },
   setup() {
     const CALENDAR_APP_STORE_MODULE_NAME = 'calendar'

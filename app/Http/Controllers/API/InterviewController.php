@@ -31,15 +31,15 @@ class InterviewController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param int $id
      * @return JsonResponse
      */
-    public function showAllByNews(int $id): JsonResponse
+    public function showAllByNews(): JsonResponse
     {
-        $per_page = request('per_page', 8);
+        $news_id = request('news_id');
+        $process_id = request('process_id');
 
         $user = $this->user();
-        $interviews = $this->interviewService->showAllByNews($user, $id, $per_page);
+        $interviews = $this->interviewService->showAllByNews($user, $news_id, $process_id);
 
         if ($interviews) {
             $interviews['data'] = !empty($interviews['data']) ? new InterviewCollection($interviews['data']) : [];

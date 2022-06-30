@@ -1,6 +1,60 @@
 <template>
   <b-row>
     <b-col cols="12">
+      <b-card title="General">
+        <b-row>
+          <b-col
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize">
+              Total users
+            </h5>
+            <b-card-text>
+              {{ total }}
+            </b-card-text>
+          </b-col>
+          <b-col
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Number candidates
+            </h5>
+            <b-card-text class="text-capitalize">
+              {{ candidates }}
+            </b-card-text>
+          </b-col>
+          <b-col
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Number Companies
+            </h5>
+            <b-card-text>
+              {{ companies }}
+            </b-card-text>
+          </b-col>
+          <b-col
+            md="4"
+            class="mb-75"
+            cols="6"
+          >
+            <h5 class="text-capitalize ">
+              Number Companies inactive
+            </h5>
+            <b-card-text>
+              {{ inactive }}
+            </b-card-text>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-col>
+    <b-col cols="12">
       <b-card title="User in system">
 
         <!-- input search -->
@@ -319,6 +373,10 @@ export default {
       searchTerm: '',
       userView: {},
       activeCompany: {},
+      total: 0,
+      candidates: 0,
+      companies: 0,
+      inactive: 0,
     }
   },
   computed: {
@@ -347,6 +405,10 @@ export default {
     admin.getAllUsers().then(resp => {
       const rs = resp.data
       this.rows = rs.data.data
+      this.total = rs.data.total
+      this.candidates = rs.data.candidates
+      this.companies = rs.data.companies
+      this.inactive = rs.data.inactive
       utils.updateUser(rs.user)
       this.$ability.update([
         {
@@ -392,41 +454,43 @@ export default {
     confirmActiveCompany(bvModalEvent) {
       bvModalEvent.preventDefault()
 
-      admin.activeCompany(this.activeCompany.general.owner.id).then(resp => {
-        const rs = resp.data
-        utils.updateUser(rs.user)
+      admin.activeCompany(this.activeCompany.general.owner.id)
+        .then(resp => {
+          const rs = resp.data
+          this.inactive -= 1
+          utils.updateUser(rs.user)
 
-        this.activeCompany.general.status = 'Active'
-        this.activeCompany.general.owner.is_active = true
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Update company success',
-            icon: 'CoffeeIcon',
-            variant: 'success',
-          },
+          this.activeCompany.general.status = 'Active'
+          this.activeCompany.general.owner.is_active = true
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Update company success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-active')
+          })
+          this.candidateSchedule = {}
+        }).catch(err => {
+          console.log(err)
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-active')
+          })
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: 'Something error. Please try again!!!',
+            },
+          })
         })
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-active')
-        })
-        this.candidateSchedule = {}
-      }).catch(err => {
-        console.log(err)
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-active')
-        })
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Error',
-            icon: 'AlertTriangleIcon',
-            variant: 'danger',
-            text: 'Something error. Please try again!!!',
-          },
-        })
-      })
     },
     setDelete(id) {
       this.userDelete = id
@@ -437,6 +501,12 @@ export default {
 
       admin.deleteUser(this.userDelete).then(resp => {
         const rs = resp.data
+        this.total -= 1
+        const deleteUser = this.rows.find(item => item.general.id === this.userDelete)
+        if (deleteUser) {
+          // eslint-disable-next-line no-unused-expressions
+          deleteUser.general.role.name === 'ROLE_CANDIDATE' ? this.candidates -= 1 : this.companies -= 1
+        }
         this.rows = this.rows.filter(item => item.general.id !== this.userDelete)
         utils.updateUser(rs.user)
         this.$ability.update([

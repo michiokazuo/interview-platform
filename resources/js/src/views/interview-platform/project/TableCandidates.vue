@@ -63,6 +63,31 @@
           </b-badge>
         </span>
 
+        <div
+          v-else-if="props.column.field === 'process.title'"
+          class="text-nowrap text-center"
+        >
+          <b-link
+            v-if="props.row.process"
+            :to="{ name: 'pages-process-edit', params: { idProject: props.row.project.id, id: props.row.process.id } }"
+            class="font-weight-bold"
+            target="_blank"
+          >
+            <b-badge
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="primary"
+            >
+              {{ props.row.process.id }} - {{ props.row.process.title }}
+            </b-badge>
+          </b-link>
+          <b-badge
+            v-else
+            variant="secondary"
+          >
+            Not set
+          </b-badge>
+        </div>
+
         <!-- Column: Action -->
         <span v-else-if="props.column.field === 'action'">
           <span>
@@ -79,6 +104,16 @@
                 />
               </template>
               <b-dropdown-item
+                v-if="(!props.row.process || props.row.process.id < idProcess) && idProcess"
+                @click.prevent="setCreateIP(props.row.id)"
+              >
+                <feather-icon
+                  icon="GridIcon"
+                  class="mr-50"
+                />
+                <span>Create interview with this Process</span>
+              </b-dropdown-item>
+              <b-dropdown-item
                 @click.prevent="viewCandidate(props.row.id)"
               >
                 <feather-icon
@@ -88,7 +123,7 @@
                 <span>View</span>
               </b-dropdown-item>
               <b-dropdown-item
-                v-if="!(props.row.result && props.row.result.company)"
+                v-if="props.row.process && props.row.process.id === idProcess && !(props.row.result && props.row.result.company)"
                 @click.prevent="setCandidateSchedule(props.row.id)"
               >
                 <feather-icon
@@ -215,6 +250,21 @@
     </b-modal>
 
     <b-modal
+      id="modal-create-ip"
+      ok-variant="warning"
+      ok-title="Accept"
+      cancel-title="Cancel"
+      modal-class="modal-warning"
+      centered
+      title="Create interview with this process"
+      @ok="createIP"
+    >
+      <b-card-text>
+        Are you sure you want to create an interview with this process?
+      </b-card-text>
+    </b-modal>
+
+    <b-modal
       id="modal-detail"
       cancel-variant="outline-secondary"
       cancel-title="Close"
@@ -225,6 +275,7 @@
     >
       <calendar
         :interview="candidateSchedule"
+        :interview-questions="groupQuestionInterviews"
       />
     </b-modal>
   </b-card>
@@ -233,13 +284,14 @@
 <script>
 import {
   BCard, BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect,
-  BDropdown, BDropdownItem, BCardText, VBModal, BForm, BAlert, BLink, BButton,
+  BDropdown, BDropdownItem, BCardText, VBModal, BLink,
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
 import store from '@/store/index'
 import interview from '@/store/api/Interview'
+import groupQs from '@/store/api/GroupQuestion'
 import utils from '@/store/utils'
 import CandidateInfo from './CandidateInfo.vue'
 import Calendar from './calendar/Calendar.vue'
@@ -259,13 +311,18 @@ export default {
     BDropdownItem,
     CandidateInfo,
     Calendar,
+    BLink,
   },
   directives: {
     'b-modal': VBModal,
     Ripple,
   },
   props: {
-    id: {
+    idNews: {
+      type: Number,
+      default: null,
+    },
+    idProcess: {
       type: Number,
       default: null,
     },
@@ -320,6 +377,14 @@ export default {
           },
         },
         {
+          label: 'Process',
+          field: 'process.title',
+          filterOptions: {
+            enabled: true,
+            placeholder: 'Search process',
+          },
+        },
+        {
           label: 'Action',
           field: 'action',
         },
@@ -329,9 +394,11 @@ export default {
       candidateView: null,
       candidateSchedule: {},
       candidateDelete: null,
+      interviewCreateProcess: null,
       optionsForm: ['Online', 'Offline'],
       creating: false,
       doneInterview: false,
+      groupQuestionInterviews: [],
     }
   },
   computed: {
@@ -339,7 +406,9 @@ export default {
       const statusColor = {
         Scheduled: 'light-primary',
         Completed: 'light-success',
+        Passed: 'light-success',
         'Canceled schedule': 'light-danger',
+        Failed: 'light-danger',
         Created: 'light-warning',
         'Have test': 'light-dark',
         'Done test': 'light-info',
@@ -358,12 +427,21 @@ export default {
       return this.dir
     },
   },
+  watch: {
+    idProcess() {
+      this.getData()
+    },
+  },
   created() {
     this.getData()
+    this.getGroupInterview()
   },
   methods: {
     getData() {
-      interview.showByNews(this.id).then(resp => {
+      interview.showByNews({
+        news_id: this.idNews,
+        process_id: this.idProcess,
+      }).then(resp => {
         const rs = resp.data
         this.rows = rs.data.data
         utils.updateUser(rs.user)
@@ -378,9 +456,32 @@ export default {
         this.rows = []
       })
     },
+    getGroupInterview() {
+      groupQs.showGroupInterviews().then(resp => {
+        const rs = resp.data
+        this.groupQuestionInterviews = rs.data?.map(item => ({
+          id: item.id,
+          title: item.title,
+        }))
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: rs.user.role,
+          },
+        ])
+      }).catch(err => {
+        console.log(err)
+        this.groupQuestionInterviews = []
+      })
+    },
     viewCandidate(id) {
       this.candidateView = this.rows.find(item => item.id === id).candidate
       this.$bvModal.show('modal-candidate')
+    },
+    setCreateIP(id) {
+      this.interviewCreateProcess = this.rows.find(item => item.id === id)
+      this.$bvModal.show('modal-create-ip')
     },
     setCandidateSchedule(id) {
       this.candidateSchedule = this.rows.find(item => item.id === id)
@@ -442,6 +543,101 @@ export default {
           })
         }
       })
+    },
+    createIP(bvModalEvent) {
+      bvModalEvent.preventDefault()
+
+      if (this.interviewCreateProcess.process) {
+        interview.store({
+          news_id: this.interviewCreateProcess.news.id,
+          company_id: this.interviewCreateProcess.company.id,
+          candidate_id: this.interviewCreateProcess.candidate.general.owner.id,
+          process_id: this.idProcess,
+        }).then(resp => {
+          const rs = resp.data
+          utils.updateUser(rs.user)
+
+          const index = this.rows.findIndex(item => item.id === this.interviewCreateProcess.id)
+          this.rows = [
+            ...this.rows.slice(0, index),
+            rs.data,
+            ...this.rows.slice(index + 1),
+          ]
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Create success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-ip')
+          })
+          this.candidateSchedule = {}
+        }).catch(err => {
+          console.log(err)
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-ip')
+          })
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: 'Something error or you are not company. Please try again!!!',
+            },
+          })
+        })
+      } else {
+        interview.update(this.interviewCreateProcess.id, {
+          news_id: this.interviewCreateProcess.news.id,
+          company_id: this.interviewCreateProcess.company.id,
+          candidate_id: this.interviewCreateProcess.candidate.general.id,
+          process_id: this.idProcess,
+        }).then(resp => {
+          const rs = resp.data
+          utils.updateUser(rs.user)
+
+          const index = this.rows.findIndex(item => item.id === this.interviewCreateProcess.id)
+          this.rows = [
+            ...this.rows.slice(0, index),
+            rs.data,
+            ...this.rows.slice(index + 1),
+          ]
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Create success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-ip')
+          })
+          this.candidateSchedule = {}
+        }).catch(err => {
+          console.log(err)
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-ip')
+          })
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: 'Something error or you are not company. Please try again!!!',
+            },
+          })
+        })
+      }
     },
     setCandidateDelete(id) {
       this.candidateDelete = id

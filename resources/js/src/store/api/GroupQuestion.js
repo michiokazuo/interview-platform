@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const apiGQ = '/api/group-question/'
+const apiInterview = '/api/group-interview'
 
 export default {
   showByUser() {
@@ -17,5 +18,8 @@ export default {
   },
   findById(id) {
     return axios.get(`${apiGQ}${id}`)
+  },
+  showGroupInterviews() {
+    return axios.get(`${apiInterview}`)
   },
 }

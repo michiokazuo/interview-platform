@@ -21,9 +21,11 @@ class CreateInterviewTable extends Migration
             $table->string('form')->nullable();
             $table->string('room')->nullable();
             $table->datetime('time')->nullable();
+            $table->boolean('is_success')->nullable();
             $table->unsignedBigInteger('candidate_id')->unsigned();
             $table->unsignedBigInteger('company_id')->unsigned()->nullable();
             $table->unsignedBigInteger('news_id')->unsigned()->nullable();
+            $table->unsignedBigInteger('process_id')->unsigned()->nullable();
             $table->unsignedBigInteger('gq_test_id')->unsigned()->nullable();
             $table->unsignedBigInteger('gq_interview_id')->unsigned()->nullable();
             $table->timestamps();
@@ -36,6 +38,9 @@ class CreateInterviewTable extends Migration
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('news_id')
                 ->references('id')->on('recruitment_news')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('process_id')
+                ->references('id')->on('process')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('gq_test_id')
                 ->references('id')->on('group_questions');

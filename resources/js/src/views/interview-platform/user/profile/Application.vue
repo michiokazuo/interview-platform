@@ -56,6 +56,19 @@
           </b-badge>
         </span>
 
+        <span
+          v-else-if="props.column.field === 'process.title'"
+          class="text-nowrap"
+        >
+          <p v-if="props.row.process"> {{ props.row.process.title }} - {{ props.row.process.title }}</p>
+          <b-badge
+            v-else
+            variant="secondary"
+          >
+            Not set
+          </b-badge>
+        </span>
+
         <!-- Column: Action -->
         <span v-else-if="props.column.field === 'action'">
           <span>
@@ -385,6 +398,14 @@ export default {
           },
         },
         {
+          label: 'Process',
+          field: 'process.title',
+          filterOptions: {
+            enabled: true,
+            placeholder: 'Search process',
+          },
+        },
+        {
           label: 'Action',
           field: 'action',
         },
@@ -402,7 +423,9 @@ export default {
       const statusColor = {
         Scheduled: 'light-primary',
         Completed: 'light-success',
+        Passed: 'light-success',
         'Canceled schedule': 'light-danger',
+        Failed: 'light-danger',
         Created: 'light-warning',
         'Have test': 'light-dark',
         'Done test': 'light-info',

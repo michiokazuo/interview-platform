@@ -68,6 +68,7 @@ export default {
           candidate_id: event.candidate.general.owner.id,
           form: event.form,
           address: event.address,
+          gq_interview_id: event.interview_question?.id ?? null,
         })
           .then(response => resolve(response))
           .catch(error => reject(error))

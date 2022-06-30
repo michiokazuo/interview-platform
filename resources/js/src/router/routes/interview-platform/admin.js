@@ -5,6 +5,17 @@ export default [
     component: () => import('@/views/interview-platform/admin/ManageUser.vue'),
     meta: {
       resource: 'ROLE_ADMIN',
+      pageTitle: 'Manage User',
+      breadcrumb: [
+        {
+          text: 'Users',
+          to: { name: 'admin-manage-user' },
+        },
+        {
+          text: 'List',
+          active: true,
+        },
+      ],
     },
   },
   {
@@ -13,6 +24,17 @@ export default [
     component: () => import('@/views/interview-platform/admin/ManageQuestion.vue'),
     meta: {
       resource: 'ROLE_ADMIN',
+      pageTitle: 'Manage Question',
+      breadcrumb: [
+        {
+          text: 'Questions',
+          to: { name: 'admin-manage-question' },
+        },
+        {
+          text: 'List',
+          active: true,
+        },
+      ],
     },
   },
 ]

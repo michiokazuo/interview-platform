@@ -163,4 +163,25 @@ class GroupQuestionServiceImpl implements GroupQuestionService
             return false;
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGroupInterview(User $user)
+    {
+        try {
+            $group = $this->_repository->where('company_id', $user->company_id)
+                ->where('is_interview', true)
+                ->get();
+
+            if ($group) {
+                return $group;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
 }

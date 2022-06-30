@@ -3,7 +3,7 @@ import axios from 'axios'
 const apiInterview = '/api/interview/'
 const apiInterviewUpdate = '/api/interview-update/'
 const apiUser = '/api/interviews-by-user/'
-const apiNews = '/api/interviews-by-news/'
+const apiNews = '/api/interviews-by-news-process'
 const apiEdit = '/api/interview-edit/'
 const apiFindNews = '/api/interview-find-news/'
 const createTest = '/api/create-test/'
@@ -23,8 +23,8 @@ export default {
   showByUser(id) {
     return axios.get(`${apiUser}${id}`)
   },
-  showByNews(id) {
-    return axios.get(`${apiNews}${id}`)
+  showByNews(params) {
+    return axios.get(`${apiNews}`, { params })
   },
   showToEdit(id) {
     return axios.get(`${apiEdit}${id}`)

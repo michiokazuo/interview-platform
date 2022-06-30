@@ -5,6 +5,7 @@ namespace App\Services\QuestionAnswerTag;
 use App\Models\Question;
 use App\Models\QuestionAnswer;
 use App\Models\QuestionTag;
+use App\Models\SettingCrawler;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class QATServiceImpl implements QATService
 {
-    protected $questionRepo, $answerRepo, $tagRepo;
+    protected $questionRepo, $answerRepo, $tagRepo, $settingRepo;
 
     /**
      * @throws BindingResolutionException
@@ -22,6 +23,7 @@ class QATServiceImpl implements QATService
         $this->questionRepo = app()->make(Question::class);
         $this->answerRepo = app()->make(QuestionAnswer::class);
         $this->tagRepo = app()->make(QuestionTag::class);
+        $this->settingRepo = app()->make(SettingCrawler::class);
     }
 
     /**
@@ -61,11 +63,16 @@ class QATServiceImpl implements QATService
                 $data = $questions->items();
             }
 
+            $status = $this->settingRepo->where('key', 'status_run_crawler')->first();
+            $crawler = $this->settingRepo->where('key', 'crawler')->orderBy('created_at', 'desc')->first();
+            
             return [
                 'current_page' => $questions->currentPage(),
                 'data' => $data,
                 'total' => $questions->total(),
                 'last_page' => $questions->lastPage(),
+                'status' => $status ? $status->value : 'stop',
+                'last_time' => $crawler ? date('Y-m-d H:i:s', strtotime($crawler->created_at)) : null
             ];
         } catch (Exception $e) {
             logger()->error($e);

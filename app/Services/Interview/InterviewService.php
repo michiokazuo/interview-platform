@@ -3,6 +3,7 @@
 namespace App\Services\Interview;
 
 use App\Models\User;
+use phpDocumentor\Reflection\Types\Nullable;
 
 interface InterviewService
 {
@@ -46,12 +47,12 @@ interface InterviewService
 
     /**
      * @param User $user
-     * @param int $news_id
-     * @param int $per_page
+     * @param $news_id
+     * @param $process_id
      *
      * @return mixed
      */
-    public function showAllByNews(User $user, int $news_id, int $per_page);
+    public function showAllByNews(User $user, $news_id, $process_id);
 
     /**
      * @param User $user

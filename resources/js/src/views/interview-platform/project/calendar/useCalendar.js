@@ -188,7 +188,7 @@ export default function userCalendar() {
       const updatedEvent = response.data.data
 
       const propsToUpdate = ['id', 'title', 'url']
-      const extendedPropsToUpdate = ['calendar', 'status', 'record', 'result', 'form', 'address', 'room', 'time']
+      const extendedPropsToUpdate = ['calendar', 'status', 'record', 'result', 'form', 'address', 'room', 'time', 'interview_question']
       localStorage.setItem('calendar', true)
       updateEventInCalendar(updatedEvent, propsToUpdate, extendedPropsToUpdate)
     })

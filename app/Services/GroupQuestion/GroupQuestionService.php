@@ -11,6 +11,14 @@ interface GroupQuestionService
      * @return mixed
      */
     public function getAll(User $user);
+
+    /**
+     * group question only show for company
+     * 
+     * @param User $user
+     * @return mixed
+     */
+    public function getGroupInterview(User $user);
     
     /**
      * @param User $user

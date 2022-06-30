@@ -439,7 +439,7 @@ import { quillEditor } from 'vue-quill-editor'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, password } from '@validations'
+import { required } from '@validations'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import Cleave from 'vue-cleave-component'
@@ -497,7 +497,7 @@ export default {
         numeral: true,
         numeralThousandsGroupStyle: 'thousand',
       },
-      required, email, password,
+      required,
     }
   },
   created() {

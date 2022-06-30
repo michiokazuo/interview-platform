@@ -5,6 +5,48 @@
     class="blog-list-wrapper match-height"
   >
     <b-row class="w-100 m-0 justify-content-center">
+      <b-col cols="12">
+        <b-card title="General">
+          <b-row>
+            <b-col
+              md="4"
+              class="mb-75"
+              cols="6"
+            >
+              <h5 class="text-capitalize">
+                Total questions
+              </h5>
+              <b-card-text>
+                {{ total }}
+              </b-card-text>
+            </b-col>
+            <b-col
+              md="4"
+              class="mb-75"
+              cols="6"
+            >
+              <h5 class="text-capitalize ">
+                Status Crawler
+              </h5>
+              <b-card-text class="text-capitalize">
+                {{ status }}
+              </b-card-text>
+            </b-col>
+            <b-col
+              md="4"
+              class="mb-75"
+              cols="6"
+            >
+              <h5 class="text-capitalize ">
+                Last time crawl data
+              </h5>
+              <b-card-text>
+                {{ last_time }}
+              </b-card-text>
+            </b-col>
+          </b-row>
+        </b-card>
+      </b-col>
       <b-col md="10">
         <b-form-group>
           <v-select
@@ -321,6 +363,9 @@ export default {
         tags: [],
         numbers: 50,
       },
+      total: 0,
+      status: 'stop',
+      last_time: null,
     }
   },
   watch: {
@@ -372,6 +417,9 @@ export default {
           this.currentPageSearch = rs.data.current_page
           this.rowsSearch = rs.data.last_page
           this.userOn = rs.user
+          this.total = rs.data.total
+          this.status = rs.data.status
+          this.last_time = rs.data.last_time
           utils.updateUser(rs.user)
           this.$ability.update([
             {
@@ -392,6 +440,8 @@ export default {
           tags: crawler.tags.map(s => s.name),
           numbers: crawler.numbers,
         }).then(() => {
+          this.status = 'Running'
+          this.last_time = new Date().toLocaleString()
           this.$toast({
             component: ToastificationContent,
             position: 'top-right',

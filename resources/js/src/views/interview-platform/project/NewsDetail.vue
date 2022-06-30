@@ -36,7 +36,7 @@
           <span class="d-none d-sm-inline">Candidates</span>
         </template>
         <table-candidates
-          :id="id"
+          :id-news="id"
           :id-project="idProject"
         />
       </b-tab>

@@ -151,9 +151,9 @@ export default [
   {
     path: '/company/project/:idProject/process/edit/:id',
     name: 'pages-process-edit',
-    component: () => import('@/views/interview-platform/project/ProcessEdit.vue'),
+    component: () => import('@/views/interview-platform/project/ProcessDetail.vue'),
     meta: {
-      pageTitle: 'Process Edit',
+      pageTitle: 'Process Detail',
       breadcrumb: [
         {
           text: 'Project',

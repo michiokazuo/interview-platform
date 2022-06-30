@@ -29,9 +29,11 @@ class Interview extends Model
         'address',
         'form',
         'time',
+        'is_success',
         'candidate_id',
         'company_id',
         'news_id',
+        'process_id',
         'room',
         'gq_test_id',
         'gq_interview_id'
@@ -80,5 +82,10 @@ class Interview extends Model
     public function gqInterview(): BelongsTo
     {
         return $this->belongsTo(GroupQuestion::class, 'gq_interview_id');
+    }
+    
+    public function process(): BelongsTo
+    {
+        return $this->belongsTo(RecruitmentProcess::class);
     }
 }

@@ -77,6 +77,9 @@ class AdminServiceImpl implements AdminService
                 return [
                     'data' => $data,
                     'inactive' => $inactive,
+                    'total' => $data ? $data->count() : 0,
+                    'candidates' => $data ? $data->where('candidate_id', '<>', null)->count() : 0,
+                    'companies' => $data ? $data->where('company_id', '<>', null)->count() : 0,
                 ];
             }
 

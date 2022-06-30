@@ -30,7 +30,7 @@
         </template>
         <project-information
           :id="id"
-          class="mt-2 pt-75 bg-light"
+          class="mt-2 pt-1 bg-light rounded"
         />
       </b-tab>
 

@@ -45,6 +45,57 @@
             @submit.prevent="handleSubmit(onSubmit)"
             @reset.prevent="resetForm"
           >
+            <b-col
+              v-if="eventLocal.project"
+              class="mb-75 pl-0"
+              cols="12"
+            >
+              <h5 class="text-capitalize ">
+                Project
+              </h5>
+              <b-card-text>
+                <b-link
+                  :to="{ name: 'pages-project-detail', params: { id: eventLocal.project.id } }"
+                  class="project-title-truncate"
+                >
+                  {{ eventLocal.project.title }}
+                </b-link>
+              </b-card-text>
+            </b-col>
+            <b-col
+              v-if="eventLocal.news"
+              class="mb-75 pl-0"
+              cols="12"
+            >
+              <h5 class="text-capitalize ">
+                News
+              </h5>
+              <b-card-text>
+                <b-link
+                  :to="{ name: 'pages-news-edit', params: { idProject: eventLocal.project.id, id: eventLocal.news.id } }"
+                  class="project-title-truncate"
+                >
+                  {{ eventLocal.news.title }}
+                </b-link>
+              </b-card-text>
+            </b-col>
+            <b-col
+              v-if="eventLocal.process"
+              class="mb-75 pl-0"
+              cols="12"
+            >
+              <h5 class="text-capitalize ">
+                Process
+              </h5>
+              <b-card-text>
+                <b-link
+                  :to="{ name: 'pages-process-edit', params: { idProject: eventLocal.project.id, id: eventLocal.process.id } }"
+                  class="project-title-truncate"
+                >
+                  {{ eventLocal.process.title }}
+                </b-link>
+              </b-card-text>
+            </b-col>
             <!-- Address -->
             <validation-provider
               name="title"
@@ -161,6 +212,31 @@
               </b-form-group>
             </validation-provider>
 
+            <validation-provider
+              v-slot="validationContext"
+              name="group-questions"
+            >
+
+              <b-form-group
+                label="Interview Question"
+                label-for="group-questions"
+                :state="getValidationState(validationContext)"
+              >
+                <v-select
+                  v-model="eventLocal.interview_question"
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  :options="interviewQuestions"
+                  placeholder="Group questions"
+                  input-id="group-questions"
+                  label="title"
+                  :disabled="eventLocal.done"
+                />
+
+                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
             <b-form-group v-if="eventLocal.form == 'Online' && eventLocal.room">
               <b-link
                 :to="{ name: 'interview-meeting', params:{id: eventLocal.id} }"
@@ -231,6 +307,8 @@ import {
   BFormInvalidFeedback,
   BAlert,
   BLink,
+  BCol,
+  BCardText,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
@@ -257,6 +335,8 @@ export default {
     ValidationObserver,
     BAlert,
     BLink,
+    BCol,
+    BCardText,
   },
   directives: {
     Ripple,
@@ -280,6 +360,11 @@ export default {
     },
     interview: {
       type: Object,
+      required: true,
+    },
+    interviewQuestions: {
+      type: Array,
+      default: () => ([]),
       required: true,
     },
   },

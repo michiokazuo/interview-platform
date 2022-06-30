@@ -193,7 +193,8 @@
                       v-if="interviewOwner"
                       class="text-body"
                     >
-                      <span v-if="interviewOwner.result && interviewOwner.result.company">You have already done interview this job</span>
+                      <span v-if="interviewOwner.news.id !== id">You have already applied for another news the same project</span>
+                      <span v-else-if="interviewOwner.result && interviewOwner.result.company">You have already done interview this job</span>
                       <span v-else>You have already applied for this job</span>
                     </div>
                     <div
@@ -242,9 +243,11 @@
                   </b-button>
                   <span v-else-if="interviewOwner">
                     <b-button
+                      v-if="interviewOwner.news.id == id"
                       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                      v-b-modal.modal-danger
+                      v-b-modal.modal-cancel
                       variant="outline-danger"
+                      @click.prevent="cancelInterview"
                     >
                       Cancel Application
                     </b-button>
@@ -254,6 +257,7 @@
                       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                       v-b-modal.modal-success
                       variant="outline-success"
+                      @click.prevent="applyInterview"
                     >
                       Apply Now
                     </b-button>
@@ -455,6 +459,21 @@
         </b-card>
       </div>
       <b-modal
+        id="modal-cancel"
+        ok-only
+        ok-variant="danger"
+        ok-title="Accept"
+        modal-class="modal-danger"
+        centered
+        title="Cancel Application"
+        @ok="cancelApply"
+      >
+        <b-card-text>
+          Are you sure you want to delete this job?
+        </b-card-text>
+      </b-modal>
+
+      <b-modal
         id="modal-success"
         ok-only
         ok-variant="success"
@@ -466,21 +485,6 @@
       >
         <b-card-text>
           Are you sure you want to apply this job?
-        </b-card-text>
-      </b-modal>
-
-      <b-modal
-        id="modal-danger"
-        ok-only
-        ok-variant="danger"
-        ok-title="Accept"
-        modal-class="modal-danger"
-        centered
-        title="Cancel apply"
-        @ok="cancelApply"
-      >
-        <b-card-text>
-          Are you sure you want to delete this job?
         </b-card-text>
       </b-modal>
       <!--/ recent posts -->
@@ -507,7 +511,6 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { kFormatter } from '@core/utils/filter'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { required, email, password } from '@validations'
 import ContentWithSidebar from '@core/layouts/components/content-with-sidebar/ContentWithSidebar.vue'
 import news from '@/store/api/RNews'
 import interview from '@/store/api/Interview'
@@ -550,7 +553,7 @@ export default {
   created() {
     const { id } = this.$route.params
     if (id) {
-      this.id = id
+      this.id = id - 0
       this.getData()
       this.getInterviewOwner()
     } else {
@@ -562,7 +565,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[tag.length % color.length]
       return `light-${rd}`
@@ -600,6 +602,9 @@ export default {
         console.log(err)
         this.interviewOwner = null
       })
+    },
+    applyInterview() {
+      this.$bvModal.show('modal-success')
     },
     applyNow() {
       interview.store({
@@ -646,6 +651,9 @@ export default {
           this.$bvModal.hide('modal-success')
         })
       })
+    },
+    cancelInterview() {
+      this.$bvModal.show('modal-cancel')
     },
     cancelApply() {
       interview.delete(this.interviewOwner.id).then(resp => {

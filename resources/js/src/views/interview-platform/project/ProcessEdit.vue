@@ -3,46 +3,6 @@
     v-if="Object.keys(processEdit ? processEdit : {}).length > 0"
     class="process-edit-wrapper"
   >
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center">
-        <div class="d-flex align-items-center mr-1">
-          <b-link
-            v-if="processEdit.prev_step"
-            @click.prevent="goToStep(processEdit.prev_step)"
-          >
-            <div class="d-inline-flex align-items-center text-primary">
-              <feather-icon
-                icon="ArrowLeftIcon"
-                size="18"
-                class="mr-50"
-              />
-              <span>Prev Step</span>
-            </div>
-          </b-link>
-        </div>
-      </div>
-
-      <!-- dropdown -->
-      <div class="blog-detail-share">
-        <b-link
-          v-if="processEdit.next_step"
-          @click.prevent="goToStep(processEdit.next_step)"
-        >
-          <div class="d-inline-flex align-items-center text-primary">
-            <span>Next Step</span>
-            <feather-icon
-              icon="ArrowRightIcon"
-              size="18"
-              class="mr-50"
-            />
-          </div>
-        </b-link>
-      </div>
-      <!--/ dropdown -->
-    </div>
-
-    <!-- eslint-enable -->
-    <hr class="my-2">
     <!-- media -->
     <b-media
       no-body
@@ -65,7 +25,7 @@
 
     <validation-observer
       ref="processForm"
-      #default="{invalid}"
+      v-slot="{invalid}"
     >
       <!-- form -->
       <b-form
@@ -80,7 +40,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Title"
                 vid="title"
                 rules="required"
@@ -141,7 +101,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Description"
                 vid="description"
                 rules="required"
@@ -249,13 +209,12 @@ import {
   BButton,
   BModal,
   BCardBody,
-  BLink,
 } from 'bootstrap-vue'
 import { quillEditor } from 'vue-quill-editor'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, password } from '@validations'
+import { required } from '@validations'
 import flatPickr from 'vue-flatpickr-component'
 import process from '@/store/api/RProcess'
 import utils from '@/store/utils'
@@ -280,15 +239,26 @@ export default {
     ValidationProvider,
     ValidationObserver,
     flatPickr,
-    BLink,
   },
   directives: {
     Ripple,
   },
+  props: {
+    id: {
+      type: Number,
+      default: null,
+    },
+    idProject: {
+      type: Number,
+      default: null,
+    },
+    process: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
-      id: null,
-      idProject: null,
       processEdit: {
         user: {},
         start_time: new Date(),
@@ -296,42 +266,18 @@ export default {
       snowOption: {
         theme: 'snow',
       },
+      required,
     }
   },
-  created() {
-    const { id } = this.$route.params
-    const { idProject } = this.$route.params
-    this.idProject = idProject
-    if (id) {
-      this.id = id
-      this.getData()
-    } else {
-      this.id = null
-      this.processEdit = {
-        user: JSON.parse(localStorage.getItem('userData')),
-        start_time: new Date(),
-      }
-    }
+  watch: {
+    process: {
+      handler() {
+        this.processEdit = this.process
+      },
+      deep: true,
+    },
   },
   methods: {
-    getData() {
-      process.findById(this.id).then(resp => {
-        const rs = resp.data
-        this.processEdit = rs.data
-        this.userOn = rs.user
-        utils.updateUser(rs.user)
-        this.$ability.update([
-          {
-            action: 'manage',
-            subject: rs.user.role,
-          },
-        ])
-      }).catch(err => {
-        console.log(err)
-        this.processEdit = null
-        console.log(this.processEdit)
-      })
-    },
     saveProcess() {
       this.$refs.processForm.validate().then(success => {
         if (success) {
@@ -486,10 +432,6 @@ export default {
           },
         })
       })
-    },
-    goToStep(step) {
-      this.id = step
-      this.getData()
     },
   },
 }

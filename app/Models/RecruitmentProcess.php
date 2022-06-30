@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RecruitmentProcess extends Model
 {
@@ -45,5 +46,10 @@ class RecruitmentProcess extends Model
     public function nextStep(): BelongsTo
     {
         return $this->belongsTo(RecruitmentProcess::class, 'next_step');
+    }
+    
+    public function interviews(): HasMany
+    {
+        return $this->hasMany(Interview::class, 'process_id', 'id');
     }
 }
