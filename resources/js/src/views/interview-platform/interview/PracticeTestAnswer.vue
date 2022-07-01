@@ -155,20 +155,6 @@
 								class="mail-message blog-content-truncate"
 								v-html="question.title"
 							/>
-							<div class="mt-1 ml-2 h6 blog-content-truncate">
-								<b-link
-									v-for="(tag,index) in question.tags"
-									:key="index"
-								>
-									<b-badge
-										pill
-										class="mr-75 mb-50"
-										:variant="tagsColor(tag.name)"
-									>
-										{{ tag.name }}
-									</b-badge>
-								</b-link>
-							</div>
 						</b-card-title>
 						<b-media no-body>
 							<b-media-body>
@@ -185,9 +171,15 @@
 								<div class="d-flex align-items-center text-body">
 									<feather-icon
 										icon="MessageSquareIcon"
-										class="mr-50"
+										:class="{
+                      'mr-50': true,
+                      'text-success font-weight-bold': result && result.candidate[`question-${question.id}`],
+                    }"
 									/>
-									<span v-if="result && result.candidate[`question-${question.id}`]"> 1 </span>
+									<span
+										v-if="result && result.candidate[`question-${question.id}`]"
+										class="text-success font-weight-bold"
+									> 1 </span>
 								</div>
 							</b-link>
 							<b-link
@@ -253,7 +245,20 @@
 			cols="12"
 		>
 			<b-card title="Review">
-				<b-card-body v-if="userOn && userOn.candidate_id">
+				<b-card-body
+					class="pt-0"
+					v-if="userOn && userOn.candidate_id"
+				>
+					<div class="d-flex w-100 mb-1 justify-content-start align-items-center">
+						<h5 class="text-capitalize mb-0 mr-1">
+							Status
+						</h5>
+						<b-card-text>
+							<b-badge :variant="statusVariant(interview.status)">
+								{{interview.status }}
+							</b-badge>
+						</b-card-text>
+					</div>
 					<b-card-text>
 						<div
 							v-if="interview.result && interview.result.company"
@@ -287,11 +292,10 @@
 									>
 										<b-form-checkbox
 											class="d-flex align-items-center custom-control-success"
-											:checked="showSelected('success')"
-											@change="changeSelected('success')"
-											value="success"
+											:checked="showSelected(true)"
+											@change="changeSelected(true)"
 										>
-											Success
+											<strong class="text-success">Success</strong>
 										</b-form-checkbox>
 									</b-col>
 									<b-col
@@ -300,17 +304,16 @@
 									>
 										<b-form-checkbox
 											class="d-flex align-items-center custom-control-danger"
-											:checked="showSelected('failure')"
-											@change="changeSelected('failure')"
-											value="failure"
+											:checked="showSelected(false)"
+											@change="changeSelected(false)"
 										>
-											Failure
+											<strong class="text-danger">Failure</strong>
 										</b-form-checkbox>
 									</b-col>
-									<b-col>
+									<b-col cols="12">
 										<b-form-group
 											label-for="news-edit-title"
-											class="mb-2"
+											class="mb-2 mt-2"
 										>
 											<validation-provider
 												v-slot="{ errors }"
@@ -553,6 +556,22 @@
 				this.id = null;
 			}
 		},
+		computed: {
+			statusVariant() {
+				const statusColor = {
+					Scheduled: "light-primary",
+					Completed: "light-success",
+					Passed: "light-success",
+					"Canceled schedule": "light-danger",
+					Failed: "light-danger",
+					Created: "light-warning",
+					"Have test": "light-dark",
+					"Done test": "light-info",
+				};
+
+				return (status) => statusColor[status];
+			},
+		},
 		methods: {
 			kFormatter,
 			tagsColor(tag) {
@@ -577,6 +596,7 @@
 						this.currentPage = 1;
 						this.result = this.interview?.result;
 						this.review = this.result?.company?.review;
+						this.is_success = this.interview?.is_success;
 						this.rows = Math.ceil(
 							this.interview.questions?.length / this.perPage
 						);
@@ -607,7 +627,7 @@
 				this.$bvModal.show("modal-detail-answer");
 			},
 			showSelected(val) {
-				return this.is_success === val;
+				return this.is_success == val;
 			},
 			changeSelected(val) {
 				if (this.is_success === val) {
