@@ -243,7 +243,11 @@ class InterviewServiceImpl implements InterviewService
                     $link = '/' . $path . '/' . $data['record']->getClientOriginalName();
                     $record = $interview->record ?? [];
                     if ($interview->company_id) {
-                        $record['company'] = $link;
+                        if ($user->company_id) {
+                            $record['company'] = $link;
+                        } else {
+                            $record['candidate'] = $link;
+                        }
                     } else if ($interview->candidate_id) {
                         $record['candidate'] = $link;
                     }
@@ -487,6 +491,27 @@ class InterviewServiceImpl implements InterviewService
                 ])
                     ->orderBy('created_at', 'desc')
                     ->get();
+            }
+
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteOnly(User $user, int $interview_id): bool
+    {
+        try {
+            $interview = $this->_repository->find($interview_id);
+
+            if ($interview && ($interview->company_id === $user->company_id
+                    || $interview->candidate_id === $user->candidate_id)) {
+                $interview->delete();
+                return true;
             }
 
             return false;

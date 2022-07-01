@@ -147,13 +147,14 @@
                       name="Key"
                       rules="required"
                     >
-                      <quill-editor
+                      <b-form-textarea
                         id="item-key"
                         v-model="group.qas[`key-${item.id}`]"
                         name="question"
-                        :options="snowOption"
-                        aria-placeholder="Question"
                         :state="errors.length > 0 ? false:null"
+                        type="text"
+                        placeholder="Question"
+                        rows="2"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -169,16 +170,15 @@
                     label-for="item-value"
                   >
                     <validation-provider
-                      v-slot="{ errors }"
                       name="answer"
                     >
-                      <quill-editor
-                        id="item-key"
+                      <b-form-textarea
+                        id="item-value"
                         v-model="group.qas[`value-${item.id}`]"
                         name="answer"
-                        :options="snowOption"
-                        aria-placeholder="Answer"
-                        :state="errors.length > 0 ? false:null"
+                        type="text"
+                        placeholder="Answer"
+                        rows="2"
                       />
                     </validation-provider>
                   </b-form-group>
@@ -238,6 +238,7 @@ import {
   BCol,
   BCard,
   BCardText,
+  BFormTextarea,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
@@ -245,7 +246,6 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required } from '@validations'
 import vSelect from 'vue-select'
-import { quillEditor } from 'vue-quill-editor'
 import groupQS from '@/store/api/GroupQuestion'
 import utils from '@/store/utils'
 
@@ -260,9 +260,9 @@ export default {
     BCard,
     ValidationProvider,
     ValidationObserver,
-    quillEditor,
     vSelect,
     BCardText,
+    BFormTextarea,
   },
   directives: {
     Ripple,
@@ -483,7 +483,6 @@ export default {
 <style lang="scss" scoped>
 @import "~@core/scss/vue/libs/vue-select.scss";
 @import "~@core/scss/vue/libs/vue-flatpicker.scss";
-@import "~@core/scss/vue/libs/quill.scss";
 </style>
 
 <style lang="scss" scoped>

@@ -9,6 +9,7 @@ const apiFindNews = '/api/interview-find-news/'
 const createTest = '/api/create-test/'
 const apiSaveTest = '/api/save-test/'
 const apiByCompany = '/api/interviews-by-company'
+const apiDeleteOne = '/api/delete-interview/'
 
 export default {
   store(data) {
@@ -19,6 +20,9 @@ export default {
   },
   delete(id) {
     return axios.delete(`${apiInterview}${id}`)
+  },
+  deleteOnly(id) {
+    return axios.delete(`${apiDeleteOne}${id}`)
   },
   showByUser(id) {
     return axios.get(`${apiUser}${id}`)

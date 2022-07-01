@@ -290,6 +290,7 @@
             <b-link
               :to="{ name: 'interview-meeting', params:{id: candidateSchedule.id} }"
               class="font-weight-bold mb-2"
+              target="_blank"
             >
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -318,7 +319,8 @@ import {
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, password } from '@validations'
+import { required } from '@validations'
+import Ripple from 'vue-ripple-directive'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import store from '@/store/index'
@@ -346,6 +348,9 @@ export default {
     BLink,
     BButton,
   },
+  directives: {
+    Ripple,
+  },
   props: {
     applications: {
       type: Array,
@@ -354,6 +359,7 @@ export default {
   },
   data() {
     return {
+      required,
       pageLength: 10,
       dir: false,
       columns: [

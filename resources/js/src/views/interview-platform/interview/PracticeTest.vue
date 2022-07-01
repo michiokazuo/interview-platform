@@ -196,7 +196,10 @@
           v-model="currentPage"
           align="center"
           :number-of-pages="rows"
-          class="mb-0"
+          :class="{
+            'mb-0': visibleMeeting,
+            'mb-3': !visibleMeeting
+          }"
           base-url="#"
         />
       </div>

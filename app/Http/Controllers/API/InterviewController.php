@@ -146,6 +146,25 @@ class InterviewController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroyOne(int $id): JsonResponse
+    {
+        $user = $this->user();
+
+        $interview = $this->interviewService->deleteOnly($user, $id);
+
+        if ($interview) {
+            return $this->successfulResult('interviews deleted successfully!!!', $user, ['delete' => true]);
+        }
+
+        return $this->failedResult('interviews deleted failed!!!', 500);
+    }
+
+    /**
      * Display a listing of user.
      *
      * @param int $id

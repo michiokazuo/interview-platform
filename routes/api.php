@@ -70,6 +70,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/interview-edit/{id}', [InterviewController::class, 'showToEdit']);
     Route::post('/create-test/{id}', [InterviewController::class, 'createTest']);
     Route::post('/save-test/{id}', [InterviewController::class, 'saveTestRS']);
+    Route::delete('/delete-interview/{id}', [InterviewController::class, 'destroyOne']);
     
     Route::get('/qat/tags', [QATController::class, 'showTags']);
     Route::post('/qat/questions', [QATController::class, 'showQuestions']);

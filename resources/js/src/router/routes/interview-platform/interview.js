@@ -1,13 +1,5 @@
 export default [
   {
-    path: '/meeting',
-    name: 'interview-meeting-base',
-    component: () => import('@/views/interview-platform/interview/Meeting.vue'),
-    meta: {
-      resource: 'ROLE_USER',
-    },
-  },
-  {
     path: '/meeting/:id',
     name: 'interview-meeting',
     component: () => import('@/views/interview-platform/interview/Meeting.vue'),

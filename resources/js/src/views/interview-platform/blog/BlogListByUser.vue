@@ -176,44 +176,49 @@
         <h6 class="section-label mb-75">
           Recent Comment on Posts
         </h6>
-        <b-card
-          v-for="(recentpost) in blogSidebar"
-          :key="recentpost.id"
-        >
-          <b-link
-            :to="{ name: 'pages-blog-detail', params:{ id :recentpost.blog.id } }"
-            class="text-body-heading"
+        <app-timeline>
+          <app-timeline-item
+            v-for="(recentpost) in blogSidebar"
+            :key="recentpost.id"
           >
-            <b-card-title class="m-0">
-              <span>
-                {{ recentpost.blog.title }}
-              </span>
-            </b-card-title>
-            <b-media
-              no-body
-              class="flex-wrap"
-            >
-              <b-media-aside
-                vertical-align="center"
-                class="mr-50"
+            <b-card>
+              <b-link
+                :to="{ name: 'pages-blog-detail', params:{ id :recentpost.blog.id } }"
+                class="text-body-heading"
               >
-                <b-avatar
-                  href="javascript:void(0)"
-                  size="24"
-                  :src="recentpost.user.avatar"
-                />
-              </b-media-aside>
-              <b-media-body>
-                <small class="text-muted mr-50">by</small>
-                <small>
-                  <b-link class="text-body">{{ recentpost.user.name }}</b-link>
-                </small>
-                <br>
-                <small class="text-muted">{{ new Date(recentpost.created_at).toDateString() }}</small>
-              </b-media-body>
-            </b-media>
-          </b-link>
-        </b-card>
+                <b-card-title class="m-0">
+                  <span>
+                    {{ recentpost.blog.title }}
+                  </span>
+                </b-card-title>
+                <b-media
+                  no-body
+                  class="flex-wrap"
+                >
+                  <b-media-aside
+                    vertical-align="center"
+                    class="mr-50"
+                  >
+                    <b-avatar
+                      href="javascript:void(0)"
+                      size="24"
+                      :src="recentpost.user.avatar"
+                    />
+                  </b-media-aside>
+                  <b-media-body>
+                    <small class="text-muted mr-50">by</small>
+                    <small>
+                      <b-link class="text-body">{{ recentpost.user.name }}</b-link>
+                    </small>
+                    <br>
+                    <small class="text-muted">{{ new Date(recentpost.created_at).toDateString() }}</small>
+                  </b-media-body>
+                </b-media>
+              </b-link>
+            </b-card>
+          </app-timeline-item>
+        </app-timeline>
+
         <b-media v-if="!blogSidebar || !blogSidebar.length">
           <b-media-body>
             <span class="text-muted mb-0 text-center">
@@ -262,6 +267,8 @@ import {
   BButton,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
+import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
+import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import ContentWithSidebar from '@core/layouts/components/content-with-sidebar/ContentWithSidebar.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
@@ -284,8 +291,11 @@ export default {
     BLink,
     BBadge,
     BPaginationNav,
-    ContentWithSidebar,
     BButton,
+
+    ContentWithSidebar,
+    AppTimeline,
+    AppTimelineItem,
   },
   directives: {
     Ripple,
@@ -315,7 +325,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[tag.length % color.length]
       return `light-${rd}`

@@ -134,13 +134,22 @@
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!(props.row.result && props.row.result.company)"
-                @click.prevent="setCandidateDelete(props.row.id)"
+                @click.prevent="setCandidateDelete(props.row.id, 'only')"
               >
                 <feather-icon
                   icon="TrashIcon"
                   class="mr-50"
                 />
-                <span>Delete</span>
+                <span>Delete Only</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                @click.prevent="setCandidateDelete(props.row.id, 'all')"
+              >
+                <feather-icon
+                  icon="TrashIcon"
+                  class="mr-50"
+                />
+                <span>Delete All</span>
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!props.row.result"
@@ -395,6 +404,7 @@ export default {
       candidateView: null,
       candidateSchedule: {},
       candidateDelete: null,
+      typeDelete: null,
       interviewCreateProcess: null,
       optionsForm: ['Online', 'Offline'],
       creating: false,
@@ -640,53 +650,103 @@ export default {
         })
       }
     },
-    setCandidateDelete(id) {
+    setCandidateDelete(id, type) {
+      this.typeDelete = type
       this.candidateDelete = id
       this.$bvModal.show('modal-delete')
     },
     deleteCandidate(bvModalEvent) {
       bvModalEvent.preventDefault()
 
-      interview.delete(this.candidateDelete).then(resp => {
-        const rs = resp.data
-        this.rows = this.rows.filter(item => item.id !== this.candidateDelete)
-        utils.updateUser(rs.user)
-        this.$ability.update([
-          {
-            action: 'manage',
-            subject: rs.user.role,
-          },
-        ])
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Delete Candidate success',
-            icon: 'CoffeeIcon',
-            variant: 'success',
-          },
+      if (this.typeDelete === 'all') {
+        interview.delete(this.candidateDelete).then(resp => {
+          const rs = resp.data
+          const deleteInterview = this.rows.find(item => item.id === this.candidateDelete)
+          this.rows = this.rows.filter(item => item.candidate.general.id !== deleteInterview.candidate.general.id || item.news.id !== deleteInterview.news.id)
+          utils.updateUser(rs.user)
+          this.$ability.update([
+            {
+              action: 'manage',
+              subject: rs.user.role,
+            },
+          ])
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Delete Candidate success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-delete')
+          })
+          this.candidateDelete = null
+          this.typeDelete = null
+        }).catch(err => {
+          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: "Something error or you don't have permission. Please try again!!!",
+            },
+          })
+          this.candidateDelete = null
+          this.typeDelete = null
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-delete')
+          })
         })
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-delete')
-        })
-        this.candidateDelete = null
-      }).catch(err => {
-        console.log(err)
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Error',
-            icon: 'AlertTriangleIcon',
-            variant: 'danger',
-            text: "Something error or you don't have permission. Please try again!!!",
-          },
-        })
+      } else {
+        interview.deleteOnly(this.candidateDelete).then(resp => {
+          const rs = resp.data
+          this.rows = this.rows.filter(item => item.id !== this.candidateDelete)
+          utils.updateUser(rs.user)
+          this.$ability.update([
+            {
+              action: 'manage',
+              subject: rs.user.role,
+            },
+          ])
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Delete Candidate success',
+              icon: 'CoffeeIcon',
+              variant: 'success',
+            },
+          })
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-delete')
+          })
+          this.candidateDelete = null
+          this.typeDelete = null
+        }).catch(err => {
+          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Error',
+              icon: 'AlertTriangleIcon',
+              variant: 'danger',
+              text: "Something error or you don't have permission. Please try again!!!",
+            },
+          })
 
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-delete')
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-delete')
+          })
+          this.candidateDelete = null
+          this.typeDelete = null
         })
-      })
+      }
     },
     resetData() {
       if (localStorage.getItem('calendar')) {

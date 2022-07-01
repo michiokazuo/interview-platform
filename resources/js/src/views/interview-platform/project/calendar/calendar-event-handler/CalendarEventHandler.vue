@@ -241,6 +241,7 @@
               <b-link
                 :to="{ name: 'interview-meeting', params:{id: eventLocal.id} }"
                 class="font-weight-bold mb-2"
+                target="_blank"
               >
                 <b-button
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"

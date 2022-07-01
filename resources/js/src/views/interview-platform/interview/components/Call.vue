@@ -35,15 +35,19 @@
                 :interview="interview.id"
                 :practice="practice"
                 :save-practice="savePractice"
+                :user-on="userOn"
+                :result="result"
+                :count="count"
+                @update-result="updateResult"
               />
             </template>
 
             <div
               v-if="participants"
               :class="{
-                'pt-1 w-100 h-100': true,
+                'w-100 h-100': true,
                 'row m-0': !(screen || practice),
-                'col-md-3 col-12': screen || practice
+                'col-md-3 col-12 vh-100 overflow-auto': screen || practice
               }"
             >
               <video-tile
@@ -56,19 +60,145 @@
                 :handle-audio-click="handleAudioClick"
                 :handle-screenshare-click="handleScreenshareClick"
                 :leave-call="leaveAndCleanUp"
+                :show-info="count > 1 && i + 1 === participants.length"
                 :disable-screen-share="screen && !screen.local"
                 :interview="interview"
                 :practice="practice"
+                :user="userOn"
+                :save-practice="savePractice"
+                :result="result"
+                :count="count"
+                @update-result="updateResult"
               />
-
               <div
                 v-if="count === 1"
                 :class="{
-                  'mt-2': true,
-                  'col-md-3': !(screen || practice)
+                  'pt-1': true,
+                  'col-md-3 vh-100 overflow-auto': !(screen || practice)
                 }"
               >
                 <waiting-card :url="roomUrl" />
+                <b-card
+                  v-if="interview"
+                  title="General"
+                  class="text-justify mt-2"
+                >
+                  <b-col
+                    v-if="interview.project"
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      Project
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        class="project-title-truncate"
+                      >
+                        {{ interview.project.title }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                  <b-col
+                    v-if="interview.news"
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      News
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        :to="{ name: 'pages-news-detail', params: { id: interview.news.id } }"
+                        class="project-title-truncate"
+                        target="_blank"
+                      >
+                        {{ interview.news.title }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                  <b-col
+                    v-if="interview.process"
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      Process
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        class="project-title-truncate"
+                      >
+                        {{ interview.process.id }} - {{ interview.process.title }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                  <b-col
+                    v-if="interview.company"
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      Company
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        :to="{ name: 'pages-company-news-list', params: { id: interview.company.id } }"
+                        class="project-title-truncate"
+                        target="_blank"
+                      >
+                        {{ interview.company.general.name }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                  <b-col
+                    v-if="interview.candidate"
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      Candidate or Practice
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        class="project-title-truncate"
+                      >
+                        {{ interview.candidate.general.name }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                  <b-col
+                    class="mb-75 pl-0"
+                    cols="12"
+                  >
+                    <h5 class="text-capitalize ">
+                      Date
+                    </h5>
+                    <b-card-text>
+                      <b-link
+                        class="project-title-truncate"
+                      >
+                        {{ new Date().toLocaleString() }}
+                      </b-link>
+                    </b-card-text>
+                  </b-col>
+                </b-card>
+
+                <b-card
+                  v-if="userOn && userOn.company_id && interview && interview.interview_question"
+                  title="Interview questions"
+                  class="text-justify mt-2"
+                >
+                  <app-collapse>
+                    <app-collapse-item
+                      v-for="(question, index) in interview.interview_question_data"
+                      :key="index"
+                      :title="(index + 1) + '. ' + question.content"
+                    >
+                      {{ question.answers && question.answers.length ? question.answers[0].content : 'Not set' }}
+                    </app-collapse-item>
+                  </app-collapse>
+                </b-card>
               </div>
             </div>
           </div>
@@ -84,6 +214,15 @@
 </template>
 
 <script>
+import {
+  BCol,
+  BCard,
+  BCardText,
+  BLink,
+} from 'bootstrap-vue'
+import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
+import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
+
 import daily from '@daily-co/daily-js'
 
 import WaitingCard from './WaitingCard.vue'
@@ -96,6 +235,13 @@ import PermissionsErrorMsg from './PermissionsErrorMsg.vue'
 export default {
   name: 'Call',
   components: {
+    BCol,
+    BCard,
+    BCardText,
+    BLink,
+    AppCollapse,
+    AppCollapseItem,
+
     VideoTile,
     WaitingCard,
     Chat,
@@ -116,9 +262,21 @@ export default {
       screen: null,
       practice: false,
       savePractice: false,
+      userOn: null,
+      result: {
+        is_success: null,
+        review: null,
+      },
     }
   },
   mounted() {
+    if (this.interview) {
+      this.result = {
+        review: this.interview?.result?.company?.review,
+        is_success: this.interview?.is_success,
+      }
+    }
+    this.userOn = JSON.parse(localStorage.getItem('userData'))
     if (this.interview && !this.interview.news && this.interview.questions) {
       this.practice = true
     }
@@ -250,6 +408,9 @@ export default {
         this.screen = null
         this.leaveCall()
       })
+    },
+    updateResult($event) {
+      this.result = { ...$event }
     },
   },
 }

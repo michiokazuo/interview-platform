@@ -22,7 +22,7 @@
 				</b-link>
 			</div>
 		</b-col>
-		<template v-if="interview.result && interview.result.candidate">
+		<template v-if="interview.questions && interview.result && interview.result.candidate">
 			<b-col cols="12">
 				<b-card :title="interview.news ? 'General' : 'General for you practices'">
 					<b-row
@@ -203,27 +203,12 @@
 						class="mb-0"
 						base-url="#"
 					/>
-					<b-card
-						v-else
-						no-body
-						class="faq-search pt-5 pb-5"
-						:style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
-					>
-						<b-card-body class="text-center">
-							<h2 class="text-primary">
-								Not have test
-							</h2>
-							<b-card-text class="mb-2">
-								Or the questions are deleted!!!
-							</b-card-text>
-						</b-card-body>
-					</b-card>
 				</div>
 			</b-col>
 		</template>
 		<b-col
 			cols="12"
-			v-else
+			v-else-if="interview.questions"
 		>
 			<b-card
 				no-body
@@ -240,6 +225,26 @@
 				</b-card-body>
 			</b-card>
 		</b-col>
+		<b-col
+			cols="12"
+			v-else
+		>
+			<b-card
+				no-body
+				class="faq-search pt-5 pb-5"
+				:style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
+			>
+				<b-card-body class="text-center">
+					<h2 class="text-primary">
+						Not have test
+					</h2>
+					<b-card-text class="mb-2">
+						Or the questions are deleted!!!
+					</b-card-text>
+				</b-card-body>
+			</b-card>
+		</b-col>
+
 		<b-col
 			v-if="interview.company"
 			cols="12"

@@ -77,6 +77,7 @@ class InterviewResource extends JsonResource
                 'id' => $this->gqInterview->id,
                 'title' => $this->gqInterview->title,
             ] : null,
+            'interview_question_data' => $this->gqInterview ? new QuestionCollection($this->gqInterview->questions) : null,
             'questions' => $groupQuestionTest->questions->count() ? new QuestionCollection($groupQuestionTest->questions) : null,
             'url' => '',
             'title' => $this->candidate->user->name . ' - ' . $this->id,

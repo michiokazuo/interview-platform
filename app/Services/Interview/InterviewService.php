@@ -47,6 +47,14 @@ interface InterviewService
 
     /**
      * @param User $user
+     * @param int $interview_id
+     *
+     * @return bool
+     */
+    public function deleteOnly(User $user, int $interview_id): bool;
+
+    /**
+     * @param User $user
      * @param $news_id
      * @param $process_id
      *

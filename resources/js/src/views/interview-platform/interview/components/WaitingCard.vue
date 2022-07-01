@@ -3,7 +3,7 @@
     title="Welcome for meeting!"
   >
     <b-card-text class="text-white">
-      If has questions, please close this meeting to save this.
+      If has something need to save, please close this meeting to save all that changes.
     </b-card-text>
   </b-card>
 </template>

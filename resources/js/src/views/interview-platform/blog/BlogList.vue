@@ -212,7 +212,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[tag.length % color.length]
       return `light-${rd}`
