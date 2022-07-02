@@ -24,7 +24,10 @@
           v-if="processList && processList.length"
           class="blog-list-wrapper match-height justify-content-center"
         >
-          <b-col cols="8">
+          <b-col
+            md="8"
+            cols="12"
+          >
             <b-link
               :to="{ name: 'pages-process-create', params: { idProject: id }}"
               class="font-weight-bold mb-2 "
@@ -38,124 +41,128 @@
               </b-button>
             </b-link>
           </b-col>
-          <b-col
-            v-for="process in processList"
-            :key="process.id"
-            cols="8"
-          >
-            <b-card
-              tag="article"
-              no-body
-              style="box-shadow: 0 4px 24px 0 rgb(34 41 47 / 10%)!important;"
+          <app-timeline class="col-md-8 col-12">
+            <app-timeline-item
+              v-for="(process, index) in processList"
+              :key="process.id"
             >
-              <b-card-body>
-                <b-card-title>
-                  <b-link
-                    :to="{ name: 'pages-process-edit', params: { id: process.id, idProject: id } }"
-                    class="process-title-truncate text-body-heading"
-                  >
-                    {{ process.title }}
-                  </b-link>
-                  <b-badge
-                    :variant="statusColor(process.start_time, process.end_time)"
-                    class="badge-glow"
-                  >
-                    {{ statusText(process.start_time, process.end_time) }}
-                  </b-badge>
-                </b-card-title>
-                <b-media no-body>
-                  <b-media-aside
-                    vertical-align="center"
-                    class="mr-50"
-                  >
-                    <b-avatar
-                      href="javascript:void(0)"
-                      size="24"
-                      :src="process.user.avatar"
+              <h3 class="mb-1">
+                Process {{ index + 1 }}
+              </h3>
+              <b-card
+                tag="article"
+                no-body
+                style="box-shadow: 0 4px 24px 0 rgb(34 41 47 / 10%)!important;"
+              >
+                <b-card-body>
+                  <b-card-title>
+                    <b-link
+                      :to="{ name: 'pages-process-edit', params: { id: process.id, idProject: id } }"
+                      class="process-title-truncate text-body-heading"
+                    >
+                      {{ process.title }}
+                    </b-link>
+                    <b-badge
+                      :variant="statusColor(process.start_time, process.end_time)"
+                      class="badge-glow"
+                    >
+                      {{ statusText(process.start_time, process.end_time) }}
+                    </b-badge>
+                  </b-card-title>
+                  <b-media no-body>
+                    <b-media-aside
+                      vertical-align="center"
+                      class="mr-50"
+                    >
+                      <b-avatar
+                        href="javascript:void(0)"
+                        size="24"
+                        :src="process.user.avatar"
+                      />
+                    </b-media-aside>
+                    <b-media-body>
+                      <small class="text-muted mr-50">by</small>
+                      <small>
+                        <b-link class="text-body">{{ process.user.name }}</b-link>
+                      </small>
+                      <span class="text-muted ml-75 mr-50">|</span>
+                      <small class="text-muted">{{ new Date(process.start_time).toDateString() }}</small>
+                    </b-media-body>
+                  </b-media>
+                  <b-card-text class="blog-content-truncate tex-truncate mt-2">
+                    <div
+                      v-html="process.description"
                     />
-                  </b-media-aside>
-                  <b-media-body>
-                    <small class="text-muted mr-50">by</small>
-                    <small>
-                      <b-link class="text-body">{{ process.user.name }}</b-link>
-                    </small>
-                    <span class="text-muted ml-75 mr-50">|</span>
-                    <small class="text-muted">{{ new Date(process.start_time).toDateString() }}</small>
-                  </b-media-body>
-                </b-media>
-                <b-card-text class="blog-content-truncate tex-truncate mt-2">
-                  <div
-                    v-html="process.description"
-                  />
-                </b-card-text>
-                <hr>
-                <div class="d-flex justify-content-between align-items-center">
-                  <b-link
-                    class="font-weight-bold mr-1"
-                  >
-                    <div class="d-inline-flex align-items-center text-secondary">
-                      <feather-icon
-                        icon="UsersIcon"
-                        size="18"
-                        class="mr-50"
-                      />
-                      <span>{{ process.total }}</span>
-                    </div>
-                  </b-link>
-                  <b-link>
-                    <div class="d-inline-flex align-items-center text-success">
-                      <feather-icon
-                        icon="CheckIcon"
-                        size="18"
-                        class="mr-50"
-                      />
-                      <span>{{ process.passed }}</span>
-                    </div>
-                  </b-link>
-                  <b-link>
-                    <div class="d-inline-flex align-items-center text-danger">
-                      <feather-icon
-                        icon="XIcon"
-                        size="18"
-                        class="mr-50"
-                      />
-                      <span>{{ process.failed }}</span>
-                    </div>
-                  </b-link>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between align-items-center">
-                  <b-link
-                    v-if="userOn && userOn.company_id === process.project.company_id"
-                    :to="{ name: 'pages-process-edit', params: { id: process.id, idProject: id } }"
-                    class="font-weight-bold mr-1"
-                  >
-                    <div class="d-inline-flex align-items-center text-primary">
-                      <feather-icon
-                        icon="Edit3Icon"
-                        size="18"
-                        class="mr-50"
-                      />
-                      <span>Edit</span>
-                    </div>
-                  </b-link>
-                  <b-link
-                    v-if="userOn && userOn.company_id === process.project.company_id"
-                    @click.prevent="getProcessDelete(process.id)"
-                  >
-                    <div class="d-inline-flex align-items-center text-danger">
-                      <feather-icon
-                        icon="Trash2Icon"
-                        size="18"
-                        class="mr-50"
-                      />
-                      <span>Delete</span>
-                    </div>
-                  </b-link>
-                </div>
-              </b-card-body>
-            </b-card>
-          </b-col>
+                  </b-card-text>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <b-link
+                      class="font-weight-bold mr-1"
+                    >
+                      <div class="d-inline-flex align-items-center text-secondary">
+                        <feather-icon
+                          icon="UsersIcon"
+                          size="18"
+                          class="mr-50"
+                        />
+                        <span>{{ process.total }}</span>
+                      </div>
+                    </b-link>
+                    <b-link>
+                      <div class="d-inline-flex align-items-center text-success">
+                        <feather-icon
+                          icon="CheckIcon"
+                          size="18"
+                          class="mr-50"
+                        />
+                        <span>{{ process.passed }}</span>
+                      </div>
+                    </b-link>
+                    <b-link>
+                      <div class="d-inline-flex align-items-center text-danger">
+                        <feather-icon
+                          icon="XIcon"
+                          size="18"
+                          class="mr-50"
+                        />
+                        <span>{{ process.failed }}</span>
+                      </div>
+                    </b-link>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <b-link
+                      v-if="userOn && userOn.company_id === process.project.company_id"
+                      :to="{ name: 'pages-process-edit', params: { id: process.id, idProject: id } }"
+                      class="font-weight-bold mr-1"
+                    >
+                      <div class="d-inline-flex align-items-center text-primary">
+                        <feather-icon
+                          icon="Edit3Icon"
+                          size="18"
+                          class="mr-50"
+                        />
+                        <span>Edit</span>
+                      </div>
+                    </b-link>
+                    <b-link
+                      v-if="userOn && userOn.company_id === process.project.company_id"
+                      @click.prevent="getProcessDelete(process.id)"
+                    >
+                      <div class="d-inline-flex align-items-center text-danger">
+                        <feather-icon
+                          icon="Trash2Icon"
+                          size="18"
+                          class="mr-50"
+                        />
+                        <span>Delete</span>
+                      </div>
+                    </b-link>
+                  </div>
+                </b-card-body>
+              </b-card>
+            </app-timeline-item>
+          </app-timeline>
         </b-row>
         <b-row v-else>
           <b-col cols="12">
@@ -409,6 +416,8 @@ import {
 import { kFormatter } from '@core/utils/filter'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
+import AppTimeline from '@core/components/app-timeline/AppTimeline.vue'
+import AppTimelineItem from '@core/components/app-timeline/AppTimelineItem.vue'
 import process from '@/store/api/RProcess'
 import news from '@/store/api/RNews'
 import utils from '@/store/utils'
@@ -430,6 +439,9 @@ export default {
     BBadge,
     BTabs,
     BTab,
+
+    AppTimeline,
+    AppTimelineItem,
   },
   directives: {
     Ripple,
