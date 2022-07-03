@@ -65,7 +65,7 @@ class QATServiceImpl implements QATService
 
             $status = $this->settingRepo->where('key', 'status_run_crawler')->first();
             $crawler = $this->settingRepo->where('key', 'crawler')->orderBy('created_at', 'desc')->first();
-            
+
             return [
                 'current_page' => $questions->currentPage(),
                 'data' => $data,
@@ -148,7 +148,7 @@ class QATServiceImpl implements QATService
                     $answers[0]->update([
                         'content' => $answerData['content'],
                     ]);
-                    
+
                 } else {
                     $this->answerRepo->create([
                         'question_id' => $question->id,
@@ -176,5 +176,30 @@ class QATServiceImpl implements QATService
     public function delete(User $user, array $data)
     {
         // TODO: Implement delete() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function countQAT(User $user)
+    {
+        try {
+            if ($user->role_id === 1) {
+                $questions = $this->questionRepo->count();
+                $answers = $this->answerRepo->count();
+                $tags = $this->tagRepo->count();
+
+                return [
+                    'questions' => $questions,
+                    'answers' => $answers,
+                    'tags' => $tags
+                ];
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            logger()->error($e);
+            return false;
+        }
     }
 }

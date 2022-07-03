@@ -53,6 +53,6 @@ class RecruitmentNews extends Model
     
     public function interviews(): HasMany
     {
-        return $this->hasMany(Interview::class);
+        return $this->hasMany(Interview::class, 'news_id', 'id');
     }
 }

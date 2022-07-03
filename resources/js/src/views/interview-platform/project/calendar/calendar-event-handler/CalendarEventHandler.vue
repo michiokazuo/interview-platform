@@ -14,12 +14,21 @@
       <template #default="{ hide }">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
+          <h5
+            v-if="userData && userData.role === 'ROLE_COMPANY'"
+            class="mb-0"
+          >
             {{ eventLocal.id ? eventLocal.done ? 'View' : 'Update': 'Add' }} Event
+          </h5>
+          <h5
+            v-else
+            class="mb-0"
+          >
+            View Event
           </h5>
           <div>
             <feather-icon
-              v-if="eventLocal.id && !eventLocal.done"
+              v-if="eventLocal.id && !eventLocal.done && userData && userData.role === 'ROLE_COMPANY'"
               icon="TrashIcon"
               class="cursor-pointer"
               @click="$emit('remove-event'); hide();"
@@ -46,7 +55,7 @@
             @reset.prevent="resetForm"
           >
             <b-col
-              v-if="eventLocal.project"
+              v-if="eventLocal.project && userData && userData.role === 'ROLE_COMPANY'"
               class="mb-75 pl-0"
               cols="12"
             >
@@ -57,6 +66,7 @@
                 <b-link
                   :to="{ name: 'pages-project-detail', params: { id: eventLocal.project.id } }"
                   class="project-title-truncate"
+                  target="_blank"
                 >
                   {{ eventLocal.project.title }}
                 </b-link>
@@ -72,8 +82,9 @@
               </h5>
               <b-card-text>
                 <b-link
-                  :to="{ name: 'pages-news-edit', params: { idProject: eventLocal.project.id, id: eventLocal.news.id } }"
+                  :to="userData && userData.role === 'ROLE_COMPANY' ? { name: 'pages-news-edit', params: { idProject: eventLocal.project.id, id: eventLocal.news.id } } : { name: 'pages-news-detail', params: { id: eventLocal.news.id } }"
                   class="project-title-truncate"
+                  target="_blank"
                 >
                   {{ eventLocal.news.title }}
                 </b-link>
@@ -89,10 +100,11 @@
               </h5>
               <b-card-text>
                 <b-link
-                  :to="{ name: 'pages-process-edit', params: { idProject: eventLocal.project.id, id: eventLocal.process.id } }"
+                  :to="userData && userData.role === 'ROLE_COMPANY' ? { name: 'pages-process-edit', params: { idProject: eventLocal.project.id, id: eventLocal.process.id } } : '#'"
                   class="project-title-truncate"
+                  target="_blank"
                 >
-                  {{ eventLocal.process.title }}
+                  {{ eventLocal.process.id }} - {{ eventLocal.process.title }}
                 </b-link>
               </b-card-text>
             </b-col>
@@ -133,7 +145,7 @@
                   :state="getValidationState(validationContext)"
                   trim
                   placeholder="Address"
-                  :disabled="eventLocal.done"
+                  :disabled="eventLocal.done || !(userData && userData.role === 'ROLE_COMPANY')"
                 />
 
                 <b-form-invalid-feedback>
@@ -160,7 +172,7 @@
                   :options="calendarOptions"
                   placeholder="Form"
                   input-id="calendar"
-                  :disabled="eventLocal.done"
+                  :disabled="eventLocal.done || !(userData && userData.role === 'ROLE_COMPANY')"
                 />
 
                 <b-form-invalid-feedback :state="getValidationState(validationContext)">
@@ -204,7 +216,7 @@
                   v-model="eventLocal.start"
                   class="form-control"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
-                  :disabled="eventLocal.done"
+                  :disabled="eventLocal.done || !(userData && userData.role === 'ROLE_COMPANY')"
                 />
                 <b-form-invalid-feedback :state="getValidationState(validationContext)">
                   {{ validationContext.errors[0] }}
@@ -213,6 +225,7 @@
             </validation-provider>
 
             <validation-provider
+              v-if="(userData && userData.role === 'ROLE_COMPANY')"
               v-slot="validationContext"
               name="group-questions"
             >
@@ -273,7 +286,10 @@
               </b-alert>
             </b-form-group>
             <!-- Form Actions -->
-            <div class="d-flex mt-2">
+            <div
+              v-if="userData && userData.role === 'ROLE_COMPANY'"
+              class="d-flex mt-2"
+            >
               <b-button
                 v-if="!eventLocal.done"
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -421,6 +437,7 @@ export default {
       email,
       url,
       timeBegin,
+      userData: JSON.parse(localStorage.getItem('userData')),
     }
   },
 }

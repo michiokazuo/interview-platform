@@ -24,8 +24,10 @@ export default function userCalendar() {
   // calendarApi
   // ------------------------------------------------
   let calendarApi = null
+  let userData = {}
   onMounted(() => {
     calendarApi = refCalendar.value.getApi()
+    userData = JSON.parse(localStorage.getItem('userData'))
   })
 
   // ------------------------------------------------
@@ -235,7 +237,11 @@ export default function userCalendar() {
         calendars: selectedCalendars.value,
       })
       .then(response => {
-        successCallback(response.data.data)
+        if (userData && userData.role === 'ROLE_CANDIDATE') {
+          successCallback(response.data.data.applications)
+        } else {
+          successCallback(response.data.data)
+        }
       })
       .catch(() => {
         toast({
@@ -329,9 +335,14 @@ export default function userCalendar() {
         event.value.start = info.date
         ```
       */
-      event.value = JSON.parse(JSON.stringify(Object.assign(event.value, { start: info.date })))
-      // eslint-disable-next-line no-use-before-define
-      isEventHandlerSidebarActive.value = true
+      try {
+        event.value = JSON.parse(JSON.stringify(Object.assign(event.value, { start: info.date })))
+        // eslint-disable-next-line no-use-before-define
+        isEventHandlerSidebarActive.value = true
+      } catch (e) {
+        // eslint-disable-next-line no-use-before-define
+        isEventHandlerSidebarActive.value = false
+      }
     },
 
     /*

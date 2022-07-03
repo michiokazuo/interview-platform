@@ -258,7 +258,11 @@ class InterviewServiceImpl implements InterviewService
                 if (isset($data['result'])) {
                     $result = $interview->result ?? [];
                     if ($interview->company_id) {
-                        $result['company'] = $data['result'];
+                        if ($user->company_id) {
+                            $result['company'] = $data['result'];
+                        } else {
+                            $result['candidate'] = $data['result'];
+                        }
                     } else if ($interview->candidate_id) {
                         $result['candidate'] = $data['result'];
                     }

@@ -46,4 +46,8 @@ class Candidate extends Model
         return $this->belongsTo(User::class, 'id', 'candidate_id');
     }
     
+    public function interviews(): HasMany
+    {
+        return $this->hasMany(Interview::class, 'candidate_id', 'id');
+    }
 }

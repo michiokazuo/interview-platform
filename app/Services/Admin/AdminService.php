@@ -27,4 +27,19 @@ interface AdminService
      * @return mixed
      */
     public function deleteUser(User $user, $id);
+    
+    /**
+     * @param User $user
+     * 
+     * @return mixed
+     */
+    public function graph7Days(User $user);
+    
+    /**
+     * @param User $user
+     * @param array $data
+     * 
+     * @return mixed
+     */
+    public function graphInterview(User $user, array $data);
 }

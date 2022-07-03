@@ -39,6 +39,14 @@ export default {
   },
   actions: {
     fetchEvents(ctx, { calendars }) {
+      const userData = JSON.parse(localStorage.getItem('userData'))
+      if (userData && userData.role === 'ROLE_CANDIDATE') {
+        return new Promise((resolve, reject) => {
+          interview.showByUser(userData.candidate_id)
+            .then(response => resolve(response))
+            .catch(error => reject(error))
+        })
+      }
       return new Promise((resolve, reject) => {
         interview.showAllByCompany()
           .then(response => resolve(response))

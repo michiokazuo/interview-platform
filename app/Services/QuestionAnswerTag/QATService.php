@@ -40,4 +40,10 @@ interface QATService
      * @return mixed
      */
     public function delete(User $user, array $data);
+    
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function countQAT(User $user);
 }

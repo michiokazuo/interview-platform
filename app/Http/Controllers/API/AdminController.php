@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CrawlerRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Services\Admin\AdminService;
-use App\Services\SettingCrawler\SettingCrawlerService;
+use App\Services\Setting\SettingService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
 use Illuminate\Http\JsonResponse;
@@ -15,17 +15,17 @@ class AdminController extends Controller
 {
     use ApiResponse, CurrentUser;
 
-    private $adminService, $settingCrawlerService;
+    private $adminService, $settingService;
 
     /**
      * Create a new instance.
      *
      * @return void
      */
-    public function __construct(AdminService $adminService, SettingCrawlerService $settingCrawlerService)
+    public function __construct(AdminService $adminService, SettingService $settingService)
     {
         $this->adminService = $adminService;
-        $this->settingCrawlerService = $settingCrawlerService;
+        $this->settingService = $settingService;
     }
 
     /**
@@ -97,7 +97,7 @@ class AdminController extends Controller
         $tags = $request->input('tags');
         $numbers = $request->input('numbers');
 
-        $crawler = $this->settingCrawlerService->crawler($user, $tags, $numbers);
+        $crawler = $this->settingService->crawler($user, $tags, $numbers);
 
         if ($crawler) {
             return $this->successfulResult('Crawl successfully!!!', $user, ['status' => true]);

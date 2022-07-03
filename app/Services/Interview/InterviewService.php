@@ -3,7 +3,6 @@
 namespace App\Services\Interview;
 
 use App\Models\User;
-use phpDocumentor\Reflection\Types\Nullable;
 
 interface InterviewService
 {

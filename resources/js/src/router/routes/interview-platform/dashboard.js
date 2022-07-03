@@ -2,7 +2,7 @@ export default [
   {
     path: '/admin-home',
     name: 'admin-home',
-    component: () => import('@/views/interview-platform/dashboard/faq/Faq.vue'),
+    component: () => import('@/views/interview-platform/dashboard/DashboardAdmin.vue'),
     meta: {
       resource: 'ROLE_ADMIN',
     },
@@ -10,7 +10,7 @@ export default [
   {
     path: '/candidate-home',
     name: 'candidate-home',
-    component: () => import('@/views/interview-platform/dashboard/faq/Faq.vue'),
+    component: () => import('@/views/interview-platform/dashboard/DashboardCandidate.vue'),
     meta: {
       resource: 'ROLE_CANDIDATE',
     },
@@ -18,7 +18,7 @@ export default [
   {
     path: '/company-home',
     name: 'company-home',
-    component: () => import('@/views/interview-platform/dashboard/faq/Faq.vue'),
+    component: () => import('@/views/interview-platform/dashboard/DashboardCompany.vue'),
     meta: {
       resource: 'ROLE_COMPANY',
     },

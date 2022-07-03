@@ -7,7 +7,7 @@ use App\Http\Controllers\API\CVController;
 use App\Http\Controllers\API\GroupQuestionController;
 use App\Http\Controllers\API\InterviewController;
 use App\Http\Controllers\API\ProjectController;
-use App\Http\Controllers\API\QATController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\RecruitmentNewsController;
 use App\Http\Controllers\API\RecruitmentProcessController;
 use App\Http\Controllers\AuthController;
@@ -30,7 +30,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => 'api'], function () {
-    
+
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'userProfile']);
@@ -45,7 +45,7 @@ Route::group(['middleware' => 'api'], function () {
 
     Route::get('/cv', [CvController::class, 'show']);
     Route::post('/cv', [CvController::class, 'store']);
-    
+
     Route::apiResource('blog', BlogController::class);
     Route::get('/blog-edit/{id}', [BlogController::class, 'showToEdit']);
     Route::get('/blog-by-user/{id}', [BlogController::class, 'showAllByUser']);
@@ -71,10 +71,10 @@ Route::group(['middleware' => 'api'], function () {
     Route::post('/create-test/{id}', [InterviewController::class, 'createTest']);
     Route::post('/save-test/{id}', [InterviewController::class, 'saveTestRS']);
     Route::delete('/delete-interview/{id}', [InterviewController::class, 'destroyOne']);
-    
-    Route::get('/qat/tags', [QATController::class, 'showTags']);
-    Route::post('/qat/questions', [QATController::class, 'showQuestions']);
-    
+
+    Route::get('/qat/tags', [DashboardController::class, 'showTags']);
+    Route::post('/qat/questions', [DashboardController::class, 'showQuestions']);
+
     Route::get('/admin/all-user', [AdminController::class, 'index']);
     Route::post('/admin/active-company/{id}', [AdminController::class, 'activeCompany']);
     Route::delete('/admin/delete-user/{id}', [AdminController::class, 'destroy']);
@@ -82,5 +82,10 @@ Route::group(['middleware' => 'api'], function () {
 
     Route::apiResource('group-question', GroupQuestionController::class);
     Route::get('/group-interview', [GroupQuestionController::class, 'getGroupInterview']);
+
+    Route::get('/admin/graph', [DashboardController::class, 'graphAdmin']);
+    Route::get('/dashboard-candidate', [DashboardController::class, 'dashboardCandidate']);
+    Route::get('/dashboard-company', [DashboardController::class, 'dashboardCompany']);
+    Route::get('/dashboard-admin', [DashboardController::class, 'dashboardAdmin']);
 });
 
