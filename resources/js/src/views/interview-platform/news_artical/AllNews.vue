@@ -1,5 +1,5 @@
 <template>
-  <!-- newss -->
+  <!-- news list -->
   <b-row
     v-if="newsList && newsList.length"
     class="news-list-wrapper match-height"
