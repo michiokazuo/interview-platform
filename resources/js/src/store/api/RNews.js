@@ -5,6 +5,7 @@ const apiNewsChange = '/api/project-news-change/'
 const apiNewsEdit = '/api/project-news-edit/'
 const apiNewsProject = '/api/news-by-project/'
 const apiNewsUser = '/api/news-by-user/'
+const apiOptions = '/api/news/select-options'
 
 export default {
   getAll(params) {
@@ -33,5 +34,8 @@ export default {
   },
   showAllByUser(id, params) {
     return axios.get(`${apiNewsUser}${id}`, { params })
+  },
+  getSelectOptions() {
+    return axios.get(`${apiOptions}`)
   },
 }

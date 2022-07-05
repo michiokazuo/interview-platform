@@ -8,10 +8,11 @@ interface NewsService
 {
     /**
      * @param User $user
+     * @param array $data
      * @param int $per_page
      * @return mixed
      */
-    public function showAll(User $user, int $per_page);
+    public function showAll(User $user, array $data, int $per_page);
 
     /**
      * @param User $user
@@ -67,4 +68,10 @@ interface NewsService
      * @return mixed
      */
     public function showAllByProject(User $user, int $project_id);
+    
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function getSelectOptions(User $user);
 }

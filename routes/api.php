@@ -60,6 +60,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/project-news-edit/{id}', [RecruitmentNewsController::class, 'showToEdit']);
     Route::get('/news-by-user/{id}', [RecruitmentNewsController::class, 'showAllByUser']);
     Route::get('/news-by-project/{id}', [RecruitmentNewsController::class, 'showAllByProject']);
+    Route::get('/news/select-options', [RecruitmentNewsController::class, 'getSelectOptions']);
 
     Route::apiResource('interview', InterviewController::class)->except(['index', 'update']);
     Route::post('/interview-update/{id}', [InterviewController::class, 'update']);

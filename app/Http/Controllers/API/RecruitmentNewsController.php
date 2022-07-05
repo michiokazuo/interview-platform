@@ -36,10 +36,11 @@ class RecruitmentNewsController extends Controller
     public function index(): JsonResponse
     {
         $per_page = request('per_page', 8);
+        $data = request()->all();
 
         $user = $this->user();
 
-        $news = $this->newsService->showAll($user, $per_page);
+        $news = $this->newsService->showAll($user, $data, $per_page);
 
         if ($news) {
             $news['data'] = !empty($news['data']) ? new NewsCollection($news['data']) : [];
@@ -196,5 +197,22 @@ class RecruitmentNewsController extends Controller
         }
 
         return $this->failedResult('News display failed!!!', 500);
+    }
+    
+    /**
+     * Display selectable options.
+     *
+     * @return JsonResponse
+     */
+    public function getSelectOptions(): JsonResponse
+    {
+        $user = $this->user();
+        $options = $this->newsService->getSelectOptions($user);
+
+        if ($options) {
+            return $this->successfulResult('options display successfully!!!', $user, $options);
+        }
+
+        return $this->failedResult('options display failed!!!', 500);
     }
 }

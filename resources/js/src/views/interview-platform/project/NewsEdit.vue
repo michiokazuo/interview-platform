@@ -25,7 +25,7 @@
 
     <validation-observer
       ref="newsForm"
-      #default="{invalid}"
+      v-slot="{invalid}"
     >
       <!-- form -->
       <b-form
@@ -40,7 +40,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Title"
                 vid="title"
                 rules="required"
@@ -63,18 +63,27 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="JobPosition"
                 vid="JobPosition"
                 rules="required"
               >
-                <b-form-input
-                  id="news-edit-job-position"
+                <vue-autosuggest
                   v-model="newsEdit.job_position"
-                  :state="errors.length > 0 ? false:null"
+                  :suggestions="filteredOptions.job_positions"
+                  :limit="10"
                   name="job_position"
-                  placeholder="Job Position"
-                />
+                  :input-props="{id:'news-edit-job-position',
+                                 class:'form-control ' + (errors.length > 0 ? ' is-invalid':''),
+                                 placeholder:'Job Position'}"
+                  :state="errors.length > 0 ? false:null"
+                  @input="onInputChange('job_positions', $event)"
+                  @selected="selectHandler('job_position', $event)"
+                >
+                  <template slot-scope="{suggestion}">
+                    <span class="my-suggestion-item">{{ suggestion.item }}</span>
+                  </template>
+                </vue-autosuggest>
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
@@ -88,7 +97,7 @@
               label-for="register-working-form"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="WorkingForm"
                 vid="WorkingForm"
                 rules="required"
@@ -114,7 +123,7 @@
               label-for="Gender"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Gender"
                 vid="gender"
                 rules=""
@@ -178,20 +187,27 @@
               label-for="Salary"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Salary"
                 vid="Salary"
                 rules="required"
               >
-                <cleave
-                  id="number"
+                <vue-autosuggest
                   v-model="newsEdit.salary"
-                  class="form-control"
-                  :raw="false"
-                  :options="number"
-                  placeholder="0,000"
+                  :suggestions="filteredOptions.salaries"
+                  :limit="10"
+                  name="salary"
+                  :input-props="{id:'news-edit-salary',
+                                 class:'form-control ' + (errors.length > 0 ? ' is-invalid':''),
+                                 placeholder:'Salary'}"
                   :state="errors.length > 0 ? false:null"
-                />
+                  @input="onInputChange('salaries', $event)"
+                  @selected="selectHandler('salary', $event)"
+                >
+                  <template slot-scope="{suggestion}">
+                    <span class="my-suggestion-item">{{ suggestion.item }}</span>
+                  </template>
+                </vue-autosuggest>
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
 
@@ -206,7 +222,7 @@
               label-for="NumbersOfRecruits"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="NumbersOfRecruits"
                 vid="NumbersOfRecruits"
                 rules="required"
@@ -232,18 +248,27 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="WorkingPlace"
                 vid="WorkingPlace"
                 rules="required"
               >
-                <b-form-input
-                  id="news-edit-working-place"
+                <vue-autosuggest
                   v-model="newsEdit.workplace"
-                  :state="errors.length > 0 ? false:null"
+                  :suggestions="filteredOptions.workplaces"
+                  :limit="10"
                   name="working_place"
-                  placeholder="Working place"
-                />
+                  :input-props="{id:'news-edit-working-place',
+                                 class:'form-control ' + (errors.length > 0 ? ' is-invalid':''),
+                                 placeholder:'Working place'}"
+                  :state="errors.length > 0 ? false:null"
+                  @input="onInputChange('workplaces', $event)"
+                  @selected="selectHandler('workplace', $event)"
+                >
+                  <template slot-scope="{suggestion}">
+                    <span class="my-suggestion-item">{{ suggestion.item }}</span>
+                  </template>
+                </vue-autosuggest>
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
@@ -255,18 +280,27 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Experience"
                 vid="Experience"
                 rules="required"
               >
-                <b-form-input
-                  id="news-edit-experience"
+                <vue-autosuggest
                   v-model="newsEdit.experience"
-                  :state="errors.length > 0 ? false:null"
+                  :suggestions="filteredOptions.experiences"
+                  :limit="10"
                   name="experience"
-                  placeholder="Experience"
-                />
+                  :input-props="{id:'news-edit-experience',
+                                 class:'form-control ' + (errors.length > 0 ? ' is-invalid':''),
+                                 placeholder:'Experience'}"
+                  :state="errors.length > 0 ? false:null"
+                  @input="onInputChange('experiences', $event)"
+                  @selected="selectHandler('experience', $event)"
+                >
+                  <template slot-scope="{suggestion}">
+                    <span class="my-suggestion-item">{{ suggestion.item }}</span>
+                  </template>
+                </vue-autosuggest>
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
@@ -278,7 +312,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Description"
                 vid="description"
                 rules="required"
@@ -302,7 +336,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="RequirementsOthers"
                 vid="RequirementsOthers"
                 rules=""
@@ -326,7 +360,7 @@
               class="mb-2"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Benefits"
                 vid="Benefits"
                 rules="required"
@@ -440,6 +474,7 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
+import { VueAutosuggest } from 'vue-autosuggest'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import Cleave from 'vue-cleave-component'
@@ -468,6 +503,7 @@ export default {
     flatPickr,
     Cleave,
     vSelect,
+    VueAutosuggest,
   },
   directives: {
     Ripple,
@@ -493,14 +529,27 @@ export default {
       },
       options: ['Remote', 'Full time', 'Part time', 'Freelancer'],
       optionsGender: ['None', 'Male', 'Female'],
+      selectOptions: {
+        job_positions: [],
+        salaries: [],
+        workplaces: [],
+        experiences: [],
+      },
       number: {
         numeral: true,
         numeralThousandsGroupStyle: 'thousand',
       },
       required,
+      filteredOptions: {
+        job_positions: [],
+        salaries: [],
+        workplaces: [],
+        experiences: [],
+      },
     }
   },
   created() {
+    this.getSelection()
     if (this.id && this.idProject) {
       this.getData()
     } else {
@@ -515,6 +564,23 @@ export default {
       news.showToEdit(this.id).then(resp => {
         const rs = resp.data
         this.newsEdit = rs.data
+        this.userOn = rs.user
+        utils.updateUser(rs.user)
+        this.$ability.update([
+          {
+            action: 'manage',
+            subject: rs.user.role,
+          },
+        ])
+      }).catch(err => {
+        console.log(err)
+        this.newsEdit = null
+      })
+    },
+    getSelection() {
+      news.getSelectOptions().then(resp => {
+        const rs = resp.data
+        this.selectOptions = rs.data
         this.userOn = rs.user
         utils.updateUser(rs.user)
         this.$ability.update([
@@ -688,10 +754,29 @@ export default {
         })
       })
     },
+    onInputChange(type, text) {
+      if (text === '' || text === undefined) {
+        return
+      }
+
+      /* Full control over filtering. Maybe fetch from API?! Up to you!!! */
+      const filteredData = this.selectOptions[type]?.filter(item => item.toLowerCase().indexOf(text.toLowerCase()) > -1).slice(0, this.limit)
+      this.filteredOptions[type] = [{
+        data: filteredData,
+      }]
+    },
+    selectHandler(type, text) {
+      if (text.item) {
+        this.newsEdit[type] = text.item
+      }
+    },
   },
 }
 </script>
 
+<style lang="scss">
+@import '~@core/scss/vue/libs/vue-autosuggest.scss';
+</style>
 <style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/quill.scss';

@@ -32,7 +32,7 @@ class StoreNewsRequest extends FormRequest
             'description' => 'nullable|string',
             'start_time' => 'required|date',
             'end_time' => 'nullable|date',
-            'salary' => 'numeric|min:0',
+            'salary' => 'required|string',
             'job_position' => 'required|string',
             'working_form' => 'required|string',
             'gender' => 'required|string',
