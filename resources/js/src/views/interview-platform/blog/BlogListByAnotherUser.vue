@@ -104,6 +104,29 @@
         </b-col>
       </b-row>
     </b-card>
+    <b-row class="mb-2">
+      <b-col cols="12">
+        <div class="d-flex justify-content-end">
+          <div class="view-options d-flex">
+            <!-- Sort Button -->
+            <b-dropdown
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              :text="sortBy.text"
+              right
+              variant="outline-primary"
+            >
+              <b-dropdown-item
+                v-for="sortOption in sortByOptions"
+                :key="sortOption.value"
+                @click="changeSortOption(sortOption)"
+              >
+                {{ sortOption.text }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
     <template>
       <b-row
         v-if="blogList && blogList.length"
@@ -144,7 +167,7 @@
                     <b-link class="text-body">{{ blog.user.name }}</b-link>
                   </small>
                   <span class="text-muted ml-75 mr-50">|</span>
-                  <small class="text-muted">{{ blog.created_at }}</small>
+                  <small class="text-muted">{{ new Date(blog.created_at).toDateString() }}</small>
                 </b-media-body>
               </b-media>
               <div class="my-1 py-25">
@@ -168,6 +191,15 @@
               </b-card-text>
               <div class="d-flex flex-wrap justify-content-between align-items-center">
                 <hr class="w-100">
+                <b-link :to="{ path: `/user/blog/${blog.id}#blogComment`}">
+                  <div class="d-flex align-items-center text-body">
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                      class="mr-50"
+                    />
+                    <span class="font-weight-bold">{{ kFormatter(blog.comments) }} Comments</span>
+                  </div>
+                </b-link>
                 <div class="d-flex align-items-center mr-1" />
                 <b-link
                   :to="{ name: 'pages-blog-detail', params: { id: blog.id } }"
@@ -194,20 +226,6 @@
         </b-col>
       </b-row>
       <b-row v-else>
-        <b-col cols="12">
-          <b-link
-            :to="{ name: 'pages-blog-create' }"
-            class="font-weight-bold mb-2"
-          >
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              variant="primary"
-              class="mb-2"
-            >
-              Create new Blog
-            </b-button>
-          </b-link>
-        </b-col>
         <b-col cols="12">
           <b-card
             no-body
@@ -265,6 +283,8 @@ import {
   BPaginationNav,
   BButton,
   VBTooltip,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
@@ -287,6 +307,8 @@ export default {
     BBadge,
     BPaginationNav,
     BButton,
+    BDropdown,
+    BDropdownItem,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -300,6 +322,11 @@ export default {
       currentPage: 1,
       perPage: 8,
       rows: 100,
+      sortByOptions: [
+        { text: 'Newest date', value: 'created_at-desc' },
+        { text: 'Oldest date', value: 'created_at-asc' },
+      ],
+      sortBy: {},
     }
   },
   watch: {
@@ -308,6 +335,7 @@ export default {
     },
   },
   created() {
+    this.sortBy = { ...this.sortByOptions[0] }
     const { id } = this.$route.params
     this.limitContent = utils.limitContent
     if (id) {
@@ -328,6 +356,7 @@ export default {
       blog.showByUser(this.id, {
         page: this.currentPage,
         per_page: this.perPage,
+        sort_by: this.sortBy?.value,
       }).then(resp => {
         const rs = resp.data
         this.blogList = rs.data.data
@@ -345,6 +374,12 @@ export default {
         console.log(err)
         this.blogList = null
       })
+    },
+    changeSortOption(option) {
+      if (this.sortBy.value !== option.value) {
+        this.sortBy = option
+        this.getData()
+      }
     },
   },
 }

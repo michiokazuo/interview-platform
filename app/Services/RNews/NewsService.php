@@ -17,10 +17,11 @@ interface NewsService
     /**
      * @param User $user
      * @param int $company_id
+     * @param array $data
      * @param int $per_page
      * @return mixed
      */
-    public function showAllByUser(User $user, int $company_id, int $per_page);
+    public function showAllByUser(User $user, int $company_id, array $data, int $per_page);
 
     /**
      * @param User $user

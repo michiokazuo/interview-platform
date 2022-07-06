@@ -90,9 +90,15 @@ class NewsServiceImpl implements NewsService
     public function showAll(User $user, array $data, int $per_page = 8)
     {
         try {
-            $news = $this->_repository->where('end_time', null)
-                ->orderBy('start_time', 'desc');
-            
+            $news = $this->_repository->where('end_time', null);
+
+            if (isset($data['sort_by']) && str_contains($data['sort_by'], '-')) {
+                $sort = explode('-', $data['sort_by']);
+                $news = $news->orderBy($sort[0], $sort[1]);
+            } else {
+                $news = $news->orderBy('start_time', 'desc');
+            }
+
             if (isset($data['keyword']) && $data['keyword']) {
                 $keyword = trim($data['keyword']);
                 $news = $news->where(function ($query) use ($keyword) {
@@ -102,22 +108,22 @@ class NewsServiceImpl implements NewsService
                         ->orWhere('requirements', 'like', "%{$keyword}%");
                 });
             }
-            
+
             if (isset($data['job_positions']) && is_array($data['job_positions'])) {
                 $job_positions = $data['job_positions'];
                 $news = $news->whereIn('job_position', $job_positions);
             }
-            
+
             if (isset($data['salaries']) && is_array($data['salaries'])) {
                 $salaries = $data['salaries'];
                 $news = $news->whereIn('salary', $salaries);
             }
-            
+
             if (isset($data['experiences']) && is_array($data['experiences'])) {
                 $experiences = $data['experiences'];
                 $news = $news->whereIn('experience', $experiences);
             }
-            
+
             if (isset($data['workplaces']) && is_array($data['workplaces'])) {
                 $workplaces = $data['workplaces'];
                 $news = $news->whereIn('workplace', $workplaces);
@@ -127,12 +133,12 @@ class NewsServiceImpl implements NewsService
                 $genders = $data['genders'];
                 $news = $news->whereIn('gender', $genders);
             }
-            
+
             if (isset($data['working_forms']) && is_array($data['working_forms'])) {
                 $working_forms = $data['working_forms'];
                 $news = $news->whereIn('working_form', $working_forms);
             }
-            
+
             $news = $news->paginate($per_page);
 
             if ($news) {
@@ -154,12 +160,20 @@ class NewsServiceImpl implements NewsService
     /**
      * @inheritDoc
      */
-    public function showAllByUser(User $user, int $company_id, int $per_page = 8)
+    public function showAllByUser(User $user, int $company_id, array $data, int $per_page = 8)
     {
         try {
             $userOwner = $this->userRepository->where('company_id', $company_id)->first();
-            $news = $this->_repository->where('company_id', $company_id)
-                ->orderBy('created_at', 'desc')->paginate($per_page);
+            $news = $this->_repository->where('company_id', $company_id);
+
+            if (isset($data['sort_by']) && str_contains($data['sort_by'], '-')) {
+                $sort = explode('-', $data['sort_by']);
+                $news = $news->orderBy($sort[0], $sort[1]);
+            } else {
+                $news = $news->orderBy('start_time', 'desc');
+            }
+            
+            $news = $news->paginate($per_page);
 
             if ($news && $userOwner) {
                 return [

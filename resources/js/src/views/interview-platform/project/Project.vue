@@ -1,159 +1,149 @@
 <template>
   <!-- projects -->
-  <b-row
-    v-if="projects && projects.length"
-    class="blog-list-wrapper match-height"
-  >
-    <b-col cols="12">
-      <b-link
-        :to="{ name: 'pages-project-create' }"
-        class="font-weight-bold mb-2"
-      >
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          class="mb-2"
+  <div>
+    <b-row>
+      <b-col cols="12">
+        <b-link
+          :to="{ name: 'pages-project-create' }"
+          class="font-weight-bold mb-2"
         >
-          Create new Project
-        </b-button>
-      </b-link>
-    </b-col>
-    <b-col
-      v-for="project in projects"
-      :key="project.id"
-      md="6"
+          <b-button
+            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+            variant="primary"
+            class="mb-2"
+          >
+            Create new Project
+          </b-button>
+        </b-link>
+      </b-col>
+    </b-row>
+    <b-row
+      v-if="projects && projects.length"
+      class="blog-list-wrapper match-height"
     >
-      <b-card
-        tag="article"
-        no-body
+      <b-col
+        v-for="project in projects"
+        :key="project.id"
+        md="6"
       >
-        <b-card-body class="d-flex flex-column justify-content-between">
-          <b-card-title>
-            <b-link
-              :to="{ name: 'pages-project-detail', params: { id: project.id } }"
-              class="project-title-truncate text-body-heading"
-            >
-              {{ project.title }}
-            </b-link>
-            <b-badge
-              :variant="statusColor(project.start_time, project.end_time)"
-              class="badge-glow"
-            >
-              {{ statusText(project.start_time, project.end_time) }}
-            </b-badge>
-          </b-card-title>
-          <b-media no-body>
-            <b-media-aside
-              vertical-align="center"
-              class="mr-50"
-            >
-              <b-avatar
-                href="javascript:void(0)"
-                size="24"
-                :src="project.user.avatar"
-              />
-            </b-media-aside>
-            <b-media-body>
-              <small class="text-muted mr-50">by</small>
-              <small>
-                <b-link class="text-body">{{ project.user.name }}</b-link>
-              </small>
-              <span class="text-muted ml-75 mr-50">|</span>
-              <small class="text-muted">{{ new Date(project.start_time).toDateString() }}</small>
-            </b-media-body>
-          </b-media>
-          <b-card-text class="blog-content-truncate tex-truncate mt-2">
-            <div
-              v-html="limitContent(project.description)"
-            />
-          </b-card-text>
-          <div class="d-flex flex-wrap justify-content-between align-items-center">
-            <hr class="w-100">
-            <b-link
-              v-if="userOn && project.company.id === userOn.company_id"
-              @click.prevent="getProjectDelete(project.id)"
-            >
-              <div class="d-inline-flex align-items-center text-danger">
-                <feather-icon
-                  icon="Trash2Icon"
-                  size="18"
-                  class="mr-50"
+        <b-card
+          tag="article"
+          no-body
+        >
+          <b-card-body class="d-flex flex-column justify-content-between">
+            <b-card-title>
+              <b-link
+                :to="{ name: 'pages-project-detail', params: { id: project.id } }"
+                class="project-title-truncate text-body-heading"
+              >
+                {{ project.title }}
+              </b-link>
+              <b-badge
+                :variant="statusColor(project.start_time, project.end_time)"
+                class="badge-glow"
+              >
+                {{ statusText(project.start_time, project.end_time) }}
+              </b-badge>
+            </b-card-title>
+            <b-media no-body>
+              <b-media-aside
+                vertical-align="center"
+                class="mr-50"
+              >
+                <b-avatar
+                  href="javascript:void(0)"
+                  size="24"
+                  :src="project.user.avatar"
                 />
-                <span>Delete</span>
-              </div>
-            </b-link>
-            <b-link
-              :to="{ name: 'pages-project-detail', params: { id: project.id } }"
-              class="font-weight-bold"
-            >
-              Read More
-            </b-link>
-          </div>
-        </b-card-body>
-      </b-card>
-    </b-col>
-    <b-col cols="12">
-      <!-- pagination -->
-      <div class="my-2">
-        <b-pagination-nav
-          v-if="rows"
-          v-model="currentPage"
-          align="center"
-          :number-of-pages="rows"
-          class="mb-0"
-          base-url="#"
-        />
-      </div>
-    </b-col>
+              </b-media-aside>
+              <b-media-body>
+                <small class="text-muted mr-50">by</small>
+                <small>
+                  <b-link class="text-body">{{ project.user.name }}</b-link>
+                </small>
+                <span class="text-muted ml-75 mr-50">|</span>
+                <small class="text-muted">{{ new Date(project.start_time).toDateString() }}</small>
+              </b-media-body>
+            </b-media>
+            <b-card-text class="blog-content-truncate tex-truncate mt-2">
+              <div
+                v-html="limitContent(project.description)"
+              />
+            </b-card-text>
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+              <hr class="w-100">
+              <b-link
+                v-if="userOn && project.company.id === userOn.company_id"
+                @click.prevent="getProjectDelete(project.id)"
+              >
+                <div class="d-inline-flex align-items-center text-danger">
+                  <feather-icon
+                    icon="Trash2Icon"
+                    size="18"
+                    class="mr-50"
+                  />
+                  <span>Delete</span>
+                </div>
+              </b-link>
+              <b-link
+                :to="{ name: 'pages-project-detail', params: { id: project.id } }"
+                class="font-weight-bold"
+              >
+                Read More
+              </b-link>
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col cols="12">
+        <!-- pagination -->
+        <div class="my-2">
+          <b-pagination-nav
+            v-if="rows"
+            v-model="currentPage"
+            align="center"
+            :number-of-pages="rows"
+            class="mb-0"
+            base-url="#"
+          />
+        </div>
+      </b-col>
 
-    <!--/ sidebar -->
-    <b-modal
-      id="modal-danger"
-      ok-variant="danger"
-      ok-title="Accept"
-      cancel-title="Cancel"
-      modal-class="modal-danger"
-      centered
-      title="Delete Alert"
-      @ok="deleteProject"
-    >
-      <b-card-text>
-        Are you sure you want to delete this blog?
-      </b-card-text>
-    </b-modal>
-  </b-row>
-  <b-row v-else>
-    <b-col cols="12">
-      <b-link
-        :to="{ name: 'pages-project-create' }"
-        class="font-weight-bold mb-2"
+      <!--/ sidebar -->
+      <b-modal
+        id="modal-danger"
+        ok-variant="danger"
+        ok-title="Accept"
+        cancel-title="Cancel"
+        modal-class="modal-danger"
+        centered
+        title="Delete Alert"
+        @ok="deleteProject"
       >
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="primary"
-          class="mb-2"
+        <b-card-text>
+          Are you sure you want to delete this blog?
+        </b-card-text>
+      </b-modal>
+    </b-row>
+    <b-row v-else>
+      <b-col cols="12">
+        <b-card
+          no-body
+          class="faq-search pt-5 pb-5"
+          :style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
         >
-          Create new Project
-        </b-button>
-      </b-link>
-    </b-col>
-    <b-col cols="12">
-      <b-card
-        no-body
-        class="faq-search pt-5 pb-5"
-        :style="{backgroundImage:`url(${require('@/assets/images/banner/banner.png')})`}"
-      >
-        <b-card-body class="text-center">
-          <h2 class="text-primary">
-            Nothing to show...
-          </h2>
-          <b-card-text class="mb-2">
-            Please try again!!!
-          </b-card-text>
-        </b-card-body>
-      </b-card>
-    </b-col>
-  </b-row>
+          <b-card-body class="text-center">
+            <h2 class="text-primary">
+              Nothing to show...
+            </h2>
+            <b-card-text class="mb-2">
+              Please try again!!!
+            </b-card-text>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
+  </div>
 
   <!--/ projects -->
 </template>

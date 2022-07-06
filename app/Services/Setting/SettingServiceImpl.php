@@ -243,7 +243,7 @@ class SettingServiceImpl implements SettingService
         try {
             if ($user->role_id === 1) {
                 $allUsers = $this->adminService->getAll($user);
-                $blogs = $this->blogService->showAll($user);
+                $blogs = $this->blogService->showAll($user, $data);
                 $qat = $this->qatService->countQAT($user);
 
                 $cmtCount = $this->cmtRepo->count();

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-lone-template -->
 <template>
   <div
     v-if="id && userData"
@@ -120,6 +121,29 @@
         </b-col>
       </b-row>
     </b-card>
+    <b-row class="mb-2">
+      <b-col cols="12">
+        <div class="d-flex justify-content-end">
+          <div class="view-options d-flex">
+            <!-- Sort Button -->
+            <b-dropdown
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              :text="sortBy.text"
+              right
+              variant="outline-primary"
+            >
+              <b-dropdown-item
+                v-for="sortOption in sortByOptions"
+                :key="sortOption.value"
+                @click="changeSortOption(sortOption)"
+              >
+                {{ sortOption.text }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
     <template>
       <b-row
         v-if="newsList && newsList.length"
@@ -278,6 +302,8 @@ import {
   BPaginationNav,
   BButton,
   VBTooltip,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
@@ -300,6 +326,8 @@ export default {
     BBadge,
     BPaginationNav,
     BButton,
+    BDropdown,
+    BDropdownItem,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -313,6 +341,11 @@ export default {
       currentPage: 1,
       perPage: 8,
       rows: 100,
+      sortByOptions: [
+        { text: 'Newest date', value: 'start_time-desc' },
+        { text: 'Oldest date', value: 'start_time-asc' },
+      ],
+      sortBy: {},
     }
   },
   watch: {
@@ -321,6 +354,7 @@ export default {
     },
   },
   created() {
+    this.sortBy = { ...this.sortByOptions[0] }
     const { id } = this.$route.params
     if (id) {
       this.id = id
@@ -333,7 +367,6 @@ export default {
   methods: {
     kFormatter,
     tagsColor(tag) {
-      
       const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark']
       const rd = color[tag.length % color.length]
       return `light-${rd}`
@@ -342,6 +375,7 @@ export default {
       news.showAllByUser(this.id, {
         page: this.currentPage,
         per_page: this.perPage,
+        sort_by: this.sortBy?.value,
       }).then(resp => {
         const rs = resp.data
         this.newsList = rs.data.data
@@ -359,6 +393,12 @@ export default {
         console.log(err)
         this.newsList = null
       })
+    },
+    changeSortOption(option) {
+      if (this.sortBy.value !== option.value) {
+        this.sortBy = option
+        this.getData()
+      }
     },
   },
 }

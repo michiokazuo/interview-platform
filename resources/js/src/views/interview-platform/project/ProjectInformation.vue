@@ -20,13 +20,11 @@
       </template>
 
       <b-col cols="12">
-        <b-row
-          v-if="processList && processList.length"
-          class="blog-list-wrapper match-height justify-content-center"
-        >
+        <b-row class="justify-content-center">
           <b-col
             md="8"
             cols="12"
+            class="pl-0"
           >
             <b-link
               :to="{ name: 'pages-process-create', params: { idProject: id }}"
@@ -41,6 +39,11 @@
               </b-button>
             </b-link>
           </b-col>
+        </b-row>
+        <b-row
+          v-if="processList && processList.length"
+          class="blog-list-wrapper match-height justify-content-center"
+        >
           <app-timeline class="col-md-8 col-12">
             <app-timeline-item
               v-for="(process, index) in processList"
@@ -166,20 +169,6 @@
         </b-row>
         <b-row v-else>
           <b-col cols="12">
-            <b-link
-              :to="{ name: 'pages-process-create', params: { idProject: id }}"
-              class="font-weight-bold mb-2"
-            >
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                variant="primary"
-                class="mb-2 box-shadow-custom"
-              >
-                Create new Process
-              </b-button>
-            </b-link>
-          </b-col>
-          <b-col cols="12">
             <b-card
               no-body
               class="faq-search pt-5 pb-5"
@@ -213,10 +202,7 @@
 
       <!-- blogs -->
       <b-col cols="12">
-        <b-row
-          v-if="newsList && newsList.length"
-          class="blog-list-wrapper match-height"
-        >
+        <b-row>
           <b-col cols="12">
             <b-link
               :to="{ name: 'pages-news-create', params: { idProject: id }}"
@@ -231,6 +217,11 @@
               </b-button>
             </b-link>
           </b-col>
+        </b-row>
+        <b-row
+          v-if="newsList && newsList.length"
+          class="blog-list-wrapper match-height"
+        >
           <b-col
             v-for="news in newsList"
             :key="news.id"
@@ -328,20 +319,6 @@
           </b-col>
         </b-row>
         <b-row v-else>
-          <b-col cols="12">
-            <b-link
-              :to="{ name: 'pages-news-create', params: { idProject: id }}"
-              class="font-weight-bold mb-2"
-            >
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                variant="primary"
-                class="mb-2 box-shadow-custom"
-              >
-                Create new News
-              </b-button>
-            </b-link>
-          </b-col>
           <b-col cols="12">
             <b-card
               no-body

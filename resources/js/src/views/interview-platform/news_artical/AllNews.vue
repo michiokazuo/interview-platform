@@ -1,7 +1,7 @@
 <template>
   <!-- news list -->
   <div>
-    <b-row>
+    <b-row class="mb-2">
       <b-col cols="12">
         <b-card title="Search">
           <b-row>
@@ -146,6 +146,27 @@
           </b-row>
         </b-card>
       </b-col>
+      <b-col cols="12">
+        <div class="d-flex justify-content-end">
+          <div class="view-options d-flex">
+            <!-- Sort Button -->
+            <b-dropdown
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              :text="sortBy.text"
+              right
+              variant="outline-primary"
+            >
+              <b-dropdown-item
+                v-for="sortOption in sortByOptions"
+                :key="sortOption.value"
+                @click="changeSortOption(sortOption)"
+              >
+                {{ sortOption.text }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
+        </div>
+      </b-col>
     </b-row>
 
     <b-row
@@ -286,6 +307,8 @@ import {
   BFormInput,
   BInputGroupAppend,
   BButton,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import { kFormatter } from '@core/utils/filter'
 import Ripple from 'vue-ripple-directive'
@@ -312,6 +335,8 @@ export default {
     BFormInput,
     BInputGroupAppend,
     BButton,
+    BDropdown,
+    BDropdownItem,
     vSelect,
   },
   directives: {
@@ -333,6 +358,11 @@ export default {
         workplaces: [],
         experiences: [],
       },
+      sortByOptions: [
+        { text: 'Newest date', value: 'start_time-desc' },
+        { text: 'Oldest date', value: 'start_time-asc' },
+      ],
+      sortBy: {},
     }
   },
   watch: {
@@ -341,6 +371,7 @@ export default {
     },
   },
   created() {
+    this.sortBy = { ...this.sortByOptions[0] }
     this.getData()
     this.getSelection()
     this.limitContent = utils.limitContent
@@ -358,7 +389,7 @@ export default {
       for (const key in this.filters) {
         if (Object.prototype.hasOwnProperty.call(this.filters, key) && this.filters[key]) {
           if (typeof this.filters[key] === 'string') {
-            dataFilters[key] = this.filters[key].trim()
+            dataFilters[key] = this.filters[key].trim() ?? null
           } else if (Array.isArray(this.filters[key]) && this.filters[key].length) {
             const filterTmp = this.filters[key].map(item => item.trim()).filter(item => item.length)
             if (filterTmp.length) {
@@ -372,6 +403,7 @@ export default {
         page: this.currentPage,
         per_page: this.perPage,
         ...dataFilters,
+        sort_by: this.sortBy?.value,
       }).then(resp => {
         const rs = resp.data
         utils.updateUser(rs.user)
@@ -409,6 +441,12 @@ export default {
     },
     searchNews() {
       this.getData()
+    },
+    changeSortOption(option) {
+      if (this.sortBy.value !== option.value) {
+        this.sortBy = option
+        this.getData()
+      }
     },
   },
 }

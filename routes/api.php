@@ -8,6 +8,7 @@ use App\Http\Controllers\API\GroupQuestionController;
 use App\Http\Controllers\API\InterviewController;
 use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\QATController;
 use App\Http\Controllers\API\RecruitmentNewsController;
 use App\Http\Controllers\API\RecruitmentProcessController;
 use App\Http\Controllers\AuthController;
@@ -73,8 +74,8 @@ Route::group(['middleware' => 'api'], function () {
     Route::post('/save-test/{id}', [InterviewController::class, 'saveTestRS']);
     Route::delete('/delete-interview/{id}', [InterviewController::class, 'destroyOne']);
 
-    Route::get('/qat/tags', [DashboardController::class, 'showTags']);
-    Route::post('/qat/questions', [DashboardController::class, 'showQuestions']);
+    Route::get('/qat/tags', [QATController::class, 'showTags']);
+    Route::post('/qat/questions', [QATController::class, 'showQuestions']);
 
     Route::get('/admin/all-user', [AdminController::class, 'index']);
     Route::post('/admin/active-company/{id}', [AdminController::class, 'activeCompany']);

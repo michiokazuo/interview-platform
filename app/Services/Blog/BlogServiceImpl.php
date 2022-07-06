@@ -66,10 +66,28 @@ class BlogServiceImpl implements BlogService
     /**
      * @inheritDoc
      */
-    public function showAll(User $user, int $per_page = 8)
+    public function showAll(User $user, array $data, int $per_page = 8)
     {
         try {
-            $blogs = $this->_repository->orderBy('created_at', 'desc')->paginate($per_page);
+            $blogs = $this->_repository;
+            
+            if (isset($data['sort_by']) && str_contains($data['sort_by'], '-')) {
+                $sort = explode('-', $data['sort_by']);
+                $blogs = $blogs->orderBy($sort[0], $sort[1]);
+            } else {
+                $blogs = $blogs->orderBy('created_at', 'desc');
+            }
+
+            if (isset($data['keyword']) && $data['keyword']) {
+                $keyword = trim($data['keyword']);
+                $blogs = $blogs->where(function ($query) use ($keyword) {
+                    $query->where('title', 'like', "%{$keyword}%")
+                        ->orWhere('topics', 'like', "%{$keyword}%")
+                        ->orWhere('content', 'like', "%{$keyword}%");
+                });
+            }
+            
+            $blogs = $blogs->paginate($per_page);
             
             if ($blogs) {
                 return [
@@ -90,12 +108,20 @@ class BlogServiceImpl implements BlogService
     /**
      * @inheritDoc
      */
-    public function showAllByUser(User $user, int $user_id,int $per_page = 8)
+    public function showAllByUser(User $user, int $user_id, array $data, int $per_page = 8)
     {
         try {
             $userOwner = $this->userRepository->find($user_id);
-            $blogs = $this->_repository->where('user_id', $user_id)->orderBy('created_at', 'desc')
-                ->paginate($per_page);
+            $blogs = $this->_repository->where('user_id', $user_id);
+
+            if (isset($data['sort_by']) && str_contains($data['sort_by'], '-')) {
+                $sort = explode('-', $data['sort_by']);
+                $blogs = $blogs->orderBy($sort[0], $sort[1]);
+            } else {
+                $blogs = $blogs->orderBy('created_at', 'desc');
+            }
+            
+            $blogs = $blogs->paginate($per_page);
 
             if ($blogs && $userOwner) {
                 return [

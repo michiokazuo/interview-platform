@@ -132,9 +132,10 @@ class RecruitmentNewsController extends Controller
     public function showAllByUser(int $id): JsonResponse
     {
         $per_page = request('per_page', 8);
+        $data = request()->all();
 
         $user = $this->user();
-        $news = $this->newsService->showAllByUser($user, $id, $per_page);
+        $news = $this->newsService->showAllByUser($user, $id, $data, $per_page);
 
         if ($news) {
             $news['data'] = !empty($news['data']) ? new NewsCollection($news['data']) : [];

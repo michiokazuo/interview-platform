@@ -36,10 +36,11 @@ class BlogController extends Controller
     public function index(): JsonResponse
     {
         $per_page = request('per_page', 8);
+        $data = request()->all();
 
         $user = $this->user();
 
-        $blogs = $this->blogService->showAll($user, $per_page);
+        $blogs = $this->blogService->showAll($user, $data, $per_page);
 
         if ($blogs) {
             $blogs['data'] = !empty($blogs['data']) ? new BlogCollection($blogs['data']) : [];
@@ -131,9 +132,10 @@ class BlogController extends Controller
     public function showAllByUser(int $id): JsonResponse
     {
         $per_page = request('per_page', 8);
+        $data = request()->all();
 
         $user = $this->user();
-        $blogs = $this->blogService->showAllByUser($user, $id, $per_page);
+        $blogs = $this->blogService->showAllByUser($user, $id, $data, $per_page);
 
         if ($blogs) {
             $blogs['data'] = !empty($blogs['data']) ? new BlogCollection($blogs['data']) : [];
