@@ -112,7 +112,7 @@
                   icon="TrashIcon"
                   class="mr-50"
                 />
-                <span>Delete</span>
+                <span>Delete All</span>
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="props.row.result"
@@ -522,7 +522,8 @@ export default {
 
       interview.delete(this.candidateDelete).then(resp => {
         const rs = resp.data
-        this.rows = this.rows.filter(item => item.id !== this.candidateDelete)
+        const deleteInterview = this.rows.find(item => item.id === this.candidateDelete)
+        this.rows = this.rows.filter(item => item.candidate.general.id !== deleteInterview.candidate.general.id || item.news.id !== deleteInterview.news.id)
         utils.updateUser(rs.user)
         this.$ability.update([
           {
