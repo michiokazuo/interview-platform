@@ -67,6 +67,10 @@ class CrawlServiceImpl implements CrawlService
                             'page_crawled' => $header['params']['page']
                         ];
 
+                        if ($tag) {
+                            unset($question['page_crawled']);
+                        }
+
                         $this->saveQuestion($item['link'], $question, $tags_id);
                     }
                 } else {
@@ -113,7 +117,7 @@ class CrawlServiceImpl implements CrawlService
             $header['params']['tagged'] = $tag;
         } else {
             $header['params']['page'] = $this->questionRepo->max('page_crawled');
-            
+
             if ($rollback) {
                 $header['params']['page'] = 0;
                 $header['count'] = $this->questionRepo->count();
