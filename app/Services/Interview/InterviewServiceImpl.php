@@ -33,7 +33,7 @@ class InterviewServiceImpl implements InterviewService
      * @param User $user
      * @return mixed
      */
-    private function createRoom(User $user)
+    private function createRoom(User $user, $is_now)
     {
         try {
             $data = [];
@@ -44,7 +44,7 @@ class InterviewServiceImpl implements InterviewService
                     if ($room) {
                         return $room['url'];
                     }
-                } else {
+                } else if ($is_now) {
                     $interviewNotRun = $this->_repository->whereNotNull('room')
                         ->where('time', '>=', (new Carbon(now()))->addDay())
                         ->first();
@@ -91,7 +91,7 @@ class InterviewServiceImpl implements InterviewService
 
                 if (empty($data['company_id']) && empty($data['news_id']) && !empty($data['interview_meeting'])) {
                     $data['time'] = now();
-                    $room = $this->createRoom($user);
+                    $room = $this->createRoom($user, true);
                     if ($room) {
                         $data['room'] = $room;
                     }
@@ -289,11 +289,14 @@ class InterviewServiceImpl implements InterviewService
                 if ($interview->room && (!empty($data['result']) || !empty($data['record']))) {
                     $array = explode('/', $interview->room);
                     $room_name = end($array);
-                    $this->dailyCoService->delete($user, $room_name);
+                    $roomExists = $this->_repository->where('room', $interview->room)->first();
+                    if (empty($roomExists)) {
+                        $this->dailyCoService->delete($user, $room_name);
+                    }
                     $data['room'] = null;
                 } else if (empty($data['result']) && empty($data['record'])) {
                     if (isset($data['form']) && $data['form'] === 'Online' && !$interview->room) {
-                        $room = $this->createRoom($user);
+                        $room = $this->createRoom($user, false);
                         if ($room) {
                             $data['room'] = $room;
                         }
