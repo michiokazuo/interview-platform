@@ -159,20 +159,6 @@
       </b-row>
       <b-row v-else>
         <b-col cols="12">
-          <b-link
-            :to="{ name: 'pages-blog-create' }"
-            class="font-weight-bold mb-2"
-          >
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              variant="primary"
-              class="mb-2"
-            >
-              Create new Blog
-            </b-button>
-          </b-link>
-        </b-col>
-        <b-col cols="12">
           <b-card
             no-body
             class="faq-search pt-5 pb-5"
