@@ -37,7 +37,7 @@ class CreateRecruitmentNewsTable extends Migration
                 ->references('id')->on('projects')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('company_id')
-                ->references('id')->on('companies')
+                ->references('id')->on('company')
                 ->onDelete('cascade')->onUpdate('cascade');
 
             // DB::statement('CREATE FULLTEXT index recruitment_news_title_index on recruitment_news(title)');
