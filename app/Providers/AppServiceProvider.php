@@ -39,6 +39,7 @@ use App\Services\Setting\SettingServiceImpl;
 use App\Services\User\UserService;
 use App\Services\User\UserServiceImpl;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        URL::forceScheme('https');
+
         $this->app->bind(UserService::class, UserServiceImpl::class);
         $this->app->bind(CandidateService::class, CandidateServiceImpl::class);
         $this->app->bind(CompanyService::class, CompanyServiceImpl::class);
