@@ -31,19 +31,19 @@ class CVServiceImpl implements CVService
 
             if ($cv) {
                 $cv->update([
-                    'link' => $data['link'],
+                    'link' => $data['link'] ?? null,
                 ]);
             }
             else {
                 $cv = $this->_repository->create([
                     'candidate_id' => $user->candidate_id,
-                    'link' => $data['link'],
+                    'link' => $data['link'] ?? null,
                 ]);
             }
             
             $cvId = $cv->id;
             
-            $cvSave = $this->cvDetailService->store($user, $cvId, $data['detail']);
+            $cvSave = $this->cvDetailService->store($user, $cvId, $data['detail'] ?? []);
 
             if ($cvSave) {
                 return $cv;
