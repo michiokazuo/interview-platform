@@ -25,9 +25,9 @@ class CreateInterviewExperienceBlogTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade')->onUpdate('cascade');
 
-            DB::statement('CREATE FULLTEXT index interview_experience_blog_title_index on interview_experience_blog(title)');
-            DB::statement('CREATE FULLTEXT index interview_experience_blog_topics_index on interview_experience_blog(topics)');
-            DB::statement('CREATE FULLTEXT index interview_experience_blog_content_index on interview_experience_blog(content)');
+            // DB::statement('CREATE FULLTEXT index interview_experience_blog_title_index on interview_experience_blog(title)');
+            // DB::statement('CREATE FULLTEXT index interview_experience_blog_topics_index on interview_experience_blog(topics)');
+            // DB::statement('CREATE FULLTEXT index interview_experience_blog_content_index on interview_experience_blog(content)');
         });
     }
 

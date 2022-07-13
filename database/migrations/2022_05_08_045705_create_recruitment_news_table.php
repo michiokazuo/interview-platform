@@ -40,16 +40,16 @@ class CreateRecruitmentNewsTable extends Migration
                 ->references('id')->on('companies')
                 ->onDelete('cascade')->onUpdate('cascade');
 
-            DB::statement('CREATE FULLTEXT index recruitment_news_title_index on recruitment_news(title)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_requirements_index on recruitment_news(requirements)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_benefits_index on recruitment_news(benefits)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_description_index on recruitment_news(description)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_salary_index on recruitment_news(salary)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_job_position_index on recruitment_news(job_position)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_working_form_index on recruitment_news(working_form)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_gender_index on recruitment_news(gender)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_experience_index on recruitment_news(experience)');
-            DB::statement('CREATE FULLTEXT index recruitment_news_workplace_index on recruitment_news(workplace)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_title_index on recruitment_news(title)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_requirements_index on recruitment_news(requirements)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_benefits_index on recruitment_news(benefits)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_description_index on recruitment_news(description)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_salary_index on recruitment_news(salary)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_job_position_index on recruitment_news(job_position)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_working_form_index on recruitment_news(working_form)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_gender_index on recruitment_news(gender)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_experience_index on recruitment_news(experience)');
+            // DB::statement('CREATE FULLTEXT index recruitment_news_workplace_index on recruitment_news(workplace)');
         });
     }
 

@@ -21,7 +21,7 @@ class CreateTagsQaTable extends Migration
             $table->integer('page_crawled')->default(1);
             $table->timestamps();
 
-            DB::statement('CREATE FULLTEXT index tags_qa_name_index on tags_qa(name)');
+            // DB::statement('CREATE FULLTEXT index tags_qa_name_index on tags_qa(name)');
         });
     }
 
