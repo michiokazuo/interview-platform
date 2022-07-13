@@ -40,7 +40,7 @@ class CreateInterviewTable extends Migration
                 ->references('id')->on('recruitment_news')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('process_id')
-                ->references('id')->on('process')
+                ->references('id')->on('recruitment_process')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('gq_test_id')
                 ->references('id')->on('group_questions');
