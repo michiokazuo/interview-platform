@@ -61,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         URL::forceScheme('https');
+        $this->app['request']->server->set('HTTPS', true);
 
         $this->app->bind(UserService::class, UserServiceImpl::class);
         $this->app->bind(CandidateService::class, CandidateServiceImpl::class);
