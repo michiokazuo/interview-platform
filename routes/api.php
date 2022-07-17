@@ -46,24 +46,52 @@ Route::group(['middleware' => 'api'], function () {
 
     Route::get('/cv', [CvController::class, 'show']);
     Route::post('/cv', [CvController::class, 'store']);
-
-    Route::apiResource('blog', BlogController::class);
+    
+//    Route::apiResource('blog', BlogController::class);
+    Route::get('/blog', [BlogController::class, 'index']);
+    Route::get('/blog/{id}', [BlogController::class, 'show']);
+    Route::post('/blog', [BlogController::class, 'store']);
+    Route::put('/blog/{id}', [BlogController::class, 'update']);
+    Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
     Route::get('/blog-edit/{id}', [BlogController::class, 'showToEdit']);
     Route::get('/blog-by-user/{id}', [BlogController::class, 'showAllByUser']);
-    Route::apiResource('comment', CommentController::class);
+//    Route::apiResource('comment', CommentController::class);
+    Route::get('/comment', [CommentController::class, 'index']);
+    Route::get('/comment/{id}', [CommentController::class, 'show']);
+    Route::post('/comment', [CommentController::class, 'store']);
+    Route::put('/comment/{id}', [CommentController::class, 'update']);
+    Route::delete('/comment/{id}', [CommentController::class, 'destroy']);
 
-    Route::apiResource('project', ProjectController::class);
+//    Route::apiResource('project', ProjectController::class);
+    Route::get('/project', [ProjectController::class, 'index']);
+    Route::get('/project/{id}', [ProjectController::class, 'show']);
+    Route::post('/project', [ProjectController::class, 'store']);
+    Route::put('/project/{id}', [ProjectController::class, 'update']);
+    Route::delete('/project/{id}', [ProjectController::class, 'destroy']);
     Route::post('/project-change/{id}', [ProjectController::class, 'changeStatus']);
-    Route::apiResource('project-process', RecruitmentProcessController::class);
+//    Route::apiResource('project-process', RecruitmentProcessController::class);
+    Route::get('/project-process', [RecruitmentProcessController::class, 'index']);
+    Route::get('/project-process/{id}', [RecruitmentProcessController::class, 'show']);
+    Route::post('/project-process', [RecruitmentProcessController::class, 'store']);
+    Route::put('/project-process/{id}', [RecruitmentProcessController::class, 'update']);
+    Route::delete('/project-process/{id}', [RecruitmentProcessController::class, 'destroy']);
     Route::post('/project-process-change/{id}', [RecruitmentProcessController::class, 'changeStatus']);
-    Route::apiResource('project-news', RecruitmentNewsController::class);
+//    Route::apiResource('project-news', RecruitmentNewsController::class);
+    Route::get('/project-news', [RecruitmentNewsController::class, 'index']);
+    Route::get('/project-news/{id}', [RecruitmentNewsController::class, 'show']);
+    Route::post('/project-news', [RecruitmentNewsController::class, 'store']);
+    Route::put('/project-news/{id}', [RecruitmentNewsController::class, 'update']);
+    Route::delete('/project-news/{id}', [RecruitmentNewsController::class, 'destroy']);
     Route::post('/project-news-change/{id}', [RecruitmentNewsController::class, 'changeStatus']);
     Route::get('/project-news-edit/{id}', [RecruitmentNewsController::class, 'showToEdit']);
     Route::get('/news-by-user/{id}', [RecruitmentNewsController::class, 'showAllByUser']);
     Route::get('/news-by-project/{id}', [RecruitmentNewsController::class, 'showAllByProject']);
     Route::get('/news/select-options', [RecruitmentNewsController::class, 'getSelectOptions']);
 
-    Route::apiResource('interview', InterviewController::class)->except(['index', 'update']);
+//    Route::apiResource('interview', InterviewController::class)->except(['index', 'update']);
+    Route::get('/interview/{id}', [InterviewController::class, 'show']);
+    Route::post('/interview', [InterviewController::class, 'store']);
+    Route::delete('/interview/{id}', [InterviewController::class, 'destroy']);
     Route::post('/interview-update/{id}', [InterviewController::class, 'update']);
     Route::get('/interviews-by-company', [InterviewController::class, 'showAllByCompany']);
     Route::get('/interviews-by-user/{id}', [InterviewController::class, 'showAllByUser']);
@@ -82,7 +110,12 @@ Route::group(['middleware' => 'api'], function () {
     Route::delete('/admin/delete-user/{id}', [AdminController::class, 'destroy']);
     Route::post('/admin/crawler', [AdminController::class, 'crawler']);
 
-    Route::apiResource('group-question', GroupQuestionController::class);
+//    Route::apiResource('group-question', GroupQuestionController::class);
+    Route::get('/group-question', [GroupQuestionController::class, 'index']);
+    Route::get('/group-question/{id}', [GroupQuestionController::class, 'show']);
+    Route::post('/group-question', [GroupQuestionController::class, 'store']);
+    Route::put('/group-question/{id}', [GroupQuestionController::class, 'update']);
+    Route::delete('/group-question/{id}', [GroupQuestionController::class, 'destroy']);
     Route::get('/group-interview', [GroupQuestionController::class, 'getGroupInterview']);
 
     Route::get('/admin/graph', [DashboardController::class, 'graphAdmin']);
