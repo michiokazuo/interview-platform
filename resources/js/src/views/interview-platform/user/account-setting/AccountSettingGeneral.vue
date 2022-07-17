@@ -1,7 +1,7 @@
 <template>
   <validation-observer
     ref="updateForm"
-    #default="{invalid}"
+    v-slot="{invalid}"
   >
     <b-form @submit.prevent="updateInfo">
       <b-card>
@@ -70,7 +70,7 @@
               label-for="account-name"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Name"
                 vid="name"
                 rules="required"
@@ -96,7 +96,7 @@
               label-for="account-e-mail"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Email"
                 vid="email"
                 rules="required|email"
@@ -123,7 +123,7 @@
               label-for="register-phone"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="phone"
                 vid="phone"
                 rules="required|phone"
@@ -150,7 +150,7 @@
               label-for="register-address"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Address"
                 vid="address"
                 rules="required"
@@ -177,7 +177,7 @@
               label-for="register-role"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Role"
                 vid="role"
                 rules="required"
@@ -206,7 +206,7 @@
               label-for="register-major"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Major"
                 vid="major"
                 rules="required"
@@ -234,7 +234,7 @@
               label-for="register-url"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Url"
                 vid="url"
                 rules="|url"
@@ -259,7 +259,7 @@
               label-for="register-introduction"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Introduction"
                 vid="introduction"
                 rules=""
@@ -304,7 +304,7 @@
               label="Twitter"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Twitter"
                 vid="twitter"
                 rules="|url"
@@ -332,7 +332,7 @@
               label="Facebook"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Facebook"
                 vid="facebook"
                 rules="|url"
@@ -360,7 +360,7 @@
               label="LinkedIn"
             >
               <validation-provider
-                #default="{ errors }"
+                v-slot="{ errors }"
                 name="Linkedin"
                 vid="linkedin"
                 rules="|url"
@@ -462,11 +462,24 @@ export default {
       }),
     },
   },
+  setup() {
+    const refInputEl = ref(null)
+    const previewEl = ref(null)
+
+    const { inputImageRenderer } = useInputImageRenderer(refInputEl, previewEl)
+
+    return {
+      refInputEl,
+      previewEl,
+      inputImageRenderer,
+    }
+  },
   data() {
     return {
       options: [
         { value: { id: 3, name: 'ROLE_COMPANY' }, text: 'Company' },
         { value: { id: 2, name: 'ROLE_CANDIDATE' }, text: 'Candidate' },
+        { value: { id: 1, name: 'ROLE_ADMIN' }, text: 'Admin' },
       ],
       user: { ...this.userInfo },
       optionsLocal: {
@@ -570,18 +583,6 @@ export default {
         }
       })
     },
-  },
-  setup() {
-    const refInputEl = ref(null)
-    const previewEl = ref(null)
-
-    const { inputImageRenderer } = useInputImageRenderer(refInputEl, previewEl)
-
-    return {
-      refInputEl,
-      previewEl,
-      inputImageRenderer,
-    }
   },
 }
 </script>
