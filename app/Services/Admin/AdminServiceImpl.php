@@ -113,7 +113,7 @@ class AdminServiceImpl implements AdminService
                 foreach ($period as $data) {
                     $arrDate[] = $data->format('Y-m-d');
                 }
-                
+
                 $users = $this->_repository->where('role_id', '<>', 1)
                     ->whereBetween('created_at', [
                         $start->format('Y-m-d 00:00:00'),
@@ -124,7 +124,7 @@ class AdminServiceImpl implements AdminService
 
                 $dataUser = [];
                 foreach ($users as $user) {
-                    if (isset($dataUser[$user->date])) {
+                    if (!isset($dataUser[$user->date])) {
                         $dataUser[$user->date] = [];
                     }
                     $dataUser[$user->date][$user->role_id] = $user->total;

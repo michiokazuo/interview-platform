@@ -264,6 +264,7 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { quillEditor } from 'vue-quill-editor'
 import interview from '@/store/api/Interview'
+import dashboard from '@/store/api/Dashboard'
 import utils from '@/store/utils'
 
 export default {
@@ -377,7 +378,6 @@ export default {
             subject: rs.user.role,
           },
         ])
-        this.userOn = rs.user
       }).catch(err => {
         console.log(err)
         this.interview = null
@@ -399,6 +399,13 @@ export default {
             },
           })
           window.onbeforeunload = null
+          dashboard.notify({
+            emails: [this.interview.company.general.email],
+            subject: 'Test result',
+            name: this.interview.company.general.name,
+            body: `<p>${this.userOn.fullName} has finished the test.</p> 
+            <b>Please check the <a href="${process.env.APP_URL}/interview/${this.id}/result">Result</a>.</b>`,
+          })
           this.$router.push({ name: 'interview-meeting-result', params: { id: this.id } })
         }).catch(err => {
           console.log(err)

@@ -3,6 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
+import dashboard from '@/store/api/Dashboard'
 
 // Notification
 import { useToast } from 'vue-toastification/composition'
@@ -189,6 +190,14 @@ export default function userCalendar() {
     store.dispatch('calendar/updateEvent', { event: eventData }).then(response => {
       const updatedEvent = response.data.data
 
+      dashboard.notify({
+        emails: [updatedEvent.candidate.general.email],
+        subject: 'Interview calendar has been updated',
+        name: updatedEvent.candidate.general.name,
+        body: `<p>Your calendar interview has been updated successfully by ${updatedEvent.company.general.name}</p>
+        <p>Please check your calendar for more details</p>`,
+      })
+
       const propsToUpdate = ['id', 'title', 'url']
       const extendedPropsToUpdate = ['calendar', 'status', 'record', 'result', 'form', 'address', 'room', 'time', 'interview_question']
       localStorage.setItem('calendar', true)
@@ -203,6 +212,13 @@ export default function userCalendar() {
     const eventId = event.value.id
     store.dispatch('calendar/removeEvent', { event: event.value }).then(() => {
       removeEventInCalendar(eventId)
+      dashboard.notify({
+        emails: [event.value.candidate.general.email],
+        subject: 'Interview calendar has been removed',
+        name: event.value.candidate.general.name,
+        body: `<p>Your calendar interview has been removed successfully by ${event.value.company.general.name}</p>
+        <p>Please check your calendar for more details</p>`,
+      })
       localStorage.setItem('calendar', true)
     })
   }

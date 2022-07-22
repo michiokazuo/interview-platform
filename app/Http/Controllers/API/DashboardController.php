@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotifyMail;
 use App\Services\Admin\AdminService;
+use App\Services\Mail\MailService;
 use App\Services\Setting\SettingService;
 use App\Traits\ApiResponse;
 use App\Traits\CurrentUser;
@@ -14,17 +16,19 @@ class DashboardController extends Controller
 {
     use ApiResponse, CurrentUser;
 
-    private $dashboardService, $adminService;
+    private $dashboardService, $adminService, $mailService;
 
     /**
      * Create a new instance.
      *
      * @return void
      */
-    public function __construct(SettingService $dashboardService, AdminService $adminService)
+    public function __construct(SettingService $dashboardService, AdminService $adminService,
+                                MailService    $mailService)
     {
         $this->dashboardService = $dashboardService;
         $this->adminService = $adminService;
+        $this->mailService = $mailService;
     }
 
     /**
@@ -94,5 +98,21 @@ class DashboardController extends Controller
         }
 
         return $this->failedResult('$graph display failed!!!', 500);
+    }
+
+    /**
+     * Notify user action.
+     *
+     * @return void
+     */
+    public function notifyUser()
+    {
+        $data = request()->all();
+        $emails = request('emails');
+        if ($emails) {
+            $this->mailService->send($emails, NotifyMail::class, $data);
+        } else {
+            logger()->error('$emails is empty!!!');
+        }
     }
 }

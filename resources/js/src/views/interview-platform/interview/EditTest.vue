@@ -599,6 +599,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
 import { quillEditor } from 'vue-quill-editor'
 import interview from '@/store/api/Interview'
+import dashboard from '@/store/api/Dashboard'
 import qat from '@/store/api/QAT'
 import utils from '@/store/utils'
 
@@ -845,6 +846,13 @@ export default {
                 icon: 'CoffeeIcon',
                 variant: 'success',
               },
+            })
+            dashboard.notify({
+              emails: [this.interview.candidate.general.email],
+              subject: 'Test created',
+              name: this.interview.candidate.general.name,
+              body: `${this.interview.company.general.name} has created a test for you. <b><a href="${process.env.APP_URL}/interview/${this.id}/practice-test">Click here to see</a></b> <br />
+              Please login to the system to start the test.`,
             })
             this.$router.push({ name: 'pages-news-edit', params: { idProject: this.interview.news.project_id, id: this.interview.news.id } })
           }).catch(err => {

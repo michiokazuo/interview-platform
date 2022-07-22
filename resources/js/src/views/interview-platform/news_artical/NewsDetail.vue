@@ -514,6 +514,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import ContentWithSidebar from '@core/layouts/components/content-with-sidebar/ContentWithSidebar.vue'
 import news from '@/store/api/RNews'
 import interview from '@/store/api/Interview'
+import dashboard from '@/store/api/Dashboard'
 import utils from '@/store/utils'
 
 export default {
@@ -631,6 +632,13 @@ export default {
             variant: 'success',
           },
         })
+        dashboard.notify({
+          emails: [this.newsDetail.company.user.email],
+          subject: 'Interview Application',
+          name: this.newsDetail.company.user.name,
+          body: `<p>${this.userData.fullName} has applied for job with news ${this.newsDetail.title}</p>
+          <br/> <p>Please check this candidate for more information</p>`,
+        })
         this.$nextTick(() => {
           this.$bvModal.hide('modal-success')
         })
@@ -675,6 +683,14 @@ export default {
             icon: 'CoffeeIcon',
             variant: 'success',
           },
+        })
+        dashboard.notify({
+          emails: [this.newsDetail.company.user.email],
+          subject: 'Interview Cancelled',
+          name: this.newsDetail.company.user.name,
+          body: `<p>${this.userData.fullName} has cancelled apply for job with news ${this.newsDetail.title}</p>
+          <p>Email: ${this.userData.email}</p>
+          <b>Please contact this candidate if you have any questions!</b>`,
         })
         this.$nextTick(() => {
           this.$bvModal.hide('modal-danger')

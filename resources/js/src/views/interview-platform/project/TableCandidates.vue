@@ -43,7 +43,19 @@
             :src="props.row.candidate.general.avatar"
             class="mx-1"
           />
-          <span class="text-nowrap">{{ props.row.candidate.general.name }}</span>
+          <span class="text-nowrap">
+            <b-button
+              size="sm"
+              variant="flat-primary"
+              @click.prevent="viewCandidate(props.row.id)"
+            >
+              <feather-icon
+                icon="EyeIcon"
+                class="mr-50"
+              />
+              <span>{{ props.row.candidate.general.name }}</span>
+            </b-button>
+          </span>
         </div>
 
         <span
@@ -90,10 +102,10 @@
 
         <!-- Column: Action -->
         <span v-else-if="props.column.field === 'action'">
-          <span>
+          <span class="d-flex">
             <b-dropdown
               variant="link"
-              toggle-class="text-decoration-none"
+              toggle-class="text-decoration-none pr-0"
               no-caret
             >
               <template #button-content>
@@ -112,25 +124,6 @@
                   class="mr-50"
                 />
                 <span>Create interview with this Process</span>
-              </b-dropdown-item>
-              <b-dropdown-item
-                @click.prevent="viewCandidate(props.row.id)"
-              >
-                <feather-icon
-                  icon="EyeIcon"
-                  class="mr-50"
-                />
-                <span>View</span>
-              </b-dropdown-item>
-              <b-dropdown-item
-                v-if="props.row.process && props.row.process.id === idProcess && !(props.row.result && props.row.result.company)"
-                @click.prevent="setCandidateSchedule(props.row.id)"
-              >
-                <feather-icon
-                  icon="CalendarIcon"
-                  class="mr-50"
-                />
-                <span>Edit schedule</span>
               </b-dropdown-item>
               <b-dropdown-item
                 v-if="!(props.row.result && props.row.result.company)"
@@ -177,6 +170,17 @@
                 <span v-else-if="props.row.form === 'Offline'">Create Result</span>
               </b-dropdown-item>
             </b-dropdown>
+            <b-button
+              v-if="props.row.process && props.row.process.id === idProcess && !(props.row.result && props.row.result.company)"
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="flat-primary"
+              class="pr-1 pl-1"
+              @click.prevent="setCandidateSchedule(props.row.id)"
+            >
+              <feather-icon
+                icon="CalendarIcon"
+              />
+            </b-button>
           </span>
         </span>
 
@@ -295,7 +299,7 @@
 <script>
 import {
   BCard, BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect,
-  BDropdown, BDropdownItem, BCardText, VBModal, BLink,
+  BDropdown, BDropdownItem, BCardText, VBModal, BLink, BButton,
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -304,6 +308,7 @@ import store from '@/store/index'
 import interview from '@/store/api/Interview'
 import groupQs from '@/store/api/GroupQuestion'
 import utils from '@/store/utils'
+import dashboard from '@/store/api/Dashboard'
 import CandidateInfo from './CandidateInfo.vue'
 import Calendar from './calendar/Calendar.vue'
 
@@ -323,6 +328,7 @@ export default {
     CandidateInfo,
     Calendar,
     BLink,
+    BButton,
   },
   directives: {
     'b-modal': VBModal,
@@ -665,6 +671,15 @@ export default {
           const deleteInterview = this.rows.find(item => item.id === this.candidateDelete)
           this.rows = this.rows.filter(item => item.candidate.general.id !== deleteInterview.candidate.general.id || item.news.id !== deleteInterview.news.id)
           utils.updateUser(rs.user)
+          dashboard.notify({
+            emails: [deleteInterview.candidate.general.email],
+            subject: 'Interview cancel',
+            name: deleteInterview.candidate.general.name,
+            body: `Your interview with ${deleteInterview.news.title} has been cancel by ${deleteInterview.company.general.name}
+            <p>Email company: ${deleteInterview.company.general.email}</p>
+            <p>Phone company: ${deleteInterview.company.general.phone}</p>
+            <br/> <b>Please contact the company if you have any questions!</b>`,
+          })
           this.$ability.update([
             {
               action: 'manage',
@@ -706,6 +721,16 @@ export default {
       } else {
         interview.deleteOnly(this.candidateDelete).then(resp => {
           const rs = resp.data
+          const deleteInterview = this.rows.find(item => item.id === this.candidateDelete)
+          dashboard.notify({
+            emails: [deleteInterview.candidate.general.email],
+            subject: 'Interview cancel',
+            name: deleteInterview.candidate.general.name,
+            body: `Your interview with ${deleteInterview.news.title} and process has been cancel by ${deleteInterview.company.general.name}
+            <p>Email company: ${deleteInterview.company.general.email}</p>
+            <p>Phone company: ${deleteInterview.company.general.phone}</p>
+            <br/> <b>Please contact the company if you have any questions!</b>`,
+          })
           this.rows = this.rows.filter(item => item.id !== this.candidateDelete)
           utils.updateUser(rs.user)
           this.$ability.update([
@@ -760,14 +785,14 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/vue-good-table.scss';
+@import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
 
 .vgt-inner-wrap .d-flex.justify-content-between.flex-wrap {
   padding: 10px;
 }
 table.vgt-table td {
-  vertical-align: middle!important;;
+  vertical-align: middle!important;
 }
 </style>

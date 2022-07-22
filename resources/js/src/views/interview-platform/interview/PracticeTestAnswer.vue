@@ -497,6 +497,7 @@
 	import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 	import { quillEditor } from "vue-quill-editor";
 	import interview from "@/store/api/Interview";
+  import dashboard from '@/store/api/Dashboard'
 	import { required, email, password } from "@validations";
 	import utils from "@/store/utils";
 
@@ -663,6 +664,13 @@
 										subject: rs.user.role,
 									},
 								]);
+                dashboard.notify({
+                  emails: [this.interview.candidate.general.email],
+                  subject: "Interview review",
+                  name: this.interview.candidate.general.name,
+                  body: `<p> ${this.interview.company.general.name} has just been reviewed about your interview</p>
+                  <p>Please check your <a href="${process.env.APP_URL}/interview/${this.id}/result">Result</a> for more details</p>`,
+                })
 								this.$toast({
 									component: ToastificationContent,
 									position: "top-right",

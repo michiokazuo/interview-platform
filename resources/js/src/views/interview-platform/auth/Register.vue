@@ -424,6 +424,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import auth from '@/store/api/Auth'
 import store from '@/store/index'
 import useJwt from '@/auth/jwt/useJwt'
+import dashboard from '@/store/api/Dashboard'
 import utils from '@/store/utils'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
@@ -518,8 +519,20 @@ export default {
 
           auth
             .register(formData)
-            .then(() => {
-              // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
+            .then(rs => {
+              const resp = rs.data
+              const userRegister = resp.data
+              if (userRegister.role_id === 3) {
+                dashboard.notify({
+                  emails: ['xuanphong10a@gmail.com'],
+                  name: 'Admin',
+                  subject: 'New company registered',
+                  body: `<p>New company registered: ${userRegister.name}</p>
+                  <p>Email: ${userRegister.email}</p>
+                  <p>Phone: ${userRegister.phone}</p>
+                  <b>Please check your account to approve the company.</b>`,
+                })
+              }
               this.$router.push({ name: 'auth-login' })
             })
             .catch(error => {

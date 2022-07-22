@@ -295,6 +295,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import Ripple from 'vue-ripple-directive'
 import store from '@/store/index'
 import admin from '@/store/api/Admin'
+import dashboard from '@/store/api/Dashboard'
 import utils from '@/store/utils'
 import CandidateInfo from '../project/CandidateInfo.vue'
 
@@ -462,6 +463,13 @@ export default {
 
           this.activeCompany.general.status = 'Active'
           this.activeCompany.general.owner.is_active = true
+
+          dashboard.notify({
+            emails: [this.activeCompany.general.email],
+            subject: 'Your account has been activated',
+            name: this.activeCompany.general.name,
+            body: '<b>Your account has been activated. You can now login to the system.</b>',
+          })
           this.$toast({
             component: ToastificationContent,
             position: 'top-right',
@@ -474,7 +482,7 @@ export default {
           this.$nextTick(() => {
             this.$bvModal.hide('modal-active')
           })
-          this.candidateSchedule = {}
+          this.activeCompany = {}
         }).catch(err => {
           console.log(err)
           this.$nextTick(() => {
@@ -515,6 +523,13 @@ export default {
             subject: rs.user.role,
           },
         ])
+
+        dashboard.notify({
+          emails: [deleteUser.general.email],
+          subject: 'Your account has been deleted',
+          name: deleteUser.general.name,
+          body: '<b>Your account has been deleted. <br/> Please contact the administrator if you have any questions!</b>',
+        })
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',
@@ -527,7 +542,7 @@ export default {
         this.$nextTick(() => {
           this.$bvModal.hide('modal-delete')
         })
-        this.candidateDelete = null
+        this.userDelete = null
       }).catch(err => {
         console.log(err)
         this.$toast({

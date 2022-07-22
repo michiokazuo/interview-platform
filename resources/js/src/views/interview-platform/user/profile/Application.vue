@@ -325,6 +325,7 @@ import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 import store from '@/store/index'
 import interview from '@/store/api/Interview'
+import dashboard from '@/store/api/Dashboard'
 import utils from '@/store/utils'
 
 export default {
@@ -487,6 +488,13 @@ export default {
           rs.data,
           ...this.rows.slice(index + 1),
         ]
+        dashboard.notify({
+          emails: [this.candidateSchedule.company.general.email],
+          subject: 'Interview calendar rescheduled',
+          name: this.candidateSchedule.company.general.name,
+          body: `<p> ${this.candidateSchedule.candidate.general.email} has just rescheduled calendar interview </p>
+          <p>Please check your calendar</p>`,
+        })
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',
@@ -531,6 +539,15 @@ export default {
             subject: rs.user.role,
           },
         ])
+        dashboard.notify({
+          emails: [deleteInterview.company.general.email],
+          subject: 'Interview canceled',
+          name: deleteInterview.company.general.name,
+          body: `<p> ${deleteInterview.candidate.general.email} has just canceled interview/p>
+          <p>Email candidate: ${deleteInterview.candidate.general.email}</p>
+          <p>Phone candidate: ${deleteInterview.candidate.general.phone}</p>
+          <b>Please contact this candidate if you have any questions!</b>`,
+        })
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',

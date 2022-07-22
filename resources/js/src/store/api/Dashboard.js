@@ -4,6 +4,7 @@ const apiCandidate = '/api/dashboard-candidate'
 const apiCompany = '/api/dashboard-company'
 const apiAdmins = '/api/dashboard-admin'
 const apiGraphAdmin = '/api/admin/graph'
+const apiNotify = '/api/mail-notify'
 
 export default {
   getCandidate() {
@@ -17,5 +18,8 @@ export default {
   },
   graphAdmin(params) {
     return axios.get(`${apiGraphAdmin}`, { params })
+  },
+  notify(data) {
+    return axios.post(`${apiNotify}`, data)
   },
 }

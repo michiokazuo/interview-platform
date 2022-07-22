@@ -89,5 +89,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/dashboard-candidate', [DashboardController::class, 'dashboardCandidate']);
     Route::get('/dashboard-company', [DashboardController::class, 'dashboardCompany']);
     Route::get('/dashboard-admin', [DashboardController::class, 'dashboardAdmin']);
+    
+    Route::post('/mail-notify', [DashboardController::class, 'notifyUser']);
 });
 
