@@ -38,6 +38,8 @@ use App\Services\Setting\SettingService;
 use App\Services\Setting\SettingServiceImpl;
 use App\Services\User\UserService;
 use App\Services\User\UserServiceImpl;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 
@@ -50,7 +52,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // register services
+        if(env('REDIRECT_HTTPS')) {
+            $this->app['request']->server->set('HTTPS', true);
+        }
     }
 
     /**
@@ -58,10 +62,14 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(UrlGenerator $url)
     {
         URL::forceScheme('https');
         $this->app['request']->server->set('HTTPS', true);
+        Schema::defaultStringLength(191);
+        if(env('REDIRECT_HTTPS')) {
+            $url->formatScheme('https');
+        }
 
         $this->app->bind(UserService::class, UserServiceImpl::class);
         $this->app->bind(CandidateService::class, CandidateServiceImpl::class);
