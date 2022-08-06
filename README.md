@@ -1,4 +1,4 @@
-<img src="./public/images/logo/logo.png" alt="Logo of the project" align="right">
+<img src="./public/logo.png" alt="Logo of the project" align="right">
 
 # Interview Platform &middot; [![php](https://img.shields.io/badge/php-v8.*-blue)](https://www.php.net/) [![laravel](https://img.shields.io/badge/laravel-v8.*-blue)](https://laravel.com/docs/8.x) [![mysql](https://img.shields.io/badge/mysql-v8.*-blue)](https://www.mysql.com/) [![npm](https://img.shields.io/badge/npm-v8.*-green)](https://www.npmjs.com/package/npm) [![composer](https://img.shields.io/badge/composer-v2.*-green)](https://getcomposer.org/) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
@@ -67,9 +67,6 @@ with arguments as:
   - tag-rollback: crawl only questions of tag again
 
 ## Getting help
-
-<!-- CONTACT -->
-## Contact
 
 Phong DX - [@MichioKazuo](https://twitter.com/MichioKazuo) - phong.dx183966@sis.hust.edu.vn
 
