@@ -39,7 +39,7 @@ class InterviewServiceImpl implements InterviewService
             $data = [];
             $rooms = $this->dailyCoService->getAll($user);
             if ($rooms) {
-                if ($rooms['total_count'] < env('MAX_ROOM')) {
+                if ($rooms['total_count'] < config('app.daily_co_room')) {
                     $room = $this->dailyCoService->create($user, $data);
                     if ($room) {
                         return $room['url'];
@@ -296,6 +296,7 @@ class InterviewServiceImpl implements InterviewService
                     $data['room'] = null;
                 } else if (empty($data['result']) && empty($data['record'])) {
                     if (isset($data['form']) && $data['form'] === 'Online' && !$interview->room) {
+                        logger()->info('Create room');
                         $room = $this->createRoom($user, false);
                         if ($room) {
                             $data['room'] = $room;

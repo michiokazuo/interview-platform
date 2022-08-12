@@ -361,14 +361,14 @@ export default {
             placeholder: 'Search Name',
           },
         },
-        {
-          label: 'Email',
-          field: 'candidate.general.email',
-          filterOptions: {
-            enabled: true,
-            placeholder: 'Search Email',
-          },
-        },
+        // {
+        //   label: 'Email',
+        //   field: 'candidate.general.email',
+        //   filterOptions: {
+        //     enabled: true,
+        //     placeholder: 'Search Email',
+        //   },
+        // },
         {
           label: 'Time',
           field: 'time',

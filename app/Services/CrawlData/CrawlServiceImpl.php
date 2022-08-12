@@ -37,7 +37,7 @@ class CrawlServiceImpl implements CrawlService
 
             do {
                 $header['params']['page'] = $header['params']['page'] + 1;
-                $response = Http::get(env('API_STACK_EXCHANGE'), $header['params']);
+                $response = Http::get(config('app.stack_exchange'), $header['params']);
                 $data = $response->json()['items'] ?? [];
 
                 if (count($data) > 0) {
@@ -98,7 +98,7 @@ class CrawlServiceImpl implements CrawlService
                 'order' => 'desc',
                 'site' => 'stackoverflow',
                 'page' => 0,
-                'key' => env('API_STACK_EXCHANGE_KEY'),
+                'key' => config('app.stack_exchange_key'),
             ],
         ];
 

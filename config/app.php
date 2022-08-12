@@ -53,6 +53,11 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'url_daily_co' => env('API_URL_DAILY_CO', 'https://api.daily.co/v1/'),
+    'daily_co_room' => env('MAX_ROOM', 50),
+    'daily_co_key' => env('API_KEY_DAILY_CO', '1bdc80e0ab0241309388b7ffd5cc5f761745cc064b0d4a49736a33f20f1fbccc'),
+    'stack_exchange' => env('API_URL_STACK_EXCHANGE', 'https://api.stackexchange.com/2.3/questions'),
+    'stack_exchange_key' => env('API_KEY_STACK_EXCHANGE', 'U4DMV*8nvpm3EOpvf69Rxw(('),
 
     'asset_url' => env('ASSET_URL', null),
 

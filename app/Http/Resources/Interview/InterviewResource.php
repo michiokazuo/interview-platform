@@ -33,7 +33,7 @@ class InterviewResource extends JsonResource
                 $status = 'Completed';
             }
         } else if (date('Y-m-d H:i:s', strtotime($this->created_at)) !== date('Y-m-d H:i:s', strtotime($this->updated_at))) {
-            $status = 'Canceled schedule';
+            $status = 'Created';
             if ($groupQuestionTest->questions && $groupQuestionTest->questions->count() > 0) {
                 $status = 'Have test';
                 if ($this->result && isset($this->result['candidate'])) {

@@ -45,7 +45,7 @@
     >
 
       <!-- Tab: Information -->
-      <b-tab :active="hash !== '#candidate'">
+      <b-tab active>
         <template #title>
           <feather-icon
             icon="InfoIcon"
@@ -65,7 +65,6 @@
       <!-- Tab: Candidates -->
       <b-tab
         v-if="id && idProject"
-        :active="hash === '#candidate'"
       >
         <template #title>
           <feather-icon

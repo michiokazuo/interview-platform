@@ -266,22 +266,30 @@ export default {
       snowOption: {
         theme: 'snow',
       },
+      id_project: null,
       required,
     }
   },
   watch: {
     process: {
       handler() {
-        this.processEdit = this.process
+        if (this.process) {
+          this.processEdit = this.process
+        }
       },
       deep: true,
     },
+  },
+  created() {
+    this.processEdit.user = JSON.parse(localStorage.getItem('userData'))
+    this.id_project = this.$route.params?.idProject
+    console.log(this.processEdit)
   },
   methods: {
     saveProcess() {
       this.$refs.processForm.validate().then(success => {
         if (success) {
-          this.processEdit.project_id = this.idProject
+          this.processEdit.project_id = this.idProject ?? this.$route.params?.idProject
           if (this.id) {
             process.update(this.id, this.processEdit).then(resp => {
               const rs = resp.data
@@ -338,7 +346,7 @@ export default {
                   variant: 'success',
                 },
               })
-              this.$router.push({ name: 'pages-project-detail', params: { id: this.idProject } })
+              this.$router.push({ name: 'pages-project-detail', params: { id: this.idProject ?? this.id_project } })
             }).catch(err => {
               console.log(err)
               this.$toast({

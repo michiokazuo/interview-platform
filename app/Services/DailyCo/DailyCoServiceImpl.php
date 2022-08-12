@@ -16,6 +16,7 @@ class DailyCoServiceImpl implements DailyCoService
         try {
             $header = $this->createHeader();
             $response = Http::withHeaders($header['headers'])->get($header['url']);
+            logger()->info($response->json());
             return $response->json();
         } catch (Exception $e) {
             logger()->error($e);
@@ -59,9 +60,9 @@ class DailyCoServiceImpl implements DailyCoService
     private function createHeader(): array
     {
         return [
-            'url' => env('API_URL_DAILY_CO') . 'rooms/',
+            'url' => config('app.url_daily_co') . 'rooms/',
             'headers' => [
-                'Authorization' => 'Bearer ' . env('API_KEY_DAILY_CO'),
+                'Authorization' => 'Bearer ' . config('app.daily_co_key'),
                 'Content-Type' => 'application/json'
             ]
         ];

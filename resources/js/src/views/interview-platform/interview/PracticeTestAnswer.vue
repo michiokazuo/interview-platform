@@ -7,7 +7,21 @@
 		<b-col cols="12">
 			<div>
 				<b-link
-					v-if="interview.record && userOn && (interview.record.candidate || interview.record.company)"
+					v-if="interview.record && userOn && userOn.role == 'ROLE_CANDIDATE' && interview.record.candidate"
+					:to="interview.record.candidate"
+					class="font-weight-bold mb-2"
+					target="_blank"
+				>
+					<b-button
+						v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+						variant="primary"
+						class="mb-2"
+					>
+						View record
+					</b-button>
+				</b-link>
+        <b-link
+					v-if="interview.record && userOn && userOn.role == 'ROLE_COMPANY' && (interview.record.candidate || interview.record.company)"
 					:to="interview.record.company ? interview.record.company : interview.record.candidate"
 					class="font-weight-bold mb-2"
 					target="_blank"

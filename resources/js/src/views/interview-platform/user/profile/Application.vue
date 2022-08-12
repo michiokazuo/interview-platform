@@ -60,7 +60,7 @@
           v-else-if="props.column.field === 'process.title'"
           class="text-nowrap"
         >
-          <p v-if="props.row.process"> {{ props.row.process.title }} - {{ props.row.process.title }}</p>
+          <p v-if="props.row.process"> {{ props.row.process.title }}</p>
           <b-badge
             v-else
             variant="secondary"
