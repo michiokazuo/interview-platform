@@ -157,7 +157,7 @@
                 <span v-else>Edit Test</span>
               </b-dropdown-item>
               <b-dropdown-item
-                v-if="props.row.result || props.row.form === 'Offline'"
+                v-if="props.row.result"
                 :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
                 class="font-weight-bold"
                 target="_blank"
@@ -166,8 +166,19 @@
                   icon="BookIcon"
                   class="mr-50"
                 />
-                <span v-if="props.row.result">View Result</span>
-                <span v-else-if="props.row.form === 'Offline'">Create Result</span>
+                <span>View Result</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="(!props.row.result && props.row.record) || props.row.form === 'Offline'"
+                :to="{ name: 'interview-meeting-result', params: { id: props.row.id } }"
+                class="font-weight-bold"
+                target="_blank"
+              >
+                <feather-icon
+                  icon="BookIcon"
+                  class="mr-50"
+                />
+                <span>Create Result</span>
               </b-dropdown-item>
             </b-dropdown>
             <b-button
