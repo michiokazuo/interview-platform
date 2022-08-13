@@ -16,7 +16,6 @@ class DailyCoServiceImpl implements DailyCoService
         try {
             $header = $this->createHeader();
             $response = Http::withHeaders($header['headers'])->get($header['url']);
-            logger()->info($response->json());
             return $response->json();
         } catch (Exception $e) {
             logger()->error($e);
@@ -30,6 +29,7 @@ class DailyCoServiceImpl implements DailyCoService
     public function create(User $user, array $data = [])
     {
         try {
+            logger()->info('Creating new dailyco');
             $header = $this->createHeader();
             $response = Http::withHeaders($header['headers'])->post($header['url'], $data);
             return $response->json();
@@ -45,6 +45,7 @@ class DailyCoServiceImpl implements DailyCoService
     public function delete(User $user, $room_name)
     {
         try {
+            logger()->info('Deleting dailyco');
             if ($room_name) {
                 $header = $this->createHeader();
                 $response = Http::withHeaders($header['headers'])->delete($header['url'] . $room_name);

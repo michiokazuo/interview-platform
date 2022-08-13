@@ -318,7 +318,7 @@ export default {
     },
     savePractice: {
       handler() {
-        if (this.savePractice && ((this.first && this.participant.video) || (this.first && !this.participant.video && !this.hasScreen)) && this.user && this.user.company_id && this.count > 1) {
+        if (this.savePractice && ((this.first && this.participant.video) || (this.first && !this.participant.video && !this.hasScreen)) && this.user && this.user.company_id) {
           this.saveReview()
         }
       },
@@ -444,7 +444,8 @@ export default {
       this.recorder.start(200)
     },
     saveRecording() {
-      if (this.chunks && (!this.interview.company || (this.interview.company && this.checkNews))) {
+      const userOn = JSON.parse(localStorage.getItem('userData'))
+      if (this.chunks && this.chunks.length && (!this.interview.company || (this.interview.company && this.checkNews))) {
         this.blobRecorder = new Blob(this.chunks, {
           type: 'video/webm',
         })
@@ -460,8 +461,14 @@ export default {
           .then(rs => {
             window.onbeforeunload = null
             console.log(rs)
+
+            if (this.interview.company && userOn && userOn.role === 'ROLE_CANDIDATE') {
+              this.$router.push({ name: 'interview-meeting-result', params: { id: this.interview.id } })
+            }
           })
           .catch(e => console.log(e))
+      } else if (this.interview.company && userOn && userOn.role === 'ROLE_CANDIDATE') {
+        this.$router.push({ name: 'interview-meeting-result', params: { id: this.interview.id } })
       }
     },
     leaveCallCustom() {
@@ -473,11 +480,13 @@ export default {
       return this.resultLocal.is_success == val
     },
     changeSelected(val) {
-      if (this.resultLocal.is_success === val) {
+      // eslint-disable-next-line
+      if (this.resultLocal.is_success == val) {
         this.resultLocal.is_success = null
       } else {
         this.resultLocal.is_success = val
       }
+      console.log(this.resultLocal)
     },
     saveReview() {
       interview
@@ -490,6 +499,7 @@ export default {
         })
         .then(resp => {
           console.log(resp)
+          window.onbeforeunload = null
           this.$router.push({ name: 'interview-meeting-result', params: { id: this.interview.id } })
         })
         .catch(err => {

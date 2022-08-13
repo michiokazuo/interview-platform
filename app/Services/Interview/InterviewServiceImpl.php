@@ -289,14 +289,13 @@ class InterviewServiceImpl implements InterviewService
                 if ($interview->room && (!empty($data['result']) || !empty($data['record']))) {
                     $array = explode('/', $interview->room);
                     $room_name = end($array);
-                    $roomExists = $this->_repository->where('room', $interview->room)->first();
-                    if (empty($roomExists)) {
+                    $roomExists = $this->_repository->where('room', $interview->room)->count();
+                    if ($roomExists == 1 && ($user->company_id || !$interview->company_id)) {
                         $this->dailyCoService->delete($user, $room_name);
                     }
                     $data['room'] = null;
                 } else if (empty($data['result']) && empty($data['record'])) {
                     if (isset($data['form']) && $data['form'] === 'Online' && !$interview->room) {
-                        logger()->info('Create room');
                         $room = $this->createRoom($user, false);
                         if ($room) {
                             $data['room'] = $room;
