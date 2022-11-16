@@ -71,5 +71,5 @@ with arguments as:
 
 Phong DX - [@MichioKazuo](https://twitter.com/MichioKazuo) - phong.dx183966@sis.hust.edu.vn
 
-Project Link: [Interview Platform](https://github.com/michiokazuo/interview-platform.git)
+Project Link Demo: [Interview Platform](https://interview-platform-hust.herokuapp.com/)
 
