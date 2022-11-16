@@ -69,7 +69,7 @@ with arguments as:
 
 ## Getting help
 
-Phong DX - [@MichioKazuo](https://twitter.com/MichioKazuo) - phong.dx183966@sis.hust.edu.vn
+Phong DX - [@MichioKazuo](#) - #email
 
 Project Link Demo: [Interview Platform](https://interview-platform-hust.herokuapp.com/)
 
